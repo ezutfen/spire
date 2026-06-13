@@ -57,6 +57,7 @@ var httpSet = wire.NewSet(
 	staticmaps.NewStaticMapController,
 	eqemuserver.NewController,
 	eqemuserver.NewPublicController,
+	eqemuserver.NewQuestEditorController,
 	eqemuserverconfig.NewController,
 	websocket.NewController,
 	backup.NewController,
@@ -197,6 +198,7 @@ func provideControllers(
 	websocketController *websocket.Controller,
 	systemController *system.Controller,
 	modelController *models.Controller,
+	questEditorController *eqemuserver.QuestEditorController,
 ) *appControllerGroups {
 	return &appControllerGroups{
 		authControllers: []routes.Controller{
@@ -220,6 +222,7 @@ func provideControllers(
 			websocketController,
 			systemController,
 			authedAnalyticsController,
+			questEditorController,
 		},
 		v1controllersNoAuth: []routes.Controller{
 			quest,
