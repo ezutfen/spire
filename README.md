@@ -133,6 +133,7 @@ Want to help contribute to Spire? Anyone can submit [pull requests](https://gith
 | ./internal/updater | Package responsible for handling the automatic update routine in Spire. Has both Windows and Linux logic within and is ran on bootup in `main.go` |
 | ./internal/encryption | Encryption package. Currently used for encrypting held credentials and sensitive information in the database |
 | ./internal/questapi | Quest API Explorer package |
+| ./internal/aaeditor | Alternate Advancement (AA) Skill Editor service & controller. Transactional hierarchical CRUD across `aa_ability`, `aa_ranks`, `aa_rank_effects`, `aa_rank_prereqs` and referenced `db_str` strings |
 | ./internal/generators | Package that holds all code generation logic. Currently has generators for the db schema config, models, controllers. Configuration for generators are held in the `./internal/generators/config` folder. Used for example to define database relationships   |
 
 ### Contributing - Project Layout - Frontend

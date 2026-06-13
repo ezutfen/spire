@@ -7,6 +7,7 @@
 package boot
 
 import (
+	"github.com/EQEmu/spire/internal/aaeditor"
 	"github.com/EQEmu/spire/internal/analytics"
 	"github.com/EQEmu/spire/internal/app"
 	"github.com/EQEmu/spire/internal/assets"
@@ -120,7 +121,9 @@ func InitializeApplication() (App, error) {
 	modelsController := models.NewController()
 	questEditorService := eqemuserver.NewQuestEditorService(appLogger, pathManagement, eqemuserverClient)
 	questEditorController := eqemuserver.NewQuestEditorController(questEditorService)
-	bootAppControllerGroups := provideControllers(helloWorldController, controller, meController, analyticsController, connectionsController, questapiController, appController, queryController, clientfilesController, staticMapController, eqemuanalyticsController, authedController, eqemuchangelogController, assetsController, permissionsController, userController, settingsController, eqemuserverController, publicController, eqemuserverconfigController, backupController, websocketController, systemController, modelsController, questEditorController)
+	aaEditorService := aaeditor.NewAaEditorService(resolver, userEvent, appLogger)
+	aaEditorController := aaeditor.NewAaEditorController(aaEditorService)
+	bootAppControllerGroups := provideControllers(helloWorldController, controller, meController, analyticsController, connectionsController, questapiController, appController, queryController, clientfilesController, staticMapController, eqemuanalyticsController, authedController, eqemuchangelogController, assetsController, permissionsController, userController, settingsController, eqemuserverController, publicController, eqemuserverconfigController, backupController, websocketController, systemController, modelsController, questEditorController, aaEditorController)
 	aaAbilityController := crudcontrollers.NewAaAbilityController(resolver, userEvent)
 	aaRankController := crudcontrollers.NewAaRankController(resolver, userEvent)
 	aaRankEffectController := crudcontrollers.NewAaRankEffectController(resolver, userEvent)

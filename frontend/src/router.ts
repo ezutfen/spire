@@ -127,6 +127,21 @@ const router = new Router({
           meta: {title: "Task Editor"},
         },
         {
+          path: ROUTE.AA_LIST,
+          component: () => import('./views/aa-editor/AaEditor.vue'),
+          meta: {title: "AA Abilities"},
+        },
+        {
+          path: ROUTE.AA_ABILITY_NEW,
+          component: () => import('./views/aa-editor/AaAbilityEditor.vue'),
+          meta: {title: "New AA Ability"},
+        },
+        {
+          path: ROUTE.AA_ABILITY_EDIT,
+          component: () => import('./views/aa-editor/AaAbilityEditor.vue'),
+          meta: {title: "Edit AA Ability"},
+        },
+        {
           path: ROUTE.SPELLS_LIST,
           component: () => import('./views/spells/Spells.vue'),
           meta: {title: "Spells Browser"},

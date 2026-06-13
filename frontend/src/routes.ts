@@ -1,4 +1,7 @@
 export const ROUTE = {
+  AA_LIST: "/aa",
+  AA_ABILITY_EDIT: "/aa/:id",
+  AA_ABILITY_NEW: "/aa/new",
   API_MODEL_RELATIONSHIP_EXPLORER: "/model-relationship-explorer",
   ADMIN_ROOT: "/admin",
   ADMIN_PLAYERS_ONLINE: "/admin/players-online",

@@ -1,6 +1,7 @@
 package boot
 
 import (
+	"github.com/EQEmu/spire/internal/aaeditor"
 	"github.com/EQEmu/spire/internal/assets"
 	"github.com/EQEmu/spire/internal/auditlog"
 	"github.com/EQEmu/spire/internal/backup"
@@ -59,4 +60,5 @@ var serviceSet = wire.NewSet(
 	websocket.NewClientManager,
 	eqemuserver.NewQuestEditorService,
 	eqemuserver.NewCrashLogWatcher,
+	aaeditor.NewAaEditorService,
 )

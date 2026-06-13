@@ -1,6 +1,7 @@
 package boot
 
 import (
+	"github.com/EQEmu/spire/internal/aaeditor"
 	"github.com/EQEmu/spire/internal/analytics"
 	"github.com/EQEmu/spire/internal/app"
 	"github.com/EQEmu/spire/internal/assets"
@@ -63,6 +64,7 @@ var httpSet = wire.NewSet(
 	backup.NewController,
 	system.NewController,
 	models.NewController,
+	aaeditor.NewAaEditorController,
 	provideControllers,
 	NewRouter,
 )
@@ -199,6 +201,7 @@ func provideControllers(
 	systemController *system.Controller,
 	modelController *models.Controller,
 	questEditorController *eqemuserver.QuestEditorController,
+	aaEditorController *aaeditor.AaEditorController,
 ) *appControllerGroups {
 	return &appControllerGroups{
 		authControllers: []routes.Controller{
@@ -223,6 +226,7 @@ func provideControllers(
 			systemController,
 			authedAnalyticsController,
 			questEditorController,
+			aaEditorController,
 		},
 		v1controllersNoAuth: []routes.Controller{
 			quest,

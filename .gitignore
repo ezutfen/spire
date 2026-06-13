@@ -17,6 +17,8 @@ spire.exe~
 
 !internal/spire
 
+.kilo
+
 frontend/public/eq-asset-preview-master
 internal/http/spa/a_spa-packr.go
 

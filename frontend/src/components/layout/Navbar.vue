@@ -99,6 +99,14 @@
             <nav-section-component :config="calculatorNav"/>
 
             <li class="nav-item">
+              <router-link class="nav-link" :to="ROUTE.AA_LIST">
+                <i class="ra ra-star mr-1"></i> AA Abilities
+                <b-badge class="ml-3" variant="warning">BETA</b-badge>
+                <b-badge class="ml-3" variant="primary">NEW!</b-badge>
+              </router-link>
+            </li>
+
+            <li class="nav-item">
               <router-link class="nav-link" to="/client-files">
                 <i class="ra ra-cycle mr-1"></i> Client File
                 <b-badge class="ml-3" variant="primary">NEW!</b-badge>
