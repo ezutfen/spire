@@ -4,7 +4,7 @@
 
 ## [4.24.3] 6/12/2026
 
-* **Quest Editor** Add a full-features Quest LUA editor with full formatting. Includes a folder structure for browsing zone directories and NPCs.
+* **Quest Editor** Add a full-features Quest LUA editor with full formatting. Includes a folder structure for browsing zone directories and NPCs. (@ezutfen)
 
 ## [4.24.2] 1/15/2026
 
