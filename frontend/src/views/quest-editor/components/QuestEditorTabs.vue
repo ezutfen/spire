@@ -41,7 +41,12 @@
 </template>
 
 <script type="ts">
+const editor = require('vue2-ace-editor')
+
 export default {
+  components: {
+    editor,
+  },
   props: {
     tabs: { type: Array, default: () => [] },
     activeTab: { type: String, default: '' },
@@ -71,6 +76,9 @@ export default {
       },
       deep: true,
     },
+  },
+  mounted() {
+    this.loadActiveContent()
   },
   methods: {
     loadActiveContent() {
@@ -143,7 +151,10 @@ export default {
 .quest-editor-tabs {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .tab-bar {
@@ -204,12 +215,14 @@ export default {
 }
 
 .editor-area {
-  flex: 1;
+  flex: 1 1 auto;
   overflow: hidden;
+  min-height: 0;
 }
 
 .no-file-open {
-  flex: 1;
+  flex: 1 1 auto;
   color: #888;
+  min-height: 0;
 }
 </style>

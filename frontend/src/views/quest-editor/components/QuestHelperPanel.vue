@@ -167,7 +167,9 @@ export default {
 
 <style scoped>
 .quest-helper-panel {
+  flex: 1 1 auto;
   height: 100%;
+  min-height: 0;
   overflow-y: auto;
   font-size: 12px;
 }

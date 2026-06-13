@@ -175,12 +175,19 @@ export default {
 
 <style scoped>
 .quest-file-tree {
-  height: 100%;
-  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .tree-container {
   font-size: 13px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .tree-item {

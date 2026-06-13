@@ -6,7 +6,12 @@
         <p class="mt-3 mb-0">Quest Editor is only available for local Spire installs.</p>
       </div>
     </div>
-    <eq-window-simple v-else title="Quest Editor" class="p-0 quest-editor-window">
+    <eq-window-simple
+      v-else
+      title="Quest Editor"
+      class="p-0 quest-editor-window"
+      classes="quest-editor-window-content"
+    >
       <div class="quest-editor-toolbar d-flex align-items-center px-2 py-1">
         <b-button
           size="sm"
@@ -239,14 +244,7 @@ export default {
     },
 
     onTreeLoaded(treeData) {
-      if (!this.$refs.fileTree) {
-        return
-      }
-      treeData.forEach(node => {
-        if (node.is_directory) {
-          this.$refs.fileTree.$set(this.$refs.fileTree.expandedDirs, node.path, true)
-        }
-      })
+      return treeData
     },
 
     async openFile(path) {
@@ -586,7 +584,12 @@ export default {
 
 <style scoped>
 .quest-editor-root {
-  height: calc(100vh - 100px);
+  height: calc(100dvh - 120px);
+  max-height: calc(100dvh - 120px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .quest-editor-blocked {
@@ -601,15 +604,19 @@ export default {
 
 .quest-editor-window {
   height: 100%;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
 }
 
-.quest-editor-window >>> .eq-window-simple > div:last-child {
-  flex: 1;
+.quest-editor-window >>> .quest-editor-window-content {
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
   padding: 0 !important;
 }
 
@@ -626,25 +633,47 @@ export default {
 }
 
 .quest-pane {
-  overflow: auto;
+  min-height: 0;
 }
 
 .quest-pane-left {
   width: 250px;
   min-width: 200px;
+  flex: 0 0 250px;
+  max-height: 100%;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .quest-pane-center {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .quest-pane-right {
   width: 250px;
   min-width: 200px;
+  flex: 0 0 250px;
+  display: flex;
+  flex-direction: column;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.quest-pane-left > .quest-file-tree,
+.quest-pane-center > .quest-editor-tabs,
+.quest-pane-right > .quest-helper-panel {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 </style>
