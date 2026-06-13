@@ -1,3 +1,7 @@
+## [4.25.0] 6/13/2026
+
+* **AA Editor** Add full-featured Alternate Advancement (AA) Skill Editor — create, duplicate, edit, and delete AA abilities with their full rank chain, effects, prerequisites, and referenced `db_str` strings. Mirrors the Spell Editor's tabbed, EQ-themed UI with dirty-change protection and a validation/preview tab. (@Akkadius)
+
 ## [4.24.2] 1/15/2026
 
 * **Info** Updated a one more URL and some info references. (@Joligario)

@@ -13,6 +13,14 @@ export class AA {
     return this._aaRanks.length > 0
   }
 
+  // reload forces a fresh fetch of the AA preload caches (used after mutations)
+  static async reload() {
+    this._aaRanks = []
+    this._aaAbility = []
+    this._dbStrs = []
+    await this.preLoad()
+  }
+
   static async preLoad() {
     if (this.isPreloaded()) {
       return
