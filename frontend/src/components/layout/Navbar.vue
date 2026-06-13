@@ -120,6 +120,13 @@
               </router-link>
             </li>
 
+            <li class="nav-item" v-if="isAppLocal()">
+              <router-link class="nav-link " to="/quest-editor">
+                <i class="ra ra-scroll-unfurled mr-1"></i> Quest Editor
+                <b-badge class="ml-3" variant="warning">BETA</b-badge>
+              </router-link>
+            </li>
+
             <li class="nav-item">
               <router-link class="nav-link " to="/sage">
                 <i class="ra ra-crystal-ball mr-1"></i> Sage

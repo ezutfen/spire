@@ -9,6 +9,10 @@ export class Setting {
   static LATEST_UPDATE_VERSION       = "latest-update-version";
   static LATEST_RELEASE_PAYLOAD      = "latest-release-payload";
   static IGNORED_UPDATE_VERSION      = "ignored-update-version";
+
+  // quest editor
+  static QUEST_EDITOR_FORMAT_ON_SAVE = "quest-editor-format-on-save";
+  static QUEST_EDITOR_FONT_SIZE      = "quest-editor-font-size";
 }
 
 export class LocalSettings {
@@ -67,5 +71,22 @@ export class LocalSettings {
     localStorage.removeItem(Setting.LATEST_UPDATE_VERSION)
     localStorage.removeItem(Setting.LATEST_RELEASE_PAYLOAD)
     localStorage.removeItem(Setting.IGNORED_UPDATE_VERSION)
+  }
+
+  static isQuestEditorFormatOnSave() {
+    return this.get(Setting.QUEST_EDITOR_FORMAT_ON_SAVE) === "true"
+  }
+
+  static setQuestEditorFormatOnSave(val: boolean) {
+    this.set(Setting.QUEST_EDITOR_FORMAT_ON_SAVE, val ? "true" : "false")
+  }
+
+  static getQuestEditorFontSize() {
+    const val = this.get(Setting.QUEST_EDITOR_FONT_SIZE)
+    return val ? parseInt(val) : 14
+  }
+
+  static setQuestEditorFontSize(size: number) {
+    this.set(Setting.QUEST_EDITOR_FONT_SIZE, String(size))
   }
 }
