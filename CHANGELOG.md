@@ -1,6 +1,10 @@
 ## [4.25.0] 6/13/2026
 
-* **AA Editor** Add full-featured Alternate Advancement (AA) Skill Editor — create, duplicate, edit, and delete AA abilities with their full rank chain, effects, prerequisites, and referenced `db_str` strings. Mirrors the Spell Editor's tabbed, EQ-themed UI with dirty-change protection and a validation/preview tab. (@Akkadius)
+* **AA Editor** Add full-featured Alternate Advancement (AA) Skill Editor — create, duplicate, edit, and delete AA abilities with their full rank chain, effects, prerequisites, and referenced `db_str` strings. Mirrors the Spell Editor's tabbed, EQ-themed UI with dirty-change protection and a validation/preview tab. (@ezutfen)
+
+## [4.24.3] 6/12/2026
+
+* **Quest Editor** Add a full-features Quest LUA editor with full formatting. Includes a folder structure for browsing zone directories and NPCs.
 
 ## [4.24.2] 1/15/2026
 
