@@ -39,7 +39,7 @@
         <eq-tabs selected="Ability">
 
           <!-- Ability tab -->
-          <eq-tab name="Ability" selected>
+          <eq-tab name="Ability" :selected="true">
             <eq-window-simple title="Ability Properties" class="p-3">
               <div class="row">
                 <div class="col-lg-4 col-sm-12 mb-2">
