@@ -21,7 +21,7 @@ Keep entries short, factual, and action-oriented.
 - Date: `2026-06-17`
 - Branch: `feature/option-2-migration-foundation`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the next admin route slices now run on the Vue 3-safe path
+- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path
 
 ## Completed Steps
 
@@ -111,6 +111,12 @@ Keep entries short, factual, and action-oriented.
 - Kept launcher option defaults and prop-sync behavior centralized in the same component so server config updates still post through the existing API
 - Switched the file log viewer teardown to Vue 3 lifecycle hooks and clear timer state explicitly in [frontend/src/views/admin/FileLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/FileLogs.vue)
 
+### 9. Admin Update / Configuration Route Compatibility
+
+- Replaced unsupported `b-select :options` usage with a native select in [frontend/src/views/admin/server-update/ServerUpdate.vue](/home/zutfen/code/spire/frontend/src/views/admin/server-update/ServerUpdate.vue)
+- Switched that route to Vue 3 lifecycle hooks, removed dead ANSI-conversion setup, and made build/clean/cancel stream status handling safer when fetch requests fail in [frontend/src/views/admin/server-update/ServerUpdate.vue](/home/zutfen/code/spire/frontend/src/views/admin/server-update/ServerUpdate.vue)
+- Added missing row keys, centralized in-game log reload behavior, and made webhook list loading resilient to API failures in [frontend/src/views/admin/configuration/DiscordWebhooks.vue](/home/zutfen/code/spire/frontend/src/views/admin/configuration/DiscordWebhooks.vue)
+
 ## Verification
 
 Last verified successfully:
@@ -128,6 +134,7 @@ Last verified successfully:
 - Connections/user modal fixes are build-verified but not yet browser-smoke-tested end-to-end
 - Admin modal/timer fixes are build-verified but not yet browser-smoke-tested end-to-end
 - Launcher options static-zone add/remove flow is build-verified but not yet browser-smoke-tested end-to-end
+- Server update branch switching/build controls and Discord webhook CRUD are build-verified but not yet browser-smoke-tested end-to-end
 - Large editor-heavy routes are not yet intentionally migrated; current success is foundation-first
 - Vue 2 specialty libraries are still present as dependency debt even though the app now builds on the new shell
 - `docs/project-assessment-2026-06.md` still references Wire historically; that is acceptable unless we want the assessment updated to reflect implementation progress
@@ -141,8 +148,8 @@ Recommended next phase:
 
 Suggested first targets:
 
-- `frontend/src/views/admin/server-update/ServerUpdate.vue`
-- `frontend/src/views/admin/configuration/DiscordWebhooks.vue`
+- `frontend/src/views/admin/configuration/LogSettings.vue`
+- `frontend/src/views/admin/configuration/ServerRules.vue`
 - `frontend/src/views/admin/*` routes with modal/tabs/pagination usage
 
 ## Session Notes

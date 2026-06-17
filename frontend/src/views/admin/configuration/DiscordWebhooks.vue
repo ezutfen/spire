@@ -65,7 +65,7 @@
 
           </thead>
           <tbody>
-          <tr v-for="w in discordWebhooks">
+          <tr v-for="w in discordWebhooks" :key="w.id">
             <td class="text-center p-0 m-0">
               <b-button
                 variant="primary"
@@ -111,11 +111,10 @@ import {SpireApi}          from "@/app/api/spire-api";
 import InfoErrorBanner     from "@/components/InfoErrorBanner.vue";
 
 export default {
+  name: "DiscordWebhooks",
   components: { InfoErrorBanner, EqWindow },
   data() {
     return {
-      loaded: false,
-
       discordWebhooks: [],
 
       // notification / errors
@@ -124,11 +123,17 @@ export default {
     }
   },
   async created() {
-    this.loaded = true
-
-    this.loadWebhooks()
+    await this.loadWebhooks()
   },
   methods: {
+    async reloadServerLogs(successMessage) {
+      const r = await SpireApi.v1().post("eqemuserver/reload/logs")
+      if (r.status === 200) {
+        setTimeout(() => {
+          this.notification = successMessage
+        }, 1000)
+      }
+    },
     async deleteWebhook(e) {
       if (confirm(`Are you sure you want to delete this webhook?\n\n${e.webhook_name} (${e.id})`)) {
         try {
@@ -139,14 +144,8 @@ export default {
           )
           if (r.status === 200) {
             this.notification = `Deleted Discord Webhook [${e.webhook_name}] (${e.id})!`
-            this.loadWebhooks()
-
-            const r = await SpireApi.v1().post("eqemuserver/reload/logs")
-            if (r.status === 200) {
-              setTimeout(() => {
-                this.notification = "Server log settings reloaded in-game!"
-              }, 1000)
-            }
+            await this.loadWebhooks()
+            await this.reloadServerLogs("Server log settings reloaded in-game!")
           }
         } catch (e) {
           // error notify
@@ -167,14 +166,8 @@ export default {
         )
         if (r.status === 200) {
           this.notification = `Updated Discord Webhook [${e.webhook_name}] (${e.id})!`
-          this.loadWebhooks()
-
-          const r = await SpireApi.v1().post("eqemuserver/reload/logs")
-          if (r.status === 200) {
-            setTimeout(() => {
-              this.notification = "Server log settings reloaded in-game!"
-            }, 1000)
-          }
+          await this.loadWebhooks()
+          await this.reloadServerLogs("Server log settings reloaded in-game!")
         }
       } catch (e) {
         // error notify
@@ -185,9 +178,15 @@ export default {
     },
 
     async loadWebhooks() {
-      let r = await (new DiscordWebhookApi(...SpireApi.cfg())).listDiscordWebhooks()
-      if (r.status === 200) {
-        this.discordWebhooks = r.data
+      try {
+        let r = await (new DiscordWebhookApi(...SpireApi.cfg())).listDiscordWebhooks()
+        if (r.status === 200) {
+          this.discordWebhooks = r.data
+        }
+      } catch (e) {
+        if (e.response && e.response.data && e.response.data.error) {
+          this.error = e.response.data.error
+        }
       }
     },
 
@@ -203,7 +202,8 @@ export default {
         )
         if (r.status === 200) {
           this.notification = "New webhook added!"
-          this.loadWebhooks()
+          await this.loadWebhooks()
+          await this.reloadServerLogs("Server log settings reloaded in-game!")
         }
       } catch (e) {
         // error notify
