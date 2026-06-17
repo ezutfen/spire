@@ -25,7 +25,7 @@ export default {
   mounted() {
     this.interval = setInterval(this.incrementLoader, this.intervalMs)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.interval) {
       clearInterval(this.interval)
     }

@@ -94,7 +94,7 @@ export default {
     EventBus.$on("CHECK_SPIRE_UPDATE", this.checkSpireUpdate);
     SpireWebsocket.addEventListener('message', this.handleWebsocketMessage);
   },
-  destroyed() {
+  unmounted() {
     EventBus.$off("SPELL_LEGACY_ICONS_ENABLED", this.loadSpellIconSettings);
     EventBus.$off("CHECK_SPIRE_UPDATE", this.checkSpireUpdate);
     SpireWebsocket.removeEventListener('message', this.handleWebsocketMessage);

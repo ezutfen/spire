@@ -159,7 +159,7 @@ export default {
       isPaused: false,
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
   },
   watch: {
@@ -246,7 +246,7 @@ export default {
       }
     }
   },
-  destroyed() {
+  unmounted() {
     if (this.ws) {
       this.ws.close()
     }

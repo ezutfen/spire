@@ -317,7 +317,7 @@ export default {
 
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timer)
 
     EventBus.$off("ROUTE_CHANGE", this.handleRouteChange);

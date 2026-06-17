@@ -39,7 +39,7 @@ export default {
       addresses: [],
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timer)
   },
   async mounted() {

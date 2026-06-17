@@ -47,7 +47,7 @@ export default {
   created() {
     EventBus.$on("DB_CONNECTION_CHANGE", this.fetchConnection);
   },
-  destroyed() {
+  unmounted() {
     EventBus.$off("DB_CONNECTION_CHANGE", this.fetchConnection);
   },
 

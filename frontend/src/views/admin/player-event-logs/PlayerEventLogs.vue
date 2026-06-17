@@ -86,7 +86,6 @@
               :fade-when-not-true="true"
               :true-value="true"
               :false-value="false"
-              @click.native="autoRefreshEnabled = !autoRefreshEnabled"
               v-model="autoRefreshEnabled"
             />
           </div>

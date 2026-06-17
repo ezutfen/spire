@@ -254,7 +254,7 @@ export default {
   /**
    * Destroy
    */
-  beforeDestroy() {
+  beforeUnmount() {
     if (Timer.timer['players-online']) {
       clearInterval(Timer.timer['players-online'])
     }

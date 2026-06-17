@@ -407,7 +407,7 @@ export default {
     }, 300),
 
     toggleShowPlayers(zoneId) {
-      this.$set(this.showPlayersForZone, zoneId, !this.showPlayersForZone[zoneId]);
+      this.showPlayersForZone[zoneId] = !this.showPlayersForZone[zoneId];
     },
 
     readyToPoll() {
@@ -618,7 +618,7 @@ export default {
             const existing = this.zoneList.find(z => z.id === id);
             if (existing) {
               Object.keys(newZone).forEach(key => {
-                this.$set(existing, key, newZone[key]);
+                existing[key] = newZone[key];
               });
               updatedZoneList.push(existing); // Keep reference
             } else {
@@ -698,7 +698,7 @@ export default {
       return zoneList
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.zoneServerLoop)
     // Navbar.expand();
   }

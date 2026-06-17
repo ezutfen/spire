@@ -21,7 +21,7 @@ Keep entries short, factual, and action-oriented.
 - Date: `2026-06-17`
 - Branch: `feature/option-2-migration-foundation`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path
+- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions
 
 ## Completed Steps
 
@@ -117,22 +117,44 @@ Keep entries short, factual, and action-oriented.
 - Switched that route to Vue 3 lifecycle hooks, removed dead ANSI-conversion setup, and made build/clean/cancel stream status handling safer when fetch requests fail in [frontend/src/views/admin/server-update/ServerUpdate.vue](/home/zutfen/code/spire/frontend/src/views/admin/server-update/ServerUpdate.vue)
 - Added missing row keys, centralized in-game log reload behavior, and made webhook list loading resilient to API failures in [frontend/src/views/admin/configuration/DiscordWebhooks.vue](/home/zutfen/code/spire/frontend/src/views/admin/configuration/DiscordWebhooks.vue)
 
+### 10. Admin/Shared Lifecycle & Removed-API Migration
+
+Note: the app boots under Vue's migration build (`configureCompat({ MODE: 2 })` in [frontend/src/main.ts](/home/zutfen/code/spire/frontend/src/main.ts)), so Vue 2 lifecycle hooks (`beforeDestroy`/`destroyed`), `this.$set`, and `.native` still *function* but emit deprecation warnings and will break when compat mode is dropped. This step migrates the admin routes and shared shell off those conventions:
+
+- Renamed Vue 2 lifecycle hooks to their Vue 3 equivalents so timer/listener teardown actually runs forward-compatibly:
+  - [frontend/src/views/admin/ZoneLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/ZoneLogs.vue) (`beforeDestroy`/`destroyed` → `beforeUnmount`/`unmounted`, closes the zone-log WebSocket on teardown)
+  - [frontend/src/views/admin/ZoneServers.vue](/home/zutfen/code/spire/frontend/src/views/admin/ZoneServers.vue) (`beforeDestroy` → `beforeUnmount`, clears the zone polling interval)
+  - [frontend/src/views/admin/tools/DatabaseBackup.vue](/home/zutfen/code/spire/frontend/src/views/admin/tools/DatabaseBackup.vue) (`destroyed` → `unmounted`)
+  - [frontend/src/views/admin/layout/AdminHeader.vue](/home/zutfen/code/spire/frontend/src/views/admin/layout/AdminHeader.vue) (`beforeDestroy` → `beforeUnmount`)
+  - [frontend/src/views/admin/components/PlayersOnlineComponent.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/PlayersOnlineComponent.vue) (`beforeDestroy` → `beforeUnmount`)
+  - [frontend/src/views/admin/components/DashboardNetworkingInfo.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/DashboardNetworkingInfo.vue) (`beforeDestroy` → `beforeUnmount`)
+  - [frontend/src/views/admin/components/DashboardCpuInfo.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/DashboardCpuInfo.vue) (`beforeDestroy` → `beforeUnmount`)
+  - [frontend/src/views/admin/components/DashboardProcessCounts.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/DashboardProcessCounts.vue) (`beforeDestroy` → `beforeUnmount`)
+  - [frontend/src/App.vue](/home/zutfen/code/spire/frontend/src/App.vue) (`destroyed` → `unmounted`)
+  - [frontend/src/components/LoaderFakeProgress.vue](/home/zutfen/code/spire/frontend/src/components/LoaderFakeProgress.vue) (`beforeDestroy` → `beforeUnmount`)
+  - [frontend/src/components/eq-ui/EQDebug.vue](/home/zutfen/code/spire/frontend/src/components/eq-ui/EQDebug.vue) (`destroyed` → `unmounted`)
+  - [frontend/src/components/DbConnectionStatusPill.vue](/home/zutfen/code/spire/frontend/src/components/DbConnectionStatusPill.vue) (`destroyed` → `unmounted`)
+- Replaced removed `this.$set(...)` calls with direct reactive assignment (Proxy-based reactivity in Vue 3) in [frontend/src/views/admin/ZoneServers.vue](/home/zutfen/code/spire/frontend/src/views/admin/ZoneServers.vue) (player-toggle map and in-place zone updates)
+- Removed a redundant `@click.native` handler from the player event log auto-refresh toggle in [frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue) (relying on the existing `v-model`, which is honored by compat mode's Vue 2 `value`/`input` convention)
+
 ## Verification
 
 Last verified successfully:
 
-- `go build`
+- `go build ./...`
 - `go build ./internal/http/spa`
 - `cd frontend && npm run build`
 
 ## Open Risks / Warnings
 
+- App still boots under Vue's migration build (`configureCompat({ MODE: 2 })`); Vue 2 conventions still present in editor-heavy routes (see `rg "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src`) emit deprecation warnings and will break when compat mode is dropped. Remaining occurrences live mostly in editor routes (ItemEditor, SpellEditor, NpcEditor, TaskEditor, QuestEditor, Zone, Sage, asset viewers, aa-editor `$set`)
 - Frontend build still emits non-fatal warnings:
   - deprecated Sass legacy JS API
   - deprecated Vue deep selector syntax (`>>>` / `/deep/`)
   - existing duplicate `case 503` warning in `frontend/src/app/spells.ts`
 - Connections/user modal fixes are build-verified but not yet browser-smoke-tested end-to-end
 - Admin modal/timer fixes are build-verified but not yet browser-smoke-tested end-to-end
+- Admin dashboard/zone/lifecycle hook fixes (`$set`, `.native`, `beforeDestroy`/`destroyed`) are build-verified but not yet browser-smoke-tested end-to-end
 - Launcher options static-zone add/remove flow is build-verified but not yet browser-smoke-tested end-to-end
 - Server update branch switching/build controls and Discord webhook CRUD are build-verified but not yet browser-smoke-tested end-to-end
 - Large editor-heavy routes are not yet intentionally migrated; current success is foundation-first
@@ -151,6 +173,8 @@ Suggested first targets:
 - `frontend/src/views/admin/configuration/LogSettings.vue`
 - `frontend/src/views/admin/configuration/ServerRules.vue`
 - `frontend/src/views/admin/*` routes with modal/tabs/pagination usage
+
+Alternatively, sweep the remaining Vue 2 lifecycle / `$set` / `.native` usages out of the editor-heavy routes (ItemEditor, SpellEditor, NpcEditor, TaskEditor, QuestEditor, aa-editor, asset viewers) to clear deprecation warnings and prepare for dropping `configureCompat({ MODE: 2 })`. Run `rg -n "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src --type vue` to enumerate.
 
 ## Session Notes
 
