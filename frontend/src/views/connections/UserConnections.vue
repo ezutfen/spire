@@ -102,7 +102,6 @@
                     class="btn btn-sm btn-white btn-danger ml-2 pt-0 pb-0"
                     v-if="isCurrentUserOwnerOfConnection(c)"
                     @click="addDeveloperToServerModal(c)"
-                    v-b-modal.add-developer-server-connection-modal
                   ><i class="fa fa-plus"/> Add</a>
                 </h4>
 
@@ -226,6 +225,7 @@
 </template>
 
 <script>
+import { nextTick }                from "vue";
 import util                         from "util";
 import {ROUTE}                      from "@/routes";
 import {SpireApi}                   from "@/app/api/spire-api";
@@ -249,20 +249,6 @@ export default {
       required: true
     },
   },
-  watch: {
-    connectionStatuses: {
-      deep: true,
-      handler() {
-        console.log("statuses")
-      }
-    },
-    connections: {
-      deep: true,
-      handler() {
-        console.log("connections")
-      }
-    },
-  },
   data() {
     return {
       user: {},
@@ -282,10 +268,6 @@ export default {
   },
   async mounted() {
     this.user = await (UserContext.getUser())
-
-    setTimeout(() => {
-      this.$forceUpdate()
-    }, 1000)
   },
   methods: {
 
@@ -297,13 +279,11 @@ export default {
       this.$emit("reload-connections", true);
     },
 
-    setDiscordWebhookLogs(connection) {
+    async setDiscordWebhookLogs(connection) {
       this.discordConnection = connection
 
-      // I don't remember why I needed to queue this
-      setTimeout(() => {
-        this.$bvModal.show('manage-discord-connection-modal')
-      }, 10)
+      await nextTick()
+      this.$bvModal.show('manage-discord-connection-modal')
     },
 
     viewAuditLog(connectionId) {
@@ -315,7 +295,7 @@ export default {
       })
     },
 
-    manageUser(user, connection) {
+    async manageUser(user, connection) {
       // if (!this.canViewPermissions(user, connection)) {
       //   return;
       // }
@@ -323,10 +303,8 @@ export default {
       this.managedUser           = user
       this.managedUserConnection = connection
 
-      // I don't remember why I needed to queue this
-      setTimeout(() => {
-        this.$bvModal.show('manage-developer-modal')
-      }, 10)
+      await nextTick()
+      this.$bvModal.show('manage-developer-modal')
     },
 
     isUserOwnerOfConnection(user, connection) {
@@ -337,8 +315,10 @@ export default {
       return this.user && Object.keys(this.user).length > 0
     },
 
-    addDeveloperToServerModal(connection) {
+    async addDeveloperToServerModal(connection) {
       this.addDeveloperToConnection = connection
+      await nextTick()
+      this.$bvModal.show('add-developer-server-connection-modal')
     },
 
     async deleteConnection(connectionId) {

@@ -54,6 +54,7 @@ export default {
   props: {
     connection: {
       type: Object,
+      default: () => ({}),
     },
   },
   data() {

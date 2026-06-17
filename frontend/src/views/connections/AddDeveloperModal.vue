@@ -74,6 +74,7 @@ export default {
   props: {
     connection: {
       type: Object,
+      default: () => ({}),
     },
   },
   data() {
@@ -130,7 +131,7 @@ export default {
     },
 
     searchUser() {
-      if (Object.keys(this.connection).length === 0) {
+      if (!this.connection || Object.keys(this.connection).length === 0) {
         return;
       }
 

@@ -698,15 +698,19 @@ const BModal = defineComponent({
               [
                 h('div', { class: ['modal-dialog', props.centered ? 'modal-dialog-centered' : '', props.size ? `modal-${props.size}` : ''] }, [
                   h('div', { class: 'modal-content' }, [
-                    h('div', { class: 'modal-header' }, [
-                      slots['modal-title'] ? renderSlot(slots, 'modal-title') : h('h5', { class: 'modal-title' }, props.title),
-                      h('button', {
-                        type: 'button',
-                        class: 'btn-close',
-                        'aria-label': 'Close',
-                        onClick: hide,
-                      }),
-                    ]),
+                    slots['modal-header']
+                      ? h('div', { class: 'modal-header' }, renderSlot(slots, 'modal-header', { close: hide }))
+                      : h('div', { class: 'modal-header' }, [
+                          slots['modal-title']
+                            ? renderSlot(slots, 'modal-title')
+                            : h('h5', { class: 'modal-title' }, props.title),
+                          h('button', {
+                            type: 'button',
+                            class: 'btn-close',
+                            'aria-label': 'Close',
+                            onClick: hide,
+                          }),
+                        ]),
                     h('div', { class: 'modal-body' }, slots.default?.()),
                     !props.hideFooter
                       ? h(

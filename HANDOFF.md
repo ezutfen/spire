@@ -21,7 +21,7 @@ Keep entries short, factual, and action-oriented.
 - Date: `2026-06-17`
 - Branch: `feature/option-2-migration-foundation`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition
+- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows have started moving onto the local Vue 3 modal bridge
 
 ## Completed Steps
 
@@ -85,6 +85,16 @@ Keep entries short, factual, and action-oriented.
 - Updated the CRUD controller template in [internal/model/templates/inject_http_crud_controller.tmpl](/home/zutfen/code/spire/internal/model/templates/inject_http_crud_controller.tmpl)
 - Updated contributor docs in [README.md](/home/zutfen/code/spire/README.md)
 
+### 6. Phase 2 Modal Flow Compatibility
+
+- Fixed the local modal bridge to honor `#modal-header` slots in [frontend/src/plugins/legacy-bootstrap.ts](/home/zutfen/code/spire/frontend/src/plugins/legacy-bootstrap.ts)
+- Reworked connection modal open flows to use `nextTick()` and direct `$bvModal.show(...)` calls instead of timing-sensitive directive registration in [frontend/src/views/connections/UserConnections.vue](/home/zutfen/code/spire/frontend/src/views/connections/UserConnections.vue)
+- Added safer empty-object defaults for conditional modal props in:
+  - [frontend/src/views/connections/AddDeveloperModal.vue](/home/zutfen/code/spire/frontend/src/views/connections/AddDeveloperModal.vue)
+  - [frontend/src/views/connections/ManageDiscordConnectionModal.vue](/home/zutfen/code/spire/frontend/src/views/connections/ManageDiscordConnectionModal.vue)
+  - [frontend/src/views/user/ResetUserPasswordModal.vue](/home/zutfen/code/spire/frontend/src/views/user/ResetUserPasswordModal.vue)
+- Removed temporary watcher / force-update noise from the connections route shell in [frontend/src/views/connections/UserConnections.vue](/home/zutfen/code/spire/frontend/src/views/connections/UserConnections.vue)
+
 ## Verification
 
 Last verified successfully:
@@ -99,6 +109,7 @@ Last verified successfully:
   - deprecated Sass legacy JS API
   - deprecated Vue deep selector syntax (`>>>` / `/deep/`)
   - existing duplicate `case 503` warning in `frontend/src/app/spells.ts`
+- Connections/user modal fixes are build-verified but not yet browser-smoke-tested end-to-end
 - Large editor-heavy routes are not yet intentionally migrated; current success is foundation-first
 - Vue 2 specialty libraries are still present as dependency debt even though the app now builds on the new shell
 - `docs/project-assessment-2026-06.md` still references Wire historically; that is acceptable unless we want the assessment updated to reflect implementation progress
@@ -107,13 +118,13 @@ Last verified successfully:
 
 Recommended next phase:
 
-- Start Phase 2 frontend migration: admin/shared modal-heavy routes
-- Goal: replace real BootstrapVue usage on ordinary CRUD/admin flows with the new local Vue 3 wrapper layer
+- Continue Phase 2 frontend migration: finish the remaining admin/shared modal-heavy routes
+- Goal: replace real BootstrapVue usage on ordinary CRUD/admin flows with the new local Vue 3 wrapper layer and remove timing-sensitive modal behavior
 
 Suggested first targets:
 
-- `frontend/src/views/connections/*`
-- `frontend/src/views/user/*`
+- `frontend/src/views/admin/components/ServerProcessButtonComponent.vue`
+- `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue`
 - `frontend/src/views/admin/*` routes with modal/tabs/pagination usage
 
 ## Session Notes
