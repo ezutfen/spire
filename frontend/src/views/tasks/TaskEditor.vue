@@ -5,7 +5,7 @@
         <eq-window-simple
           title="Task Editor"
           v-if="tasks"
-          @mouseover.native="previewTask()"
+          @mouseover="previewTask()"
         >
           <div class="row">
             <div :class="(task ? 'col-4' : 'col-12') + ' p-0'">

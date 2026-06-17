@@ -210,7 +210,7 @@ export default {
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
 
     if (this.interval) {

@@ -328,7 +328,7 @@ export default {
     // cycle background images
     this.interval = setInterval(this.setBackgroundImage, 3 * 1000)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.interval) {
       clearInterval(this.interval)
     }

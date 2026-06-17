@@ -39,7 +39,7 @@ export default {
       }
     },
   },
-  destroyed() {
+  unmounted() {
     clearInterval(this.taskTimer)
   },
   mounted() {

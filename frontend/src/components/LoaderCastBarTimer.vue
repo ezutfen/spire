@@ -47,7 +47,7 @@ export default {
     this.interval              = setInterval(this.incrementLoader, TIME_INCREMENT_MS)
     this.internalTimeRemaining = parseInt(this.timeMs)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.interval) {
       clearInterval(this.interval)
     }

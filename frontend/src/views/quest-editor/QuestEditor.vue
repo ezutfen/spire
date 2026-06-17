@@ -225,7 +225,7 @@ export default {
 
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
   beforeRouteLeave(to, from, next) {

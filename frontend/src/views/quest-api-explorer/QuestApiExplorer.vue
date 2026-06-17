@@ -408,7 +408,7 @@ export default {
     }
   },
 
-  destroyed() {
+  unmounted() {
     Debug.log("[deactivated]")
 
     document.body.removeEventListener('keyup', this.closeExampleKeyHandler)

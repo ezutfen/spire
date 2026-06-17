@@ -86,7 +86,7 @@ export default {
       selectorActive: {},
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
 
     // if (this.zonePreviewInterval) {

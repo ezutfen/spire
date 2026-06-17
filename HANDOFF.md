@@ -21,7 +21,7 @@ Keep entries short, factual, and action-oriented.
 - Date: `2026-06-17`
 - Branch: `feature/option-2-migration-foundation`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions
+- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native` sweep complete across editor-heavy and shared routes (0 remaining occurrences)
 
 ## Completed Steps
 
@@ -137,17 +137,41 @@ Note: the app boots under Vue's migration build (`configureCompat({ MODE: 2 })` 
 - Replaced removed `this.$set(...)` calls with direct reactive assignment (Proxy-based reactivity in Vue 3) in [frontend/src/views/admin/ZoneServers.vue](/home/zutfen/code/spire/frontend/src/views/admin/ZoneServers.vue) (player-toggle map and in-place zone updates)
 - Removed a redundant `@click.native` handler from the player event log auto-refresh toggle in [frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue) (relying on the existing `v-model`, which is honored by compat mode's Vue 2 `value`/`input` convention)
 
+### 11. Vue 2 Convention Sweep (Lifecycle Hooks + `.native`)
+
+Completed the bounded sweep of the remaining Vue 2 conventions enumerated by `rg -n "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src` across editor-heavy and shared routes. Result: **0 occurrences remain**. The app still boots under `configureCompat({ MODE: 2 })`, but these usages no longer emit deprecation warnings and will not break when compat mode is dropped.
+
+- Renamed Vue 2 lifecycle hooks to their Vue 3 equivalents (`beforeDestroy` → `beforeUnmount`, `destroyed` → `unmounted`) so teardown actually runs forward-compatibly:
+  - [frontend/src/views/zone/Zone.vue](/home/zutfen/code/spire/frontend/src/views/zone/Zone.vue)
+  - [frontend/src/views/tasks/components/TaskTimerCountdown.vue](/home/zutfen/code/spire/frontend/src/views/tasks/components/TaskTimerCountdown.vue)
+  - [frontend/src/views/asset-viewers/SpellAnimationViewer.vue](/home/zutfen/code/spire/frontend/src/views/asset-viewers/SpellAnimationViewer.vue)
+  - [frontend/src/views/asset-viewers/EmitterViewer.vue](/home/zutfen/code/spire/frontend/src/views/asset-viewers/EmitterViewer.vue)
+  - [frontend/src/views/quest-editor/QuestEditor.vue](/home/zutfen/code/spire/frontend/src/views/quest-editor/QuestEditor.vue)
+  - [frontend/src/views/quest-api-explorer/QuestApiExplorer.vue](/home/zutfen/code/spire/frontend/src/views/quest-api-explorer/QuestApiExplorer.vue)
+  - [frontend/src/components/LoaderCastBarTimer.vue](/home/zutfen/code/spire/frontend/src/components/LoaderCastBarTimer.vue)
+  - [frontend/src/views/npcs/NPCs.vue](/home/zutfen/code/spire/frontend/src/views/npcs/NPCs.vue)
+  - [frontend/src/components/EqZoneMap.vue](/home/zutfen/code/spire/frontend/src/components/EqZoneMap.vue)
+  - [frontend/src/views/items/ItemEditor.vue](/home/zutfen/code/spire/frontend/src/views/items/ItemEditor.vue)
+  - [frontend/src/views/sage/Sage.vue](/home/zutfen/code/spire/frontend/src/views/sage/Sage.vue)
+  - [frontend/src/components/preview/EQZoneCardPreview.vue](/home/zutfen/code/spire/frontend/src/components/preview/EQZoneCardPreview.vue)
+- Removed the deprecated `.native` event modifier from component listeners. All affected listeners were on components (`eq-tabs`, `eq-window-simple`, `b-form-select`, `b-form-input`) whose single-root / `...attrs`-spread behavior forwards a plain `@mouseover` to the root element, preserving the previous native-listener behavior:
+  - [frontend/src/views/tasks/TaskEditor.vue](/home/zutfen/code/spire/frontend/src/views/tasks/TaskEditor.vue)
+  - [frontend/src/views/spells/SpellEditor.vue](/home/zutfen/code/spire/frontend/src/views/spells/SpellEditor.vue) (3 usages)
+  - [frontend/src/views/npcs/NpcEditor.vue](/home/zutfen/code/spire/frontend/src/views/npcs/NpcEditor.vue)
+  - [frontend/src/views/items/ItemEditor.vue](/home/zutfen/code/spire/frontend/src/views/items/ItemEditor.vue)
+
 ## Verification
 
-Last verified successfully:
+Last verified successfully (`2026-06-17`, after Step 11):
 
 - `go build ./...`
 - `go build ./internal/http/spa`
 - `cd frontend && npm run build`
+- `rg -n "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src` → 0 matches
 
 ## Open Risks / Warnings
 
-- App still boots under Vue's migration build (`configureCompat({ MODE: 2 })`); Vue 2 conventions still present in editor-heavy routes (see `rg "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src`) emit deprecation warnings and will break when compat mode is dropped. Remaining occurrences live mostly in editor routes (ItemEditor, SpellEditor, NpcEditor, TaskEditor, QuestEditor, Zone, Sage, asset viewers, aa-editor `$set`)
+- App still boots under Vue's migration build (`configureCompat({ MODE: 2 })`). The targeted sweep in Step 11 cleared all `beforeDestroy`/`destroyed`/`$set`/`.native` usages (verified: 0 matches). Other Vue 2-only instance APIs may still be present (e.g. `this.$children`, `this.$listeners`, `this.$scopedSlots`, `Vue.set`, `.sync`) and would surface when scanning for compat-mode deprecation warnings in the browser; these were intentionally out of scope for this sweep
 - Frontend build still emits non-fatal warnings:
   - deprecated Sass legacy JS API
   - deprecated Vue deep selector syntax (`>>>` / `/deep/`)
@@ -157,7 +181,8 @@ Last verified successfully:
 - Admin dashboard/zone/lifecycle hook fixes (`$set`, `.native`, `beforeDestroy`/`destroyed`) are build-verified but not yet browser-smoke-tested end-to-end
 - Launcher options static-zone add/remove flow is build-verified but not yet browser-smoke-tested end-to-end
 - Server update branch switching/build controls and Discord webhook CRUD are build-verified but not yet browser-smoke-tested end-to-end
-- Large editor-heavy routes are not yet intentionally migrated; current success is foundation-first
+- Step 11 lifecycle-hook/`.native` sweep is build-verified but not yet browser-smoke-tested; the `@mouseover` fallthrough behavior (eq-tabs/eq-window-simple root `div`, b-form-select/b-form-input via `...attrs` spread) should be confirmed in the browser for the editor/preview hover flows
+- Large editor-heavy routes are not yet intentionally re-architected; current success is foundation-first
 - Vue 2 specialty libraries are still present as dependency debt even though the app now builds on the new shell
 - `docs/project-assessment-2026-06.md` still references Wire historically; that is acceptable unless we want the assessment updated to reflect implementation progress
 
@@ -172,9 +197,10 @@ Suggested first targets:
 
 - `frontend/src/views/admin/configuration/LogSettings.vue`
 - `frontend/src/views/admin/configuration/ServerRules.vue`
+- `frontend/src/views/admin/configuration/ServerConfig.vue`
 - `frontend/src/views/admin/*` routes with modal/tabs/pagination usage
 
-Alternatively, sweep the remaining Vue 2 lifecycle / `$set` / `.native` usages out of the editor-heavy routes (ItemEditor, SpellEditor, NpcEditor, TaskEditor, QuestEditor, aa-editor, asset viewers) to clear deprecation warnings and prepare for dropping `configureCompat({ MODE: 2 })`. Run `rg -n "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src --type vue` to enumerate.
+The Vue 2 lifecycle / `$set` / `.native` sweep (Step 11) is complete. As a follow-up to further reduce compat-mode deprecation noise, scan the browser console and sweep the remaining Vue 2-only instance APIs (e.g. `this.$children`, `this.$listeners`, `this.$scopedSlots`, `Vue.set`, `.sync`) with `rg -n "\\\$children|\\\$listeners|\\\$scopedSlots|Vue\\.set|\\.sync=" frontend/src --type-add 'vue:*.vue' --type vue`.
 
 ## Session Notes
 

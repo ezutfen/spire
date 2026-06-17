@@ -25,7 +25,7 @@ export default {
 
   },
 
-  destroyed() {
+  unmounted() {
     Navbar.expand();
   },
   async mounted() {

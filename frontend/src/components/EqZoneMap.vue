@@ -792,7 +792,7 @@ export default {
   async mounted() {
     this.loadMap()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     EventBus.$off("NPC_ZOOM", this.handleNpcZoomEvent);
   },
   created() {

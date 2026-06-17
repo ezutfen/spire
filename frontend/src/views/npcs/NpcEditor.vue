@@ -10,7 +10,7 @@
             v-if="npc"
             id="npc-edit-card"
             class="npc-edit-card minified-inputs"
-            @mouseover.native="previewMain()"
+            @mouseover="previewMain()"
           >
             <eq-tab
               :name="tab.name"

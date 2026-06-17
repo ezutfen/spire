@@ -30,7 +30,7 @@
             @on-selected="tabSelected = $event; updateQueryState()"
             id="spell-edit-card"
             class="spell-edit-card"
-            @mouseover.native="previewSpell(false)"
+            @mouseover="previewSpell(false)"
           >
             <eq-tab
               name="Basic"
@@ -237,7 +237,7 @@
 
                   <b-form-select
                     :id="'effectid_' + i"
-                    @mouseover.native="drawSpaDetailPane(spell['effectid_' + i], i)"
+                    @mouseover="drawSpaDetailPane(spell['effectid_' + i], i)"
                     @change="getSpaDefaultValues(spell['effectid_' + i], i); drawSpaDetailPane(spell['effectid_' + i], i)"
                     v-model.number="spell['effectid_' + i]"
                     style="width: 150px"
@@ -271,7 +271,7 @@
 
                   <b-form-input
                     :id="'formula_' + i"
-                    @mouseover.native="drawSpaFormulasPane('formula_' + i)"
+                    @mouseover="drawSpaFormulasPane('formula_' + i)"
                     v-model.number="spell['formula_' + i]"
                     :class="getSpaSpellHighlights(spell['effectid_' + i], 'formula')"
                     @click="processSpaFieldAction(i, spell['effectid_' + i], 'formula')"

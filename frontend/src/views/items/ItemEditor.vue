@@ -26,7 +26,7 @@
             @on-selected="tabSelected = $event; updateQueryState()"
             id="item-edit-card"
             class="item-edit-card"
-            @mouseover.native="previewItem"
+            @mouseover="previewItem"
           >
             <eq-tab
               name="General"
@@ -1981,7 +1981,7 @@ export default {
       immediate: true,
     },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
   },
   mounted() {

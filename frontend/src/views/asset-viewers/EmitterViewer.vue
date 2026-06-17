@@ -109,7 +109,7 @@ export default {
       }, 100);
     }
   },
-  destroyed() {
+  unmounted() {
     VideoViewer.destroyScrollListener()
 
     // remove route watcher
