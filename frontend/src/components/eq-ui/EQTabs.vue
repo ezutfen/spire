@@ -32,6 +32,23 @@ export default {
   data() {
     return { tabs: [] };
   },
+  provide() {
+    return {
+      eqTabsApi: {
+        register: (tab) => {
+          if (!this.tabs.includes(tab)) {
+            this.tabs.push(tab);
+          }
+        },
+        unregister: (tab) => {
+          const i = this.tabs.indexOf(tab);
+          if (i !== -1) {
+            this.tabs.splice(i, 1);
+          }
+        },
+      },
+    };
+  },
   watch: {
     'selected'() {
       if (this.selected && this.selected.length > 0) {
@@ -40,9 +57,6 @@ export default {
         })
       }
     },
-  },
-  created() {
-    this.tabs = this.$children;
   },
   mounted() {
     if (this.selected && this.selected.length > 0) {
