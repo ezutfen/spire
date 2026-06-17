@@ -52,7 +52,7 @@ export default {
       }
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // remove keypress listener
     document.removeEventListener('keydown', this.keyPress);
   },

@@ -84,48 +84,40 @@
     <div class="mb-3 mt-4">
       Static Zones
 
-      <b-form-group class="mt-3">
-        <!-- Prop `add-on-change` is needed to enable adding tags vie the `change` event -->
-        <b-form-tags
-          id="tags-component-select"
-          v-model="staticZones"
-          size="lg"
-          tag-pills
-          variant="success"
-          class="mb-2"
-          add-on-change
-          no-outer-focus
+      <div class="mt-3">
+        <div v-if="staticZones.length > 0" class="d-flex flex-wrap gap-2 mb-3">
+          <span
+            v-for="tag in staticZones"
+            :key="tag"
+            class="badge bg-success d-inline-flex align-items-center"
+            :title="tag"
+          >
+            <span>{{ tag }}</span>
+            <button
+              type="button"
+              class="btn btn-link text-white p-0 ml-2"
+              aria-label="Remove zone"
+              @click="removeStaticZone(tag)"
+            >&times;</button>
+          </span>
+        </div>
+
+        <select
+          v-model="selectedZoneToAdd"
+          class="form-select"
+          :disabled="availableOptions.length === 0"
+          @change="addStaticZone"
         >
-          <template v-slot="{ tags, inputAttrs, inputHandlers, disabled, removeTag }">
-            <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-              <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                <b-form-tag
-                  @remove="removeTag(tag); saveLauncherOptions()"
-                  :title="tag"
-                  :disabled="disabled"
-                  variant="success"
-                >{{ tag }}
-                </b-form-tag>
-              </li>
-            </ul>
-            <b-form-select
-              v-bind="inputAttrs"
-              v-on="inputHandlers"
-              @change="saveLauncherOptions()"
-              :disabled="disabled || availableOptions.length === 0"
-              :options="availableOptions"
-              class="mr-3"
-            >
-              <template
-                #first
-              >
-                <!-- This is required to prevent bugs with Safari -->
-                <option disabled value="">Choose a zone...</option>
-              </template>
-            </b-form-select>
-          </template>
-        </b-form-tags>
-      </b-form-group>
+          <option disabled value="">Choose a zone...</option>
+          <option
+            v-for="option in availableOptions"
+            :key="option"
+            :value="option"
+          >
+            {{ option }}
+          </option>
+        </select>
+      </div>
 
 
       <div class="mt-3">
@@ -189,27 +181,12 @@ export default {
       },
 
       staticZones: [],
-      availableZoneOptions: []
+      availableZoneOptions: [],
+      selectedZoneToAdd: "",
     }
   },
   async created() {
-    this.launcher = this.launcherConfig
-
-    if (this.launcher.staticZones && this.launcher.staticZones.length > 0) {
-      this.staticZones = this.launcher.staticZones.split(",")
-    }
-
-    if (typeof this.launcher.updateOpcodesOnStart === 'undefined') {
-      this.launcher.updateOpcodesOnStart = true
-    }
-
-    if (typeof this.launcher.deleteLogFilesOlderThanDays !== 'undefined' && this.launcher.deleteLogFilesOlderThanDays === 0) {
-      this.launcher.deleteLogFilesOlderThanDays = 7
-    }
-
-    if (typeof this.launcher.runUcs === 'undefined') {
-      this.launcher.runUcs = true
-    }
+    this.applyLauncherConfig(this.launcherConfig)
 
     // zone options
     let options = []
@@ -220,8 +197,8 @@ export default {
     this.availableZoneOptions = options
   },
   watch: {
-    launcherConfig: function (newValue) {
-      this.launcher = newValue
+    launcherConfig(newValue) {
+      this.applyLauncherConfig(newValue)
     }
   },
   computed: {
@@ -230,11 +207,44 @@ export default {
     }
   },
   methods: {
+    applyLauncherConfig(newValue) {
+      this.launcher = newValue || this.launcher
+
+      if (this.launcher.staticZones && this.launcher.staticZones.length > 0) {
+        this.staticZones = this.launcher.staticZones.split(",")
+      } else {
+        this.staticZones = []
+      }
+
+      if (typeof this.launcher.updateOpcodesOnStart === 'undefined') {
+        this.launcher.updateOpcodesOnStart = true
+      }
+
+      if (typeof this.launcher.deleteLogFilesOlderThanDays !== 'undefined' && this.launcher.deleteLogFilesOlderThanDays === 0) {
+        this.launcher.deleteLogFilesOlderThanDays = 7
+      }
+
+      if (typeof this.launcher.runUcs === 'undefined') {
+        this.launcher.runUcs = true
+      }
+    },
+    addStaticZone() {
+      if (!this.selectedZoneToAdd || this.staticZones.includes(this.selectedZoneToAdd)) {
+        this.selectedZoneToAdd = ""
+        return
+      }
+
+      this.staticZones = [...this.staticZones, this.selectedZoneToAdd]
+      this.selectedZoneToAdd = ""
+      this.saveLauncherOptions()
+    },
+    removeStaticZone(tag) {
+      this.staticZones = this.staticZones.filter((zone) => zone !== tag)
+      this.saveLauncherOptions()
+    },
     saveLauncherOptions() {
       setTimeout(async () => {
-        if (this.staticZones && this.staticZones.length > 0) {
-          this.launcher.staticZones = this.staticZones.join(",")
-        }
+        this.launcher.staticZones = this.staticZones.join(",")
 
         try {
           await SpireApi.v1().post('admin/launcherconfig', this.launcher)

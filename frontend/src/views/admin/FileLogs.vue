@@ -314,12 +314,13 @@ export default {
     },
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
 
     this.stopLogStream()
     if (this.fileListingTimer) {
       clearInterval(this.fileListingTimer);
+      this.fileListingTimer = null
     }
   },
   created() {

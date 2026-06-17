@@ -427,6 +427,7 @@ export default {
       pageLimit: 100,
 
       objCount: 0,
+      requesting: false,
     }
   },
   watch: {
@@ -440,6 +441,10 @@ export default {
       setTimeout(() => {
         this.loadEvents();
       }, 1)
+    },
+    refreshInterval() {
+      this.stopTimer()
+      this.startTimer()
     }
   },
   methods: {
@@ -562,9 +567,8 @@ export default {
       this.$forceUpdate()
 
       setTimeout(() => {
-        // hljs.initHighlighting()
         for (let b of document.querySelectorAll('pre code')) {
-          hljs.highlightBlock(b)
+          hljs.highlightElement(b)
         }
       }, 10)
     },
@@ -719,7 +723,6 @@ export default {
 
       let events = []
       try {
-        // @ts-ignore
         this.requesting = true
         const r         = await (new PlayerEventLogApi(...SpireApi.cfg()))
           .listPlayerEventLogs(
@@ -729,13 +732,14 @@ export default {
             }
           )
         if (r.status === 200) {
-          events          = r.data
-          this.requesting = false
+          events = r.data
         }
       } catch (e) {
         if (e.response && e.response.data && e.response.data.error) {
           this.error = e.response.data.error
         }
+      } finally {
+        this.requesting = false
       }
 
       // get total count
@@ -859,7 +863,7 @@ export default {
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
     this.stopTimer()
     window.removeEventListener("click", this.handleClick);
@@ -869,9 +873,6 @@ export default {
     Navbar.collapse()
 
     window.addEventListener("click", this.handleClick);
-
-    // non-reactive
-    this.requesting = false;
 
     this.loadQueryState()
     const r = await (new PlayerEventLogSettingApi(...SpireApi.cfg())).listPlayerEventLogSettings()

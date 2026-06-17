@@ -21,7 +21,7 @@ Keep entries short, factual, and action-oriented.
 - Date: `2026-06-17`
 - Branch: `feature/option-2-migration-foundation`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows have started moving onto the local Vue 3 modal bridge
+- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the next admin route slices now run on the Vue 3-safe path
 
 ## Completed Steps
 
@@ -95,6 +95,22 @@ Keep entries short, factual, and action-oriented.
   - [frontend/src/views/user/ResetUserPasswordModal.vue](/home/zutfen/code/spire/frontend/src/views/user/ResetUserPasswordModal.vue)
 - Removed temporary watcher / force-update noise from the connections route shell in [frontend/src/views/connections/UserConnections.vue](/home/zutfen/code/spire/frontend/src/views/connections/UserConnections.vue)
 
+### 7. Admin Modal / Pagination Runtime Cleanup
+
+- Switched local EQ modal teardown to Vue 3 lifecycle hooks in [frontend/src/components/eq-ui/EQModal.vue](/home/zutfen/code/spire/frontend/src/components/eq-ui/EQModal.vue)
+- Removed the last dead BootstrapVue modal event and fixed delayed stop/restart notification handling in [frontend/src/views/admin/components/ServerProcessButtonComponent.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/ServerProcessButtonComponent.vue)
+- Updated the player event log explorer to:
+  - keep `requesting` reactive and always released after request failures
+  - restart its auto-refresh timer when the selected interval changes
+  - use Vue 3 lifecycle hooks and modern Highlight.js element highlighting
+  in [frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue)
+
+### 8. Admin Form / Log Viewer Compatibility
+
+- Replaced unsupported `b-form-tags` / `b-form-tag` / `b-form-select` usage with a native Vue 3-safe static-zone tag picker in [frontend/src/views/admin/components/LauncherOptions.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/LauncherOptions.vue)
+- Kept launcher option defaults and prop-sync behavior centralized in the same component so server config updates still post through the existing API
+- Switched the file log viewer teardown to Vue 3 lifecycle hooks and clear timer state explicitly in [frontend/src/views/admin/FileLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/FileLogs.vue)
+
 ## Verification
 
 Last verified successfully:
@@ -110,6 +126,8 @@ Last verified successfully:
   - deprecated Vue deep selector syntax (`>>>` / `/deep/`)
   - existing duplicate `case 503` warning in `frontend/src/app/spells.ts`
 - Connections/user modal fixes are build-verified but not yet browser-smoke-tested end-to-end
+- Admin modal/timer fixes are build-verified but not yet browser-smoke-tested end-to-end
+- Launcher options static-zone add/remove flow is build-verified but not yet browser-smoke-tested end-to-end
 - Large editor-heavy routes are not yet intentionally migrated; current success is foundation-first
 - Vue 2 specialty libraries are still present as dependency debt even though the app now builds on the new shell
 - `docs/project-assessment-2026-06.md` still references Wire historically; that is acceptable unless we want the assessment updated to reflect implementation progress
@@ -123,8 +141,8 @@ Recommended next phase:
 
 Suggested first targets:
 
-- `frontend/src/views/admin/components/ServerProcessButtonComponent.vue`
-- `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue`
+- `frontend/src/views/admin/server-update/ServerUpdate.vue`
+- `frontend/src/views/admin/configuration/DiscordWebhooks.vue`
 - `frontend/src/views/admin/*` routes with modal/tabs/pagination usage
 
 ## Session Notes
