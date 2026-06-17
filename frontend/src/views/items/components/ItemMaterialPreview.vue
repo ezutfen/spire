@@ -43,7 +43,7 @@ import PageHeader        from "@/components/layout/PageHeader";
 import {App}             from "@/constants/app";
 import EqWindow          from "@/components/eq-ui/EQWindow";
 import EqWindowSimple    from "@/components/eq-ui/EQWindowSimple";
-import {debounce}        from "@/app/utility/debounce.js";
+import {debounce}        from "@/app/utility/debounce";
 import {DB_PLAYER_RACES} from "@/app/constants/eq-races-constants";
 import EqAssets          from "../../../app/eq-assets/eq-assets";
 
@@ -216,4 +216,3 @@ export default {
   }
 }
 </script>
-

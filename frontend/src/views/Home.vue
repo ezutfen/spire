@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import MarkdownIt      from "markdown-it";
 
 import EqWindow        from "@/components/eq-ui/EQWindow";
 import UserContext     from "@/app/user/UserContext";
@@ -67,7 +68,7 @@ export default {
           }
         })
 
-        const md = require("markdown-it")({
+        const md = new MarkdownIt({
           html: true,
           xhtmlOut: false,
           breaks: true,
@@ -146,6 +147,10 @@ export default {
         }
       }
     }
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.handleRender, false)
+    LazyImageLoader.destroyScrollListener()
   },
   deactivated() {
     window.removeEventListener("scroll", this.handleRender, false)

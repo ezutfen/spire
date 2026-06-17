@@ -191,6 +191,8 @@
 </template>
 
 <script>
+import MarkdownIt from "markdown-it";
+
 import EqWindow   from "@/components/eq-ui/EQWindow.vue";
 import {SpireApi} from "@/app/api/spire-api";
 import util       from "util";
@@ -264,7 +266,7 @@ export default {
         this.$bvModal.show('release-notes')
         this.releaseNotes = r.body
 
-        const md = require("markdown-it")({
+        const md = new MarkdownIt({
           html: true,
           xhtmlOut: false,
           breaks: true,

@@ -21,7 +21,7 @@
 
       <!-- Toggler -->
       <button
-        class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidebarCollapse"
+        class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse"
         aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle navigation"
       >
         <span class="navbar-toggler-icon"></span>
@@ -39,7 +39,7 @@
       <div class="navbar-user d-md-none">
         <div class="dropdown">
           <a
-            href="#" id="sidebarIcon" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+            href="#" id="sidebarIcon" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false"
           >
             <div :class="'avatar avatar-sm ' + (isUserLoggedIn() ? 'avatar-online' : '')">
@@ -187,7 +187,7 @@
             <li class="nav-item">
               <a
                 :class="'nav-link collapse ' + (hasRoute('components') ? 'active' : 'collapsed')"
-                href="#sidebarComponents" data-toggle="collapse" role="button"
+                href="#sidebarComponents" data-bs-toggle="collapse" role="button"
                 aria-expanded="false" aria-controls="sidebarComponents"
               >
                 <i class="ra ra-burst-blob mr-1"></i> Components
@@ -214,7 +214,7 @@
               href="#"
               style="color: yellow"
               class="nav-link pulsate-highlight-white"
-              data-toggle="modal"
+              data-bs-toggle="modal"
               @click="checkForSpireUpdate()"
             >
               <i class="fe fe-check-circle mr-2"></i>
@@ -222,13 +222,13 @@
             </a>
           </li>
           <li class="nav-item" v-if="!hasUpdate">
-            <a href="#" class="nav-link" data-toggle="modal" @click="checkForSpireUpdate()">
+            <a href="#" class="nav-link" data-bs-toggle="modal" @click="checkForSpireUpdate()">
               <i class="fe fe-check-circle mr-2"></i>
               Spire Update Check
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link" data-toggle="modal" @click="openSearch()">
+            <a href="#" class="nav-link" data-bs-toggle="modal" @click="openSearch()">
               <i class="fe fe-search mr-2"></i>
               Nav Search (Ctrl + K)
             </a>
@@ -247,7 +247,7 @@
 
             <!-- Toggle -->
             <a
-              href="#" id="sidebarIconCopy" class="dropdown-toggle" role="button" data-toggle="dropdown"
+              href="#" id="sidebarIconCopy" class="dropdown-toggle" role="button" data-bs-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false"
             >
               <div class="avatar avatar-sm avatar-online">
@@ -299,6 +299,7 @@ import DbConnectionStatusPill from "@/components/DbConnectionStatusPill";
 import {SpireApi}             from "@/app/api/spire-api";
 import {LocalSettings}        from "@/app/local-settings/localsettings";
 import semver                 from "semver";
+import defaultAvatar          from "@/assets/img/spire.png";
 
 export default {
   computed: {
@@ -325,6 +326,7 @@ export default {
       lastPartition: "default",
 
       backendBaseUrl: "",
+      defaultAvatar,
       user: null,
       hideNavbar: false,
       appEnv: AppEnv.getEnv(),
@@ -543,7 +545,7 @@ export default {
     EventBus.$on("APP_ENV_LOADED", this.handleAppEnvLoaded);
     EventBus.$on("ROUTE_CHANGE", this.handleRouteChange);
   },
-  destroyed() {
+  beforeUnmount() {
     EventBus.$off("HIDE_NAVBAR", this.toggleNavbarCollapse);
     EventBus.$off("APP_ENV_LOADED", this.handleAppEnvLoaded);
     EventBus.$off("ROUTE_CHANGE", this.handleRouteChange);
@@ -696,7 +698,7 @@ export default {
         return this.user.avatar
       }
 
-      return require('@/assets/img/spire.png')
+      return this.defaultAvatar
     },
 
     setSidebarStyle() {

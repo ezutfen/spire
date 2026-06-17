@@ -110,7 +110,7 @@ import {RACES}            from "@/app/constants/eq-race-constants"
 import PageHeader         from "@/components/layout/PageHeader";
 import EqWindow           from "@/components/eq-ui/EQWindow";
 import EqWindowSimple     from "@/components/eq-ui/EQWindowSimple";
-import {debounce} from "@/app/utility/debounce.js";
+import {debounce} from "@/app/utility/debounce";
 import {SpireApi} from "../../app/api/spire-api";
 import {ZoneApi}  from "../../app/api";
 import LoaderFakeProgress from "../../components/LoaderFakeProgress";
@@ -403,4 +403,3 @@ export default {
   }
 }
 </script>
-

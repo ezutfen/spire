@@ -3,7 +3,7 @@
     <div class="container-fluid">
 
       <!-- Toggler -->
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidebarCollapse"
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse"
               aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -27,10 +27,10 @@
         <div class="dropdown">
 
           <!-- Toggle -->
-          <a href="#" id="sidebarIcon" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+          <a href="#" id="sidebarIcon" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
              aria-expanded="false">
             <div class="avatar avatar-sm avatar-online">
-              <img :src="user ? user.avatar : require('@/assets/img/eqemu-avatar.png')"
+              <img :src="user ? user.avatar : defaultAvatar"
                    class="avatar-img rounded-circle" alt="...">
             </div>
           </a>
@@ -75,7 +75,7 @@
         <div class="navbar-user d-none d-md-flex" id="sidebarUser">
 
           <!-- Icon -->
-          <a href="#sidebarModalActivity" class="navbar-user-link" data-toggle="modal">
+          <a href="#sidebarModalActivity" class="navbar-user-link" data-bs-toggle="modal">
               <span class="icon">
                 <i class="fe fe-bell"></i>
               </span>
@@ -85,10 +85,10 @@
           <div class="dropup">
 
             <!-- Toggle -->
-            <a href="#" id="sidebarIconCopy" class="dropdown-toggle" role="button" data-toggle="dropdown"
+            <a href="#" id="sidebarIconCopy" class="dropdown-toggle" role="button" data-bs-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
               <div class="avatar avatar-sm avatar-online">
-                <img :src="user ? user.avatar : require('@/assets/img/eqemu-avatar.png')"
+                <img :src="user ? user.avatar : defaultAvatar"
                      class="avatar-img rounded-circle" alt="...">
               </div>
             </a>
@@ -99,7 +99,7 @@
           </div>
 
           <!-- Icon -->
-          <a href="#sidebarModalSearch" class="navbar-user-link" data-toggle="modal">
+          <a href="#sidebarModalSearch" class="navbar-user-link" data-bs-toggle="modal">
               <span class="icon">
                 <i class="fe fe-search"></i>
               </span>
@@ -115,11 +115,13 @@
 </template>
 
 <script>
+import MarkdownIt from "markdown-it";
 
 import {App}              from "@/constants/app";
 import NavbarDropdownMenu from "@/components/layout/NavbarDropdownMenu";
 import UserContext from "@/app/user/UserContext";
 import {SpireApi}  from "../../../app/api/spire-api";
+import defaultAvatar      from "@/assets/img/eqemu-avatar.png";
 
 export default {
   components: {
@@ -129,6 +131,7 @@ export default {
   data() {
     return {
       backendBaseUrl: "",
+      defaultAvatar,
       user: null,
       docNav: null,
       componentNavs: [
@@ -152,7 +155,7 @@ export default {
     SpireApi.v1().get(`/doc/SUMMARY`).then((response) => {
       if (response.data && response.data.data) {
 
-        const md = require("markdown-it")({
+        const md = new MarkdownIt({
           html: true,
           xhtmlOut: false,
           breaks: true,
@@ -168,12 +171,8 @@ export default {
         result = result.replaceAll("<ul>", "<ul class='nav nav-sm flex-column4'>")
         result = result.replaceAll("<li>", "<li class='nav-item'>")
         result = result.replaceAll("<a", "<a class='nav-link'")
-        result = result.replaceAll("<a", "<router-link")
         result = result.replaceAll(".md", "")
-        result = result.replaceAll("href=\"", "to=\"/doc/")
-        result = result.replaceAll("</a", "</router-link")
-
-        console.log(result)
+        result = result.replaceAll("href=\"", "href=\"/doc/")
 
         // doc
         this.docNav = "<div>" + result + "</div>"

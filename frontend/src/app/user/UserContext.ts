@@ -110,12 +110,18 @@ export default class UserContext {
   }
 
   static getAccessTokenUserInfo() {
-    let accessToken = this.getAccessToken()
+    const accessToken = this.getAccessToken()
     if (accessToken === '' || !accessToken.includes('.')) {
       return {}
     }
 
-    const decodedToken = Buffer.from(accessToken.split('.')[1].trim(), 'base64').toString()
+    const tokenPayload = accessToken.split('.')[1].trim()
+    const decodedToken = decodeURIComponent(
+      atob(tokenPayload)
+        .split('')
+        .map((char) => `%${`00${char.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .join(''),
+    )
 
     return JSON.parse(decodedToken)
   }

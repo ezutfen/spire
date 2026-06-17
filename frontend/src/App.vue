@@ -72,15 +72,14 @@ export default {
 
     EventBus.$emit('APP_ENV_LOADED', true);
 
-    this.$router.onReady(async () => {
-      if (!this.$route.fullPath.includes(ROUTE.LOGIN)) {
-        console.log("login route, skipping auth check")
-        this.user = await UserContext.getUser()
-        await this.checkIfUserNeedsToAuth()
-      }
+    await this.$router.isReady()
+    if (!this.$route.fullPath.includes(ROUTE.LOGIN)) {
+      console.log("login route, skipping auth check")
+      this.user = await UserContext.getUser()
+      await this.checkIfUserNeedsToAuth()
+    }
 
-      AppEnv.routeCheckSpireInitialized(this.$route, this.$router)
-    })
+    AppEnv.routeCheckSpireInitialized(this.$route, this.$router)
 
     setTimeout(() => {
       AppEnv.routeCheckSpireInitialized(this.$route, this.$router)

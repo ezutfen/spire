@@ -1,6 +1,7 @@
 // export convst ASSET_CDN_BASE_URL = "https://rawcdn.githack.com/Akkadius/eq-asset-preview/36903141f431d94766eb83782e9445a856f23514/"
 
 import {LocalSettings, Setting} from "@/app/local-settings/localsettings";
+import {RuntimeEnv} from "@/app/env/runtime-env";
 
 // const CDN_VERSION_HASH = '4dfd41553f0f30e4061ca63d7dba589b978c40b8'
 // List of different git CDN's
@@ -33,7 +34,7 @@ export const App = {
   ASSET_WALLPAPER_URL: ASSET_CDN_BASE_URL_INT + 'assets/wallpaper/',
   ASSET_INVENTORY_SLOT_URL: ASSET_CDN_BASE_URL_INT + 'assets/inventory/',
   ASSET_SPRITE_ITEM_ICONS_URL: ASSET_CDN_BASE_URL_INT + 'assets/sprites/item-icons.css',
-  BACKEND_BASE_URL: (process.env.VUE_APP_BACKEND_BASE_URL ? process.env.VUE_APP_BACKEND_BASE_URL : window.location.origin),
+  BACKEND_BASE_URL: RuntimeEnv.getBackendBaseUrl(),
 
   // app level
   DEBUG: LocalSettings.get(Setting.DEBUG_MODE) === "true",

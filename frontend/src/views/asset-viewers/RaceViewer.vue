@@ -109,7 +109,7 @@ import PageHeader         from "@/components/layout/PageHeader";
 import {App}              from "@/constants/app";
 import EqWindow           from "@/components/eq-ui/EQWindow";
 import EqWindowSimple     from "@/components/eq-ui/EQWindowSimple";
-import {debounce}         from "@/app/utility/debounce.js";
+import {debounce}         from "@/app/utility/debounce";
 import {ROUTE}    from "../../routes";
 import {SpireApi} from "../../app/api/spire-api";
 import {ZoneApi}  from "../../app/api";
@@ -387,4 +387,3 @@ export default {
   }
 }
 </script>
-
