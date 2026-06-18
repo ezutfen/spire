@@ -36,10 +36,20 @@
       <loader-component v-if="loading"/>
 
       <div v-if="!loading">
+        <b-alert v-if="loadWarnings.length" variant="warning" show class="mb-3">
+          <div class="font-weight-bold mb-1">
+            <i class="fa fa-exclamation-triangle mr-1"></i>
+            AA rank chain warning
+          </div>
+          <ul class="mb-0 pl-3">
+            <li v-for="warning in loadWarnings" :key="warning">{{ warning }}</li>
+          </ul>
+        </b-alert>
+
         <eq-tabs selected="Ability">
 
           <!-- Ability tab -->
-          <eq-tab name="Ability" selected>
+          <eq-tab name="Ability" :selected="true">
             <eq-window-simple title="Ability Properties" class="p-3">
               <div class="row">
                 <div class="col-lg-4 col-sm-12 mb-2">
@@ -308,6 +318,7 @@ export default {
       classEntries: [],
       raceEntries: [],
       deityEntries: [],
+      loadWarnings: [],
       validation: null,
       dupName: '',
       dupRemapSelf: false,
@@ -377,7 +388,7 @@ export default {
         recast_time: 0,
         expansion: 7,
         prev_id: 0,
-        next_id: 0,
+        next_id: -1,
         effects: [],
         prereqs: [],
         strings: {},
@@ -422,6 +433,7 @@ export default {
           this.showToast('Ability not found')
           return
         }
+        this.loadWarnings = full.warnings || []
         this.form = this.fullToForm(full)
         this.snapshot()
       } catch (e) {
@@ -466,8 +478,8 @@ export default {
           spell_type: rank.spell_type,
           recast_time: rank.recast_time,
           expansion: rank.expansion,
-          prev_id: rank.prev_id,
-          next_id: rank.next_id,
+          prev_id: i > 0 ? (full.ranks[i - 1].aa_rank || {}).id || 0 : 0,
+          next_id: i < (full.ranks || []).length - 1 ? ((full.ranks[i + 1].aa_rank || {}).id || 0) : -1,
           effects: (r.effects || []).map(e => ({slot: e.slot, effect_id: e.effect_id, base_1: e.base_1, base_2: e.base_2})),
           prereqs: (r.prereqs || []).map(p => ({aa_id: p.aa_id, points: p.points})),
           strings: r.strings || {},
@@ -549,6 +561,7 @@ export default {
           full = await AaEditorApi.saveAbility(this.abilityId, payload)
           this.showToast('Saved', '#4ae84a')
         }
+        this.loadWarnings = full.warnings || []
         this.form = this.fullToForm(full)
         this.snapshot()
       } catch (e) {

@@ -1,6 +1,7 @@
 package aaeditor
 
 import (
+	"errors"
 	"fmt"
 	"github.com/EQEmu/spire/internal/auditlog"
 	"github.com/EQEmu/spire/internal/database"
@@ -141,6 +142,7 @@ type AaRankFull struct {
 type AaAbilityFull struct {
 	AaAbility models.AaAbility `json:"aa_ability"`
 	Ranks     []AaRankFull     `json:"ranks"`
+	Warnings  []string         `json:"warnings,omitempty"`
 }
 
 type AaAbilityListItem struct {
@@ -192,15 +194,17 @@ func (s *AaEditorService) db(c echo.Context) *gorm.DB {
 }
 
 // walkRankChain loads the ordered rank list by following next_id starting from
-// firstRankId. It guards against cycles with a hard iteration cap.
-func walkRankChain(tx *gorm.DB, firstRankId int) ([]models.AaRank, error) {
+// firstRankId. Broken links return the recoverable prefix with warnings so
+// malformed abilities can still be opened and repaired.
+func walkRankChain(tx *gorm.DB, firstRankId int) ([]models.AaRank, []string, error) {
 	if firstRankId <= 0 {
-		return []models.AaRank{}, nil
+		return []models.AaRank{}, nil, nil
 	}
 
 	const maxRanks = 10000
 	rankById := map[int]models.AaRank{}
 	var ordered []models.AaRank
+	var warnings []string
 
 	// load the chain
 	current := firstRankId
@@ -209,20 +213,30 @@ func walkRankChain(tx *gorm.DB, firstRankId int) ([]models.AaRank, error) {
 			break
 		}
 		if _, seen := rankById[current]; seen {
+			warnings = append(warnings, fmt.Sprintf("AA rank chain loops back to rank [%v]; stopped loading at the repeated rank.", current))
 			break // cycle guard
 		}
 
 		var rank models.AaRank
 		err := tx.Where("id = ?", current).First(&rank).Error
 		if err != nil {
-			return nil, fmt.Errorf("rank [%v] not found: %w", current, err)
+			if len(ordered) > 0 && errors.Is(err, gorm.ErrRecordNotFound) {
+				prev := ordered[len(ordered)-1]
+				warnings = append(warnings, fmt.Sprintf("Rank [%v] has invalid next_id [%v]; no matching aa_ranks row was found, so it is being treated as the final rank.", prev.ID, current))
+				break
+			}
+			return nil, nil, fmt.Errorf("rank [%v] not found: %w", current, err)
 		}
 		rankById[current] = rank
 		ordered = append(ordered, rank)
 		current = rank.NextId
 	}
 
-	return ordered, nil
+	if current > 0 && len(ordered) >= maxRanks {
+		warnings = append(warnings, fmt.Sprintf("AA rank chain exceeded the safety limit of %v ranks; stopped loading remaining ranks.", maxRanks))
+	}
+
+	return ordered, warnings, nil
 }
 
 // loadEffectsBulk loads effects for all given rank ids in a single query,
@@ -376,7 +390,7 @@ func (s *AaEditorService) getFullAbility(db *gorm.DB, id int) (*AaAbilityFull, e
 		return nil, fmt.Errorf("ability not found: %w", err)
 	}
 
-	chain, err := walkRankChain(db, ability.FirstRankId)
+	chain, warnings, err := walkRankChain(db, ability.FirstRankId)
 	if err != nil {
 		return nil, err
 	}
@@ -417,7 +431,7 @@ func (s *AaEditorService) getFullAbility(db *gorm.DB, id int) (*AaAbilityFull, e
 		})
 	}
 
-	return &AaAbilityFull{AaAbility: ability, Ranks: ranks}, nil
+	return &AaAbilityFull{AaAbility: ability, Ranks: ranks, Warnings: warnings}, nil
 }
 
 func (s *AaEditorService) ListAbilities(c echo.Context, filter AaListFilter) (*AaAbilityListResult, error) {
@@ -521,7 +535,7 @@ func countRanks(db *gorm.DB, firstRankId int) int {
 	if firstRankId <= 0 {
 		return 0
 	}
-	chain, err := walkRankChain(db, firstRankId)
+	chain, _, err := walkRankChain(db, firstRankId)
 	if err != nil {
 		return 0
 	}
@@ -627,7 +641,7 @@ func (s *AaEditorService) createAbilityTree(db *gorm.DB, input AaAbilityInput) (
 	return createdID, nil
 }
 
-// buildRankModel assembles an aa_ranks row from input, zeroing prev/next (the
+// buildRankModel assembles an aa_ranks row from input, defaulting prev/next (the
 // chain is stitched separately). It is the single source of truth for the
 // editable rank field-set used on both create and update.
 func buildRankModel(r AaRankInput) models.AaRank {
@@ -643,7 +657,7 @@ func buildRankModel(r AaRankInput) models.AaRank {
 		RecastTime:     r.RecastTime,
 		Expansion:      r.Expansion,
 		PrevId:         0,
-		NextId:         0,
+		NextId:         -1,
 	}
 }
 
@@ -682,8 +696,8 @@ func buildPrereq(rankId int, p AaRankPrereqInput) models.AaRankPrereq {
 	}
 }
 
-// insertRanks inserts each rank (prev/next zeroed) and returns the assigned ids
-// in input order. If a rank already carries an explicit id it is honored.
+// insertRanks inserts each rank and returns the assigned ids in input order. If
+// a rank already carries an explicit id it is honored.
 func insertRanks(tx *gorm.DB, ranks []AaRankInput) ([]int, error) {
 	ids := make([]int, 0, len(ranks))
 	for _, r := range ranks {
@@ -703,7 +717,7 @@ func insertRanks(tx *gorm.DB, ranks []AaRankInput) ([]int, error) {
 func stitchChain(tx *gorm.DB, ids []int) error {
 	for i, id := range ids {
 		prev := 0
-		next := 0
+		next := -1
 		if i > 0 {
 			prev = ids[i-1]
 		}
@@ -974,7 +988,7 @@ func (s *AaEditorService) saveAbilityTree(db *gorm.DB, id int, input AaAbilityIn
 		}
 
 		// 3. reconcile ranks: keep/update existing by id, insert new, delete missing
-		oldChain, err := walkRankChain(tx, existing.FirstRankId)
+		oldChain, _, err := walkRankChain(tx, existing.FirstRankId)
 		if err != nil {
 			return err
 		}
@@ -1108,7 +1122,7 @@ func (s *AaEditorService) deleteAbilityTree(db *gorm.DB, id int) (*models.AaAbil
 	}
 
 	err := db.Transaction(func(tx *gorm.DB) error {
-		chain, err := walkRankChain(tx, ability.FirstRankId)
+		chain, _, err := walkRankChain(tx, ability.FirstRankId)
 		if err != nil {
 			return err
 		}

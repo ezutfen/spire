@@ -3,6 +3,7 @@ package aaeditor
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -259,8 +260,8 @@ func TestCreateFullAbility(t *testing.T) {
 	if full.Ranks[0].AaRank.NextId != int(full.Ranks[1].AaRank.ID) {
 		t.Fatalf("rank0 next_id should point to rank1")
 	}
-	if full.Ranks[2].AaRank.NextId != 0 {
-		t.Fatalf("last rank next_id should be 0, got %d", full.Ranks[2].AaRank.NextId)
+	if full.Ranks[2].AaRank.NextId != -1 {
+		t.Fatalf("last rank next_id should be -1, got %d", full.Ranks[2].AaRank.NextId)
 	}
 	if full.Ranks[1].AaRank.PrevId != int(full.Ranks[0].AaRank.ID) {
 		t.Fatalf("rank1 prev_id should point to rank0")
@@ -301,6 +302,37 @@ func TestGetFullAbility(t *testing.T) {
 	}
 	if full.Ranks[0].Spell == nil || full.Ranks[0].Spell.Name != "Flame Strike" {
 		t.Fatalf("expected resolved spell name, got %#v", full.Ranks[0].Spell)
+	}
+}
+
+func TestGetFullAbilityWarnsOnMissingNextRank(t *testing.T) {
+	db, cleanup := testDB(t)
+	defer cleanup()
+
+	svc := newTestService()
+	id, _ := svc.createAbilityTree(db, sampleAbility("Broken Next", 2))
+
+	full, err := svc.getFullAbility(db, id)
+	if err != nil {
+		t.Fatalf("getFullAbility before corruption: %v", err)
+	}
+	lastRankId := full.Ranks[len(full.Ranks)-1].AaRank.ID
+	if err := db.Exec("UPDATE aa_ranks SET next_id = ? WHERE id = ?", 8465, lastRankId).Error; err != nil {
+		t.Fatalf("corrupt next_id: %v", err)
+	}
+
+	full, err = svc.getFullAbility(db, id)
+	if err != nil {
+		t.Fatalf("getFullAbility should tolerate a missing next rank: %v", err)
+	}
+	if len(full.Ranks) != 2 {
+		t.Fatalf("expected loaded rank prefix to be returned, got %d ranks", len(full.Ranks))
+	}
+	if len(full.Warnings) != 1 {
+		t.Fatalf("expected one chain warning, got %#v", full.Warnings)
+	}
+	if !strings.Contains(full.Warnings[0], "invalid next_id [8465]") {
+		t.Fatalf("expected missing next_id warning, got %q", full.Warnings[0])
 	}
 }
 
@@ -355,8 +387,8 @@ func TestSaveFullAbilityReorderAndReconcile(t *testing.T) {
 	if after.Ranks[0].AaRank.NextId != int(after.Ranks[1].AaRank.ID) {
 		t.Fatalf("chain broken after save")
 	}
-	if after.Ranks[2].AaRank.NextId != 0 {
-		t.Fatalf("last rank next_id should be 0")
+	if after.Ranks[2].AaRank.NextId != -1 {
+		t.Fatalf("last rank next_id should be -1")
 	}
 
 	// dropped rank's children should be gone
