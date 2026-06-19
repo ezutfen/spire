@@ -570,3 +570,333 @@ func TestListAbilities(t *testing.T) {
 		t.Fatalf("expected rank count 2, got %d", res.Items[0].RankCount)
 	}
 }
+
+func exportBundleFromAbility(t *testing.T, svc *AaEditorService, db *gorm.DB, id int) AaExportBundle {
+	t.Helper()
+
+	full, err := svc.getFullAbility(db, id)
+	if err != nil {
+		t.Fatalf("getFullAbility for export: %v", err)
+	}
+	input, warnings := normalizeAbilityForBundle(full)
+	return AaExportBundle{
+		Version: aaExportBundleVersion,
+		Abilities: []AaExportAbility{
+			{
+				Ability:  input,
+				Warnings: warnings,
+			},
+		},
+	}
+}
+
+func TestExportBundleNormalizesPayload(t *testing.T) {
+	db, cleanup := testDB(t)
+	defer cleanup()
+
+	svc := newTestService()
+	id, _ := svc.createAbilityTree(db, sampleAbility("Bundle Export", 1))
+	full, _ := svc.getFullAbility(db, id)
+	firstRank := full.Ranks[0].AaRank.ID
+
+	if err := db.Exec("INSERT INTO db_str (id, type, value) VALUES (?, 1, ?)", 7100, "Bundle Title").Error; err != nil {
+		t.Fatalf("seed db_str: %v", err)
+	}
+	if err := db.Exec("UPDATE aa_ranks SET title_sid = ? WHERE id = ?", 7100, firstRank).Error; err != nil {
+		t.Fatalf("update title sid: %v", err)
+	}
+
+	bundle := exportBundleFromAbility(t, svc, db, id)
+	if bundle.Version != aaExportBundleVersion {
+		t.Fatalf("unexpected bundle version %q", bundle.Version)
+	}
+	if len(bundle.Abilities) != 1 {
+		t.Fatalf("expected 1 exported ability, got %d", len(bundle.Abilities))
+	}
+
+	exported := bundle.Abilities[0].Ability
+	if exported.ID != id {
+		t.Fatalf("expected exported ability id %d, got %d", id, exported.ID)
+	}
+	if len(exported.Ranks) != 1 {
+		t.Fatalf("expected 1 exported rank, got %d", len(exported.Ranks))
+	}
+	if exported.Ranks[0].ID != 0 {
+		t.Fatalf("expected exported rank id to be zeroed, got %d", exported.Ranks[0].ID)
+	}
+	if exported.Ranks[0].TitleSid != 0 {
+		t.Fatalf("expected title sid to be zeroed, got %d", exported.Ranks[0].TitleSid)
+	}
+	if exported.Ranks[0].Strings[1].ID != 0 {
+		t.Fatalf("expected exported string id to be zeroed, got %d", exported.Ranks[0].Strings[1].ID)
+	}
+	if exported.Ranks[0].Strings[1].Value != "Bundle Title" {
+		t.Fatalf("expected exported string value, got %#v", exported.Ranks[0].Strings[1])
+	}
+}
+
+func TestPreviewImportClassifiesCreateAndUpdate(t *testing.T) {
+	db, cleanup := testDB(t)
+	defer cleanup()
+
+	svc := newTestService()
+	existingID, _ := svc.createAbilityTree(db, sampleAbility("Preview Existing", 1))
+	bundle := exportBundleFromAbility(t, svc, db, existingID)
+
+	createAbility := sampleAbility("Preview Create", 1)
+	createAbility.ID = 9999
+	bundle.Abilities = append(bundle.Abilities, AaExportAbility{Ability: createAbility})
+
+	preview, err := svc.previewImportBundle(db, bundle)
+	if err != nil {
+		t.Fatalf("previewImportBundle: %v", err)
+	}
+
+	if preview.Updates != 1 {
+		t.Fatalf("expected 1 update, got %d", preview.Updates)
+	}
+	if preview.Creates != 1 {
+		t.Fatalf("expected 1 create, got %d", preview.Creates)
+	}
+	if preview.Blocked != 0 {
+		t.Fatalf("expected 0 blocked, got %d", preview.Blocked)
+	}
+}
+
+func TestPreviewImportBlocksMissingPrereq(t *testing.T) {
+	db, cleanup := testDB(t)
+	defer cleanup()
+
+	svc := newTestService()
+	input := sampleAbility("Preview Missing Prereq", 1)
+	input.ID = 6001
+	input.Ranks[0].Prereqs = []AaRankPrereqInput{{AaId: 7777, Points: 1}}
+
+	preview, err := svc.previewImportBundle(db, AaExportBundle{
+		Version: aaExportBundleVersion,
+		Abilities: []AaExportAbility{
+			{Ability: input},
+		},
+	})
+	if err != nil {
+		t.Fatalf("previewImportBundle: %v", err)
+	}
+
+	if preview.Blocked != 1 {
+		t.Fatalf("expected preview to block, got %d blocked", preview.Blocked)
+	}
+	if len(preview.MissingPrereqAaIds) != 1 || preview.MissingPrereqAaIds[0] != 7777 {
+		t.Fatalf("expected missing prereq [7777], got %#v", preview.MissingPrereqAaIds)
+	}
+}
+
+func TestPreviewImportBlocksMissingSpell(t *testing.T) {
+	db, cleanup := testDB(t)
+	defer cleanup()
+
+	svc := newTestService()
+	input := sampleAbility("Preview Missing Spell", 1)
+	input.ID = 6002
+	input.Ranks[0].Spell = 4242
+
+	preview, err := svc.previewImportBundle(db, AaExportBundle{
+		Version: aaExportBundleVersion,
+		Abilities: []AaExportAbility{
+			{Ability: input},
+		},
+	})
+	if err != nil {
+		t.Fatalf("previewImportBundle: %v", err)
+	}
+
+	if preview.Blocked != 1 {
+		t.Fatalf("expected preview to block, got %d blocked", preview.Blocked)
+	}
+	if len(preview.MissingSpellIds) != 1 || preview.MissingSpellIds[0] != 4242 {
+		t.Fatalf("expected missing spell [4242], got %#v", preview.MissingSpellIds)
+	}
+}
+
+func TestApplyImportCreatesAbilityWithPreservedId(t *testing.T) {
+	db, cleanup := testDB(t)
+	defer cleanup()
+
+	svc := newTestService()
+	input := sampleAbility("Imported Create", 2)
+	input.ID = 3200
+	input.Ranks[0].Strings = map[int]DbStrInput{
+		1: {Value: "Imported Bundle Title"},
+	}
+
+	result, err := svc.applyImportBundle(db, AaExportBundle{
+		Version: aaExportBundleVersion,
+		Abilities: []AaExportAbility{
+			{Ability: input},
+		},
+	})
+	if err != nil {
+		t.Fatalf("applyImportBundle: %v", err)
+	}
+	if len(result.AppliedAbilityIds) != 1 || result.AppliedAbilityIds[0] != 3200 {
+		t.Fatalf("expected applied id [3200], got %#v", result.AppliedAbilityIds)
+	}
+
+	full, err := svc.getFullAbility(db, 3200)
+	if err != nil {
+		t.Fatalf("getFullAbility after import create: %v", err)
+	}
+	if full.AaAbility.ID != 3200 {
+		t.Fatalf("expected created ability id 3200, got %d", full.AaAbility.ID)
+	}
+	if len(full.Ranks) != 2 {
+		t.Fatalf("expected 2 ranks, got %d", len(full.Ranks))
+	}
+	if full.Ranks[0].AaRank.ID == 0 {
+		t.Fatalf("expected target rank id to be allocated")
+	}
+	if full.Ranks[0].AaRank.TitleSid == 0 {
+		t.Fatalf("expected title sid to be allocated")
+	}
+	if full.Ranks[0].Strings[1].Value != "Imported Bundle Title" {
+		t.Fatalf("expected imported string value, got %#v", full.Ranks[0].Strings[1])
+	}
+}
+
+func TestApplyImportUpdatesExistingAbilityByRankOrder(t *testing.T) {
+	db, cleanup := testDB(t)
+	defer cleanup()
+
+	svc := newTestService()
+	id, _ := svc.createAbilityTree(db, sampleAbility("Existing Update", 2))
+	existing, _ := svc.getFullAbility(db, id)
+	firstRankID := existing.Ranks[0].AaRank.ID
+	secondRankID := existing.Ranks[1].AaRank.ID
+
+	if err := db.Exec("INSERT INTO db_str (id, type, value) VALUES (?, 1, ?)", 7200, "Original Title").Error; err != nil {
+		t.Fatalf("seed db_str: %v", err)
+	}
+	if err := db.Exec("UPDATE aa_ranks SET title_sid = ? WHERE id = ?", 7200, firstRankID).Error; err != nil {
+		t.Fatalf("update title sid: %v", err)
+	}
+
+	updated := sampleAbility("Existing Update Imported", 1)
+	updated.ID = id
+	updated.Ranks[0].Cost = 55
+	updated.Ranks[0].Strings = map[int]DbStrInput{
+		1: {Value: "Updated Title"},
+	}
+
+	if _, err := svc.applyImportBundle(db, AaExportBundle{
+		Version: aaExportBundleVersion,
+		Abilities: []AaExportAbility{
+			{Ability: updated},
+		},
+	}); err != nil {
+		t.Fatalf("applyImportBundle update: %v", err)
+	}
+
+	after, err := svc.getFullAbility(db, id)
+	if err != nil {
+		t.Fatalf("getFullAbility after update: %v", err)
+	}
+	if len(after.Ranks) != 1 {
+		t.Fatalf("expected rank count to shrink to 1, got %d", len(after.Ranks))
+	}
+	if after.Ranks[0].AaRank.ID != firstRankID {
+		t.Fatalf("expected first rank id %d to be reused, got %d", firstRankID, after.Ranks[0].AaRank.ID)
+	}
+	if after.Ranks[0].AaRank.Cost != 55 {
+		t.Fatalf("expected updated rank cost, got %d", after.Ranks[0].AaRank.Cost)
+	}
+	if after.Ranks[0].AaRank.TitleSid != 7200 {
+		t.Fatalf("expected title sid 7200 to be reused, got %d", after.Ranks[0].AaRank.TitleSid)
+	}
+	if after.Ranks[0].Strings[1].Value != "Updated Title" {
+		t.Fatalf("expected updated title value, got %#v", after.Ranks[0].Strings[1])
+	}
+
+	var droppedCount int64
+	db.Table("aa_ranks").Where("id = ?", secondRankID).Count(&droppedCount)
+	if droppedCount != 0 {
+		t.Fatalf("expected second rank %d to be removed", secondRankID)
+	}
+}
+
+func TestApplyImportRollsBackBatchOnMidTransactionFailure(t *testing.T) {
+	db, cleanup := testDB(t)
+	defer cleanup()
+
+	svc := newTestService()
+	seedID, _ := svc.createAbilityTree(db, sampleAbility("Seed Ability", 1))
+	seedFull, _ := svc.getFullAbility(db, seedID)
+	duplicateRankID := int(seedFull.Ranks[0].AaRank.ID)
+
+	valid := sampleAbility("Valid Batch Ability", 1)
+	valid.ID = 9100
+
+	invalid := sampleAbility("Invalid Batch Ability", 1)
+	invalid.ID = 9101
+	invalid.Ranks[0].ID = duplicateRankID
+
+	_, err := svc.applyImportBundle(db, AaExportBundle{
+		Version: aaExportBundleVersion,
+		Abilities: []AaExportAbility{
+			{Ability: valid},
+			{Ability: invalid},
+		},
+	})
+	if err == nil {
+		t.Fatalf("expected bundle import to fail")
+	}
+
+	var count int64
+	db.Table("aa_ability").Where("id = ?", valid.ID).Count(&count)
+	if count != 0 {
+		t.Fatalf("expected valid ability create to roll back, got %d rows", count)
+	}
+}
+
+func TestApplyImportAllowsCrossBundlePrereqs(t *testing.T) {
+	db, cleanup := testDB(t)
+	defer cleanup()
+
+	svc := newTestService()
+	base := sampleAbility("Cross Bundle Base", 1)
+	base.ID = 8100
+
+	dependent := sampleAbility("Cross Bundle Dependent", 1)
+	dependent.ID = 8101
+	dependent.Ranks[0].Prereqs = []AaRankPrereqInput{{AaId: 8100, Points: 1}}
+
+	preview, err := svc.previewImportBundle(db, AaExportBundle{
+		Version: aaExportBundleVersion,
+		Abilities: []AaExportAbility{
+			{Ability: base},
+			{Ability: dependent},
+		},
+	})
+	if err != nil {
+		t.Fatalf("previewImportBundle: %v", err)
+	}
+	if preview.Blocked != 0 {
+		t.Fatalf("expected no blockers for internal prereq, got %d", preview.Blocked)
+	}
+
+	if _, err := svc.applyImportBundle(db, AaExportBundle{
+		Version: aaExportBundleVersion,
+		Abilities: []AaExportAbility{
+			{Ability: base},
+			{Ability: dependent},
+		},
+	}); err != nil {
+		t.Fatalf("applyImportBundle cross bundle prereq: %v", err)
+	}
+
+	dependentFull, err := svc.getFullAbility(db, 8101)
+	if err != nil {
+		t.Fatalf("getFullAbility dependent: %v", err)
+	}
+	if len(dependentFull.Ranks[0].Prereqs) != 1 || dependentFull.Ranks[0].Prereqs[0].AaId != 8100 {
+		t.Fatalf("expected prereq to point to 8100, got %#v", dependentFull.Ranks[0].Prereqs)
+	}
+}

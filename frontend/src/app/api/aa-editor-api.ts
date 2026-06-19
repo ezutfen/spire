@@ -21,6 +21,21 @@ export class AaEditorApi {
     return r.data && r.data.data ? r.data.data : null
   }
 
+  static async exportAbilities(abilityIds) {
+    const r = await SpireApi.v1().post('/aa_editor/export', {ability_ids: abilityIds})
+    return r.data && r.data.data ? r.data.data : null
+  }
+
+  static async previewImport(bundle) {
+    const r = await SpireApi.v1().post('/aa_editor/import/preview', bundle)
+    return r.data && r.data.data ? r.data.data : null
+  }
+
+  static async applyImport(bundle) {
+    const r = await SpireApi.v1().post('/aa_editor/import/apply', bundle)
+    return r.data && r.data.data ? r.data.data : null
+  }
+
   static async duplicateAbility(id, opts = {}) {
     const r = await SpireApi.v1().post('/aa_editor/abilities/' + id + '/duplicate', opts)
     return r.data && r.data.data ? r.data.data : null
