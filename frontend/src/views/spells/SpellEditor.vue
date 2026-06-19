@@ -1492,7 +1492,7 @@
         >
           <spell-icon-selector
             :selected-icon="spell.new_icon"
-            :inputData.sync="spell.new_icon"
+            v-model:inputData="spell.new_icon"
           />
         </eq-window>
 
@@ -1504,7 +1504,7 @@
         >
           <spell-animation-selector
             :selected-animation="spell.spellanim"
-            :inputData.sync="spell.spellanim"
+            v-model:inputData="spell.spellanim"
           />
         </div>
 
@@ -1516,7 +1516,7 @@
         >
           <spell-nimbus-animation-selector
             :selected-animation="spell.nimbuseffect"
-            :inputData.sync="spell.nimbuseffect"
+            v-model:inputData="spell.nimbuseffect"
           />
         </div>
 
@@ -1561,7 +1561,7 @@
         >
           <spell-casting-animation-selector
             :selected-animation="spell[castingAnimField]"
-            :inputData.sync="spell[castingAnimField]"
+            v-model:inputData="spell[castingAnimField]"
           />
         </div>
 

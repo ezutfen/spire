@@ -23,7 +23,7 @@
                 :add-only-button-enabled="true"
                 :add-only-state-enabled="selectOnlyClassEnabled"
                 @selectOnly="selectOnlyClassEnabled = $event"
-                :inputData.sync="selectedClasses"
+                v-model:inputData="selectedClasses"
                 :mask="selectedClasses"
               />
             </div>
@@ -34,7 +34,7 @@
               <race-bitmask-calculator
                 :centered-buttons="false"
                 :display-all-none="true"
-                :inputData.sync="selectedRaces"
+                v-model:inputData="selectedRaces"
                 :mask="selectedRaces"
               />
             </div>
@@ -47,7 +47,7 @@
                 :skip-duplicate-slots="true"
                 :display-all-none="false"
                 :centered-buttons="true"
-                :inputData.sync="selectedSlots"
+                v-model:inputData="selectedSlots"
                 :mask="selectedSlots"
               />
             </div>

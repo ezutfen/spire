@@ -18,10 +18,10 @@ Keep entries short, factual, and action-oriented.
 
 ## Current Status
 
-- Date: `2026-06-17`
+- Date: `2026-06-18`
 - Branch: `feature/option-2-migration-foundation`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native` sweep complete across editor-heavy and shared routes (0 remaining occurrences); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration (tab navigation now works under Vue 3 across all 12 consumers); the three admin configuration routes (`LogSettings`/`ServerRules`/`ServerConfig`) cleaned off BootstrapVue form inputs and Node `util` debt
+- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native` sweep complete across editor-heavy and shared routes (0 remaining occurrences); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration (tab navigation now works under Vue 3 across all 12 consumers); the three admin configuration routes (`LogSettings`/`ServerRules`/`ServerConfig`) cleaned off BootstrapVue form inputs and Node `util` debt; the remaining `.sync` compat debt has been swept to Vue 3 `v-model:inputData` (0 `.sync` occurrences remain in `frontend/src`)
 
 ## Completed Steps
 
@@ -173,21 +173,39 @@ The single remaining real `this.$children` usage (`frontend/src/components/eq-ui
   - [frontend/src/views/admin/configuration/ServerRules.vue](/home/zutfen/code/spire/frontend/src/views/admin/configuration/ServerRules.vue): replaced `b-form-input` with a native `<input>`
   - [frontend/src/views/admin/configuration/ServerConfig.vue](/home/zutfen/code/spire/frontend/src/views/admin/configuration/ServerConfig.vue): removed stray `console.log("trigger")` debug noise (route was already on native inputs and `eq-tabs`/`eq-tab`, now fixed via the `EQTabs` change above)
 
+### 13. `.sync` Modifier Sweep
+
+Completed the remaining Vue 2 `.sync` compat sweep by converting all 28 `:inputData.sync="..."` call sites to Vue 3 `v-model:inputData="..."`. This was a mechanical drop-in because the receiving components already emit `update:inputData`. Result: **0 `.sync` occurrences remain** in `frontend/src`.
+
+- Converted the calculator/editor call sites:
+  - [frontend/src/views/Calculators.vue](/home/zutfen/code/spire/frontend/src/views/Calculators.vue)
+  - [frontend/src/views/Components.vue](/home/zutfen/code/spire/frontend/src/views/Components.vue)
+  - [frontend/src/views/items/ItemEditor.vue](/home/zutfen/code/spire/frontend/src/views/items/ItemEditor.vue)
+  - [frontend/src/views/npcs/NpcEditor.vue](/home/zutfen/code/spire/frontend/src/views/npcs/NpcEditor.vue)
+  - [frontend/src/views/spells/SpellEditor.vue](/home/zutfen/code/spire/frontend/src/views/spells/SpellEditor.vue)
+- Converted the shared selector/item-picker call sites:
+  - [frontend/src/views/items/Items.vue](/home/zutfen/code/spire/frontend/src/views/items/Items.vue)
+  - [frontend/src/views/tasks/components/TaskItemSelector.vue](/home/zutfen/code/spire/frontend/src/views/tasks/components/TaskItemSelector.vue)
+  - [frontend/src/views/spells/components/SpellItemSelector.vue](/home/zutfen/code/spire/frontend/src/views/spells/components/SpellItemSelector.vue)
+  - [frontend/src/components/selectors/ItemSelector.vue](/home/zutfen/code/spire/frontend/src/components/selectors/ItemSelector.vue)
+
 ## Verification
 
-Last verified successfully (`2026-06-17`, after Step 12):
+Last verified successfully (`2026-06-18`, after Step 13):
 
+- `cd frontend && npm install --legacy-peer-deps --package-lock=false` (local dependency refresh required because this checkout's `node_modules` was incomplete and plain `npm ci` hits the expected Vue 2/3 peer-dependency conflict during the migration)
+- `cd frontend && npm run build`
 - `go build ./...`
 - `go build ./internal/http/spa`
-- `cd frontend && npm run build`
 - `rg -n "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src` (`.vue` files) → 0 matches
 - `rg -n "\$children" frontend/src` (excluding `assets/vendors/`) → 0 matches
+- `rg -n "\.sync=" frontend/src --type-add 'vue:*.vue' --type vue` → 0 matches
 
 ## Open Risks / Warnings
 
 - App still boots under Vue's migration build (`configureCompat({ MODE: 2 })`). The targeted sweeps cleared all `beforeDestroy`/`destroyed`/`$set`/`.native` usages and the single real `$children` usage (verified: 0 matches each). Other Vue 2-only instance APIs may still be present (e.g. `this.$listeners`, `this.$scopedSlots`, `Vue.set`, `.sync`) and would surface when scanning for compat-mode deprecation warnings in the browser; these were intentionally out of scope for this sweep
-- **`.sync` modifier debt**: 28 `:prop.sync="..."` usages remain across editor/selector routes (`frontend/src/views/Calculators.vue`, `frontend/src/views/Components.vue`, `frontend/src/views/spells/`, `frontend/src/views/items/`, `frontend/src/views/npcs/NpcEditor.vue`, `frontend/src/views/tasks/components/`, `frontend/src/components/selectors/`). Under compat mode these emit deprecation warnings and must become `v-model:prop` before compat is dropped
 - **Node `util` import debt**: `import util from "util"` (browser-unsafe, currently polyfilled by the bundler) still exists in 5 admin routes outside this step's scope: `frontend/src/views/admin/tools/ClientAssets.vue`, `frontend/src/views/admin/server-update/UpdateReleases.vue`, `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue`, `frontend/src/views/admin/player-event-logs/PlayerEventLogSettings.vue`, `frontend/src/views/admin/ZoneServers.vue` (plus a stray `console.log("trigger")` in `UpdateReleases.vue`)
+- Fresh frontend dependency installs still need the legacy peer resolver while Vue 2 bridge packages remain in tree: plain `npm ci` currently fails on the expected `vue-class-component@7.2.6` peer conflict against Vue 3, while `npm install --legacy-peer-deps --package-lock=false` restored a working local build
 - Frontend build still emits non-fatal warnings:
   - deprecated Sass legacy JS API
   - deprecated Vue deep selector syntax (`>>>` / `/deep/`)
@@ -207,18 +225,16 @@ Last verified successfully (`2026-06-17`, after Step 12):
 
 Recommended next phase:
 
-- Continue Phase 2 frontend migration: finish the remaining admin/shared modal-heavy routes
+- Continue Phase 2 frontend migration: finish the remaining admin/shared modal-heavy routes and browser-unsafe Node shims
 - Goal: replace real BootstrapVue usage on ordinary CRUD/admin flows with the new local Vue 3 wrapper layer and remove timing-sensitive modal behavior
 
 Suggested next targets:
 
 - `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue` / `PlayerEventLogSettings.vue` (still use `b-form-input`, `b-pagination`, and the Node `util` import)
-- `frontend/src/views/admin/server-update/UpdateReleases.vue` (uses `b-modal`/`b-button` and the Node `util` import + a stray `console.log("trigger")`)
+- `frontend/src/views/admin/server-update/UpdateReleases.vue` (uses `b-modal`/`b-button`, still has the Node `util` import, and still contains the stray `console.log("trigger")`)
 - `frontend/src/views/admin/ZoneServers.vue` and `frontend/src/views/admin/FileLogs.vue` (still use `b-form-input` / `b-input-group` / `b-button`)
 
-The Vue 2 lifecycle / `$set` / `.native` sweep (Step 11) and the `$children` removal (Step 12) are complete. The highest-value remaining compat-noise follow-up is the **`.sync` modifier sweep**: 28 `:prop.sync="..."` usages need to become `v-model:prop="..."` (a mechanical drop-in since the child components already emit `update:<prop>`). Scan with `rg -n "\.sync=" frontend/src --type-add 'vue:*.vue' --type vue`. Editor/selector routes touched: `Calculators.vue`, `Components.vue`, `spells/`, `items/`, `npcs/NpcEditor.vue`, `tasks/components/`, `components/selectors/`.
-
-The remaining Vue 2-only instance APIs can also be swept with `rg -n "\\\$listeners|\\\$scopedSlots|Vue\\.set" frontend/src` (currently 0 matches for those three).
+The Vue 2 lifecycle / `$set` / `.native` sweep (Step 11), the `$children` removal (Step 12), and the `.sync` sweep (Step 13) are complete. The remaining Vue 2-only instance API scan stays clean with `rg -n "\\\$listeners|\\\$scopedSlots|Vue\\.set" frontend/src` (0 matches on 2026-06-18).
 
 ## Session Notes
 

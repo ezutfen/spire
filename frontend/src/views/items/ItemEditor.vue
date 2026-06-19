@@ -1554,7 +1554,7 @@
           v-if="drawAugmentTypeCalculatorActive && item"
         >
           <aug-bitmask-calculator
-            :inputData.sync="item.augtype"
+            v-model:inputData="item.augtype"
             :mask="item.augtype"
           />
         </eq-window>
