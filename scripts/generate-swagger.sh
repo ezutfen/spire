@@ -18,8 +18,9 @@ sed -i.bak \
   -e 's/null.Float32/float32/' \
   -e 's/null.Float64/float64/' ./internal/models/*
 
-# generate
-swag init -g internal/http/http.go
+# generate with the same swag version pinned in go.mod so docs/docs.go stays
+# compatible with the runtime library used by `go build`.
+go run github.com/swaggo/swag/cmd/swag@v1.8.6 init -g internal/http/http.go
 
 # revert temp changes
 find ./internal/models/ -name "*.bak" -exec sh -c 'mv -f $0 ${0%.bak}' {} \;

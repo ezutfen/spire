@@ -182,6 +182,10 @@ type AaMetadata struct {
 	Expansions map[int]string `json:"expansions"`
 }
 
+type createAbilityTreeOptions struct {
+	AllowExplicitAbilityID bool
+}
+
 // ------------------------------------------------------------------
 // Helpers
 // ------------------------------------------------------------------
@@ -578,63 +582,78 @@ func (s *AaEditorService) createAbilityTree(db *gorm.DB, input AaAbilityInput) (
 		return 0, fmt.Errorf("at least one rank is required")
 	}
 
+	return s.createAbilityTreeWithOptions(db, input, createAbilityTreeOptions{})
+}
+
+func (s *AaEditorService) createAbilityTreeWithOptions(db *gorm.DB, input AaAbilityInput, opts createAbilityTreeOptions) (int, error) {
+	if strings.TrimSpace(input.Name) == "" {
+		return 0, fmt.Errorf("ability name is required")
+	}
+	if len(input.Ranks) == 0 {
+		return 0, fmt.Errorf("at least one rank is required")
+	}
+
 	var createdID int
 	err := db.Transaction(func(tx *gorm.DB) error {
-		// 1. upsert any inline strings and backfill sid references
-		for i := range input.Ranks {
-			if err := upsertRankStrings(tx, &input.Ranks[i]); err != nil {
-				return err
-			}
-		}
-
-		// 2. insert ability with placeholder first_rank_id (0)
-		ability := models.AaAbility{
-			Name:             input.Name,
-			Category:         input.Category,
-			Classes:          input.Classes,
-			Races:            input.Races,
-			DrakkinHeritage:  input.DrakkinHeritage,
-			Deities:          input.Deities,
-			Status:           input.Status,
-			Type:             input.Type,
-			Charges:          input.Charges,
-			GrantOnly:        int8(input.GrantOnly),
-			Enabled:          uint8(input.Enabled),
-			ResetOnDeath:     int8(input.ResetOnDeath),
-			AutoGrantEnabled: int8(input.AutoGrantEnabled),
-			FirstRankId:      0,
-		}
-		if err := tx.Create(&ability).Error; err != nil {
-			return fmt.Errorf("failed to create ability: %w", err)
-		}
-		createdID = int(ability.ID)
-
-		// 3. insert ranks with zeroed prev/next, collecting assigned ids
-		rankIds, err := insertRanks(tx, input.Ranks)
-		if err != nil {
-			return err
-		}
-
-		// 4. stitch prev/next chain + set first_rank_id
-		if err := stitchChain(tx, rankIds); err != nil {
-			return err
-		}
-		if len(rankIds) > 0 {
-			if err := tx.Model(&models.AaAbility{}).
-				Where("id = ?", createdID).
-				Update("first_rank_id", rankIds[0]).Error; err != nil {
-				return fmt.Errorf("failed to set first_rank_id: %w", err)
-			}
-		}
-
-		// 5. insert effects + prereqs for each rank
-		if err := insertChildren(tx, input.Ranks, rankIds, createdID); err != nil {
-			return err
-		}
-
-		return nil
+		var err error
+		createdID, err = s.createAbilityTreeTx(tx, input, opts)
+		return err
 	})
 	if err != nil {
+		return 0, err
+	}
+
+	return createdID, nil
+}
+
+func (s *AaEditorService) createAbilityTreeTx(tx *gorm.DB, input AaAbilityInput, opts createAbilityTreeOptions) (int, error) {
+	for i := range input.Ranks {
+		if err := upsertRankStrings(tx, &input.Ranks[i]); err != nil {
+			return 0, err
+		}
+	}
+
+	ability := models.AaAbility{
+		Name:             input.Name,
+		Category:         input.Category,
+		Classes:          input.Classes,
+		Races:            input.Races,
+		DrakkinHeritage:  input.DrakkinHeritage,
+		Deities:          input.Deities,
+		Status:           input.Status,
+		Type:             input.Type,
+		Charges:          input.Charges,
+		GrantOnly:        int8(input.GrantOnly),
+		Enabled:          uint8(input.Enabled),
+		ResetOnDeath:     int8(input.ResetOnDeath),
+		AutoGrantEnabled: int8(input.AutoGrantEnabled),
+		FirstRankId:      0,
+	}
+	if opts.AllowExplicitAbilityID && input.ID > 0 {
+		ability.ID = uint(input.ID)
+	}
+	if err := tx.Create(&ability).Error; err != nil {
+		return 0, fmt.Errorf("failed to create ability: %w", err)
+	}
+	createdID := int(ability.ID)
+
+	rankIds, err := insertRanks(tx, input.Ranks)
+	if err != nil {
+		return 0, err
+	}
+
+	if err := stitchChain(tx, rankIds); err != nil {
+		return 0, err
+	}
+	if len(rankIds) > 0 {
+		if err := tx.Model(&models.AaAbility{}).
+			Where("id = ?", createdID).
+			Update("first_rank_id", rankIds[0]).Error; err != nil {
+			return 0, fmt.Errorf("failed to set first_rank_id: %w", err)
+		}
+	}
+
+	if err := insertChildren(tx, input.Ranks, rankIds, createdID); err != nil {
 		return 0, err
 	}
 
@@ -953,109 +972,108 @@ func (s *AaEditorService) saveAbilityTree(db *gorm.DB, id int, input AaAbilityIn
 		return fmt.Errorf("ability name is required")
 	}
 
-	// ensure the ability exists
+	return db.Transaction(func(tx *gorm.DB) error {
+		return s.saveAbilityTreeTx(tx, id, input)
+	})
+}
+
+func (s *AaEditorService) saveAbilityTreeTx(tx *gorm.DB, id int, input AaAbilityInput) error {
+	if strings.TrimSpace(input.Name) == "" {
+		return fmt.Errorf("ability name is required")
+	}
+
 	var existing models.AaAbility
-	if err := db.Where("id = ?", id).First(&existing).Error; err != nil {
+	if err := tx.Where("id = ?", id).First(&existing).Error; err != nil {
 		return fmt.Errorf("ability not found: %w", err)
 	}
 
-	return db.Transaction(func(tx *gorm.DB) error {
-		// 1. upsert inline strings
-		for i := range input.Ranks {
-			if err := upsertRankStrings(tx, &input.Ranks[i]); err != nil {
-				return err
-			}
-		}
-
-		// 2. update ability row
-		updates := map[string]interface{}{
-			"name":               input.Name,
-			"category":           input.Category,
-			"classes":            input.Classes,
-			"races":              input.Races,
-			"drakkin_heritage":   input.DrakkinHeritage,
-			"deities":            input.Deities,
-			"status":             input.Status,
-			"type":               input.Type,
-			"charges":            input.Charges,
-			"grant_only":         input.GrantOnly,
-			"enabled":            input.Enabled,
-			"reset_on_death":     input.ResetOnDeath,
-			"auto_grant_enabled": input.AutoGrantEnabled,
-		}
-		if err := tx.Model(&models.AaAbility{}).Where("id = ?", id).Updates(updates).Error; err != nil {
-			return fmt.Errorf("failed to update ability: %w", err)
-		}
-
-		// 3. reconcile ranks: keep/update existing by id, insert new, delete missing
-		oldChain, _, err := walkRankChain(tx, existing.FirstRankId)
-		if err != nil {
+	for i := range input.Ranks {
+		if err := upsertRankStrings(tx, &input.Ranks[i]); err != nil {
 			return err
 		}
-		oldIds := map[int]bool{}
-		for _, r := range oldChain {
-			oldIds[int(r.ID)] = true
-		}
+	}
 
-		keptIds := map[int]bool{}
-		orderedIds := make([]int, 0, len(input.Ranks))
-		for _, r := range input.Ranks {
-			if r.ID > 0 && oldIds[r.ID] {
-				// update existing rank row
-				if err := tx.Model(&models.AaRank{}).Where("id = ?", r.ID).Updates(rankFieldMap(r)).Error; err != nil {
-					return fmt.Errorf("failed to update rank [%v]: %w", r.ID, err)
-				}
-				keptIds[r.ID] = true
-				orderedIds = append(orderedIds, r.ID)
-			} else {
-				// new rank
-				model := buildRankModel(r)
-				if err := tx.Create(&model).Error; err != nil {
-					return fmt.Errorf("failed to create rank: %w", err)
-				}
-				keptIds[int(model.ID)] = true
-				orderedIds = append(orderedIds, int(model.ID))
+	updates := map[string]interface{}{
+		"name":               input.Name,
+		"category":           input.Category,
+		"classes":            input.Classes,
+		"races":              input.Races,
+		"drakkin_heritage":   input.DrakkinHeritage,
+		"deities":            input.Deities,
+		"status":             input.Status,
+		"type":               input.Type,
+		"charges":            input.Charges,
+		"grant_only":         input.GrantOnly,
+		"enabled":            input.Enabled,
+		"reset_on_death":     input.ResetOnDeath,
+		"auto_grant_enabled": input.AutoGrantEnabled,
+	}
+	if err := tx.Model(&models.AaAbility{}).Where("id = ?", id).Updates(updates).Error; err != nil {
+		return fmt.Errorf("failed to update ability: %w", err)
+	}
+
+	oldChain, _, err := walkRankChain(tx, existing.FirstRankId)
+	if err != nil {
+		return err
+	}
+	oldIds := map[int]bool{}
+	for _, r := range oldChain {
+		oldIds[int(r.ID)] = true
+	}
+
+	keptIds := map[int]bool{}
+	orderedIds := make([]int, 0, len(input.Ranks))
+	for _, r := range input.Ranks {
+		if r.ID > 0 && oldIds[r.ID] {
+			if err := tx.Model(&models.AaRank{}).Where("id = ?", r.ID).Updates(rankFieldMap(r)).Error; err != nil {
+				return fmt.Errorf("failed to update rank [%v]: %w", r.ID, err)
+			}
+			keptIds[r.ID] = true
+			orderedIds = append(orderedIds, r.ID)
+		} else {
+			model := buildRankModel(r)
+			if err := tx.Create(&model).Error; err != nil {
+				return fmt.Errorf("failed to create rank: %w", err)
+			}
+			keptIds[int(model.ID)] = true
+			orderedIds = append(orderedIds, int(model.ID))
+		}
+	}
+
+	for oldId := range oldIds {
+		if !keptIds[oldId] {
+			if err := deleteRankAndChildren(tx, oldId); err != nil {
+				return err
 			}
 		}
+	}
 
-		// 4. delete ranks that were removed (and their children)
-		for oldId := range oldIds {
-			if !keptIds[oldId] {
-				if err := deleteRankAndChildren(tx, oldId); err != nil {
-					return err
-				}
-			}
+	if err := stitchChain(tx, orderedIds); err != nil {
+		return err
+	}
+	newFirst := 0
+	if len(orderedIds) > 0 {
+		newFirst = orderedIds[0]
+	}
+	if err := tx.Model(&models.AaAbility{}).Where("id = ?", id).
+		Update("first_rank_id", newFirst).Error; err != nil {
+		return fmt.Errorf("failed to set first_rank_id: %w", err)
+	}
+
+	for i, r := range input.Ranks {
+		if i >= len(orderedIds) {
+			break
 		}
-
-		// 5. re-stitch chain + first_rank_id
-		if err := stitchChain(tx, orderedIds); err != nil {
+		rankId := orderedIds[i]
+		if err := replaceEffects(tx, rankId, r.Effects); err != nil {
 			return err
 		}
-		newFirst := 0
-		if len(orderedIds) > 0 {
-			newFirst = orderedIds[0]
+		if err := replacePrereqs(tx, rankId, r.Prereqs); err != nil {
+			return err
 		}
-		if err := tx.Model(&models.AaAbility{}).Where("id = ?", id).
-			Update("first_rank_id", newFirst).Error; err != nil {
-			return fmt.Errorf("failed to set first_rank_id: %w", err)
-		}
+	}
 
-		// 6. replace effects + prereqs for every kept/new rank
-		for i, r := range input.Ranks {
-			if i >= len(orderedIds) {
-				break
-			}
-			rankId := orderedIds[i]
-			if err := replaceEffects(tx, rankId, r.Effects); err != nil {
-				return err
-			}
-			if err := replacePrereqs(tx, rankId, r.Prereqs); err != nil {
-				return err
-			}
-		}
-
-		return nil
-	})
+	return nil
 }
 
 func replaceEffects(tx *gorm.DB, rankId int, effects []AaRankEffectInput) error {

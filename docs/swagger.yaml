@@ -1,5 +1,367 @@
 basePath: /api/v1
 definitions:
+  aaeditor.AaAbilityFull:
+    properties:
+      aa_ability:
+        $ref: '#/definitions/models.AaAbility'
+      ranks:
+        items:
+          $ref: '#/definitions/aaeditor.AaRankFull'
+        type: array
+      warnings:
+        items:
+          type: string
+        type: array
+    type: object
+  aaeditor.AaAbilityInput:
+    properties:
+      auto_grant_enabled:
+        type: integer
+      category:
+        type: integer
+      charges:
+        type: integer
+      classes:
+        type: integer
+      deities:
+        type: integer
+      drakkin_heritage:
+        type: integer
+      enabled:
+        type: integer
+      first_rank_id:
+        type: integer
+      grant_only:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      races:
+        type: integer
+      ranks:
+        items:
+          $ref: '#/definitions/aaeditor.AaRankInput'
+        type: array
+      reset_on_death:
+        type: integer
+      status:
+        type: integer
+      type:
+        type: integer
+    type: object
+  aaeditor.AaAbilityListItem:
+    properties:
+      category:
+        type: integer
+      classes:
+        type: integer
+      enabled:
+        type: integer
+      first_rank_cost:
+        type: integer
+      first_rank_id:
+        type: integer
+      first_rank_level:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      rank_count:
+        type: integer
+      type:
+        type: integer
+    type: object
+  aaeditor.AaAbilityListResult:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/aaeditor.AaAbilityListItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  aaeditor.AaExportAbility:
+    properties:
+      ability:
+        $ref: '#/definitions/aaeditor.AaAbilityInput'
+      warnings:
+        items:
+          type: string
+        type: array
+    type: object
+  aaeditor.AaExportBundle:
+    properties:
+      abilities:
+        items:
+          $ref: '#/definitions/aaeditor.AaExportAbility'
+        type: array
+      exported_at:
+        type: string
+      source_connection:
+        $ref: '#/definitions/aaeditor.AaExportConnection'
+      version:
+        type: string
+    type: object
+  aaeditor.AaExportConnection:
+    properties:
+      content_db_name:
+        type: string
+      id:
+        type: integer
+      is_default:
+        type: boolean
+      name:
+        type: string
+    type: object
+  aaeditor.AaExportRequest:
+    properties:
+      ability_ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  aaeditor.AaImportAbilityAction:
+    properties:
+      ability_id:
+        type: integer
+      action:
+        type: string
+      name:
+        type: string
+      reasons:
+        items:
+          type: string
+        type: array
+    type: object
+  aaeditor.AaImportApplyResult:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/aaeditor.AaImportAbilityAction'
+        type: array
+      applied_ability_ids:
+        items:
+          type: integer
+        type: array
+      blocked:
+        type: integer
+      creates:
+        type: integer
+      missing_prereq_aa_ids:
+        items:
+          type: integer
+        type: array
+      missing_spell_ids:
+        items:
+          type: integer
+        type: array
+      updates:
+        type: integer
+      valid:
+        type: boolean
+      version:
+        type: string
+    type: object
+  aaeditor.AaImportPreviewResult:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/aaeditor.AaImportAbilityAction'
+        type: array
+      blocked:
+        type: integer
+      creates:
+        type: integer
+      missing_prereq_aa_ids:
+        items:
+          type: integer
+        type: array
+      missing_spell_ids:
+        items:
+          type: integer
+        type: array
+      updates:
+        type: integer
+      valid:
+        type: boolean
+      version:
+        type: string
+    type: object
+  aaeditor.AaMetadata:
+    properties:
+      categories:
+        additionalProperties:
+          type: string
+        type: object
+      expansions:
+        additionalProperties:
+          type: string
+        type: object
+      spell_types:
+        additionalProperties:
+          type: string
+        type: object
+      statuses:
+        additionalProperties:
+          type: string
+        type: object
+      types:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  aaeditor.AaRankEffectFull:
+    properties:
+      base_1:
+        type: integer
+      base_2:
+        type: integer
+      effect_id:
+        type: integer
+      rank_id:
+        type: integer
+      slot:
+        type: integer
+    type: object
+  aaeditor.AaRankEffectInput:
+    properties:
+      base_1:
+        type: integer
+      base_2:
+        type: integer
+      effect_id:
+        type: integer
+      slot:
+        type: integer
+    type: object
+  aaeditor.AaRankFull:
+    properties:
+      aa_rank:
+        $ref: '#/definitions/models.AaRank'
+      effects:
+        items:
+          $ref: '#/definitions/aaeditor.AaRankEffectFull'
+        type: array
+      prereqs:
+        items:
+          $ref: '#/definitions/aaeditor.AaRankPrereqFull'
+        type: array
+      spell:
+        $ref: '#/definitions/aaeditor.AaSpellSummary'
+      strings:
+        additionalProperties:
+          $ref: '#/definitions/aaeditor.AaStringFull'
+        type: object
+    type: object
+  aaeditor.AaRankInput:
+    properties:
+      cost:
+        type: integer
+      desc_sid:
+        type: integer
+      effects:
+        items:
+          $ref: '#/definitions/aaeditor.AaRankEffectInput'
+        type: array
+      expansion:
+        type: integer
+      id:
+        type: integer
+      level_req:
+        type: integer
+      lower_hotkey_sid:
+        type: integer
+      next_id:
+        type: integer
+      prereqs:
+        items:
+          $ref: '#/definitions/aaeditor.AaRankPrereqInput'
+        type: array
+      prev_id:
+        type: integer
+      recast_time:
+        type: integer
+      spell:
+        type: integer
+      spell_type:
+        type: integer
+      strings:
+        additionalProperties:
+          $ref: '#/definitions/aaeditor.DbStrInput'
+        type: object
+      temp_id:
+        description: |-
+          TempId is a client-side identifier used to reference a rank during
+          create/duplicate before a real DB id exists. It is ignored on save.
+        type: string
+      title_sid:
+        type: integer
+      upper_hotkey_sid:
+        type: integer
+    type: object
+  aaeditor.AaRankPrereqFull:
+    properties:
+      aa_id:
+        type: integer
+      points:
+        type: integer
+      rank_id:
+        type: integer
+    type: object
+  aaeditor.AaRankPrereqInput:
+    properties:
+      aa_id:
+        type: integer
+      points:
+        type: integer
+    type: object
+  aaeditor.AaSpellSummary:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  aaeditor.AaStringFull:
+    properties:
+      id:
+        type: integer
+      type:
+        type: integer
+      value:
+        type: string
+    type: object
+  aaeditor.DbStrInput:
+    properties:
+      id:
+        type: integer
+      type:
+        type: integer
+      value:
+        type: string
+    type: object
+  aaeditor.DuplicateOptions:
+    properties:
+      name:
+        type: string
+      remap_self:
+        type: boolean
+    type: object
+  aaeditor.ValidationResult:
+    properties:
+      errors:
+        items:
+          type: string
+        type: array
+      valid:
+        type: boolean
+      warnings:
+        items:
+          type: string
+        type: array
+    type: object
   crudcontrollers.BulkFetchByIdsGetRequest:
     properties:
       ids:
@@ -153,10 +515,6 @@ definitions:
         type: integer
       rulesflag:
         type: integer
-      sharedbanks:
-        items:
-          $ref: '#/definitions/models.Sharedbank'
-        type: array
       sharedplat:
         type: integer
       status:
@@ -438,6 +796,17 @@ definitions:
       txtfile:
         type: string
     type: object
+  models.BotBlockedBuff:
+    properties:
+      blocked:
+        type: integer
+      blocked_pet:
+        type: integer
+      bot_id:
+        type: integer
+      spell_id:
+        type: integer
+    type: object
   models.BotBuff:
     properties:
       bot_id:
@@ -494,8 +863,6 @@ definitions:
         type: integer
       agi:
         type: integer
-      archery_setting:
-        type: integer
       atk:
         type: integer
       beard:
@@ -503,8 +870,6 @@ definitions:
       beard_color:
         type: integer
       bot_id:
-        type: integer
-      caster_range:
         type: integer
       cha:
         type: integer
@@ -528,10 +893,6 @@ definitions:
         type: integer
       drakkin_tattoo:
         type: integer
-      enforce_spell_settings:
-        type: integer
-      expansion_bitmask:
-        type: integer
       extra_haste:
         type: integer
       eye_color_1:
@@ -541,8 +902,6 @@ definitions:
       face:
         type: integer
       fire:
-        type: integer
-      follow_distance:
         type: integer
       gender:
         type: integer
@@ -572,15 +931,11 @@ definitions:
         type: integer
       race:
         type: integer
-      show_helm:
-        type: integer
       size:
         type: number
       spells_id:
         type: integer
       sta:
-        type: integer
-      stop_melee_level:
         type: integer
       str:
         type: integer
@@ -777,6 +1132,25 @@ definitions:
       pet_inventories_index:
         type: integer
       pets_index:
+        type: integer
+    type: object
+  models.BotSetting:
+    properties:
+      bot_id:
+        type: integer
+      category_name:
+        type: string
+      character_id:
+        type: integer
+      setting_id:
+        type: integer
+      setting_name:
+        type: string
+      setting_type:
+        type: integer
+      stance:
+        type: integer
+      value:
         type: integer
     type: object
   models.BotSpellCastingChance:
@@ -1635,6 +2009,8 @@ definitions:
         type: integer
       id:
         type: integer
+      illusion_block:
+        type: integer
       instance_list_players:
         items:
           $ref: '#/definitions/models.InstanceListPlayer'
@@ -1797,6 +2173,27 @@ definitions:
         type: integer
       taskid:
         type: integer
+    type: object
+  models.CharacterEvolvingItem:
+    properties:
+      activated:
+        type: integer
+      character_id:
+        type: integer
+      current_amount:
+        type: integer
+      deleted_at:
+        type: string
+      equipped:
+        type: integer
+      final_item_id:
+        type: integer
+      id:
+        type: integer
+      item_id:
+        type: integer
+      progression:
+        type: number
     type: object
   models.CharacterExpModifier:
     properties:
@@ -2028,6 +2425,13 @@ definitions:
         type: integer
       slot:
         type: integer
+    type: object
+  models.CharacterPetName:
+    properties:
+      character_id:
+        type: integer
+      name:
+        type: string
     type: object
   models.CharacterPotionbelt:
     properties:
@@ -2351,6 +2755,8 @@ definitions:
     type: object
   models.DataBucket:
     properties:
+      account_id:
+        type: integer
       bot_id:
         type: integer
       character_id:
@@ -2359,12 +2765,16 @@ definitions:
         type: integer
       id:
         type: integer
+      instance_id:
+        type: integer
       key:
         type: string
       npc_id:
         type: integer
       value:
         type: string
+      zone_id:
+        type: integer
     type: object
   models.DbStr:
     properties:
@@ -2480,6 +2890,8 @@ definitions:
     type: object
   models.DynamicZone:
     properties:
+      add_replay:
+        type: integer
       compass_x:
         type: number
       compass_y:
@@ -2495,6 +2907,8 @@ definitions:
       id:
         type: integer
       instance_id:
+        type: integer
+      is_locked:
         type: integer
       leader_id:
         type: integer
@@ -2526,6 +2940,21 @@ definitions:
         type: number
       zone_in_z:
         type: number
+    type: object
+  models.DynamicZoneLockout:
+    properties:
+      duration:
+        type: integer
+      dynamic_zone_id:
+        type: integer
+      event_name:
+        type: string
+      expire_time:
+        type: string
+      from_expedition_uuid:
+        type: string
+      id:
+        type: integer
     type: object
   models.DynamicZoneMember:
     properties:
@@ -3087,6 +3516,8 @@ definitions:
         type: string
       gender:
         type: integer
+      helmtexture:
+        type: integer
       id:
         type: integer
       mountspeed:
@@ -3101,6 +3532,8 @@ definitions:
   models.InstanceList:
     properties:
       duration:
+        type: integer
+      expire_at:
         type: integer
       id:
         type: integer
@@ -3134,21 +3567,21 @@ definitions:
     type: object
   models.Inventory:
     properties:
-      augslot_1:
+      augment_five:
         type: integer
-      augslot_2:
+      augment_four:
         type: integer
-      augslot_3:
+      augment_one:
         type: integer
-      augslot_4:
+      augment_six:
         type: integer
-      augslot_5:
+      augment_three:
         type: integer
-      augslot_6:
+      augment_two:
+        type: integer
+      character_id:
         type: integer
       charges:
-        type: integer
-      charid:
         type: integer
       color:
         type: integer
@@ -3160,15 +3593,15 @@ definitions:
         type: integer
       item:
         $ref: '#/definitions/models.Item'
-      itemid:
+      item_id:
         type: integer
       ornament_hero_model:
         type: integer
-      ornamenticon:
+      ornament_icon:
         type: integer
-      ornamentidfile:
+      ornament_idfile:
         type: integer
-      slotid:
+      slot_id:
         type: integer
     type: object
   models.InventorySnapshot:
@@ -3866,6 +4299,23 @@ definitions:
         type: integer
       it_qglobal:
         type: string
+    type: object
+  models.ItemsEvolvingDetail:
+    properties:
+      id:
+        type: integer
+      item_evo_id:
+        type: integer
+      item_evolve_level:
+        type: integer
+      item_id:
+        type: integer
+      required_amount:
+        type: integer
+      sub_type:
+        type: string
+      type:
+        type: integer
     type: object
   models.Keyring:
     properties:
@@ -4640,6 +5090,8 @@ definitions:
         type: integer
       mr:
         type: integer
+      multiquest_enabled:
+        type: integer
       name:
         type: string
       no_target_hotkey:
@@ -4741,7 +5193,7 @@ definitions:
       version:
         type: integer
       walkspeed:
-        type: integer
+        type: number
       wis:
         type: integer
     type: object
@@ -5042,6 +5494,72 @@ definitions:
       slot:
         type: integer
     type: object
+  models.PlayerEventAaPurchase:
+    properties:
+      aa_ability_id:
+        type: integer
+      cost:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      next_id:
+        type: integer
+      previous_id:
+        type: integer
+    type: object
+  models.PlayerEventKilledNamedNpc:
+    properties:
+      combat_time_seconds:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      npc_id:
+        type: integer
+      npc_name:
+        type: string
+      total_damage_per_second_taken:
+        type: integer
+      total_heal_per_second_taken:
+        type: integer
+    type: object
+  models.PlayerEventKilledNpc:
+    properties:
+      combat_time_seconds:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      npc_id:
+        type: integer
+      npc_name:
+        type: string
+      total_damage_per_second_taken:
+        type: integer
+      total_heal_per_second_taken:
+        type: integer
+    type: object
+  models.PlayerEventKilledRaidNpc:
+    properties:
+      combat_time_seconds:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      npc_id:
+        type: integer
+      npc_name:
+        type: string
+      total_damage_per_second_taken:
+        type: integer
+      total_heal_per_second_taken:
+        type: integer
+    type: object
   models.PlayerEventLog:
     properties:
       account:
@@ -5054,6 +5572,8 @@ definitions:
         type: integer
       created_at:
         type: string
+      etl_table_id:
+        type: integer
       event_data:
         type: string
       event_type_id:
@@ -5081,6 +5601,8 @@ definitions:
     properties:
       discord_webhook_id:
         type: integer
+      etl_enabled:
+        type: integer
       event_enabled:
         type: integer
       event_name:
@@ -5089,7 +5611,225 @@ definitions:
         type: integer
       retention_days:
         type: integer
-      etl_enabled:
+    type: object
+  models.PlayerEventLootItem:
+    properties:
+      augment_1_id:
+        type: integer
+      augment_2_id:
+        type: integer
+      augment_3_id:
+        type: integer
+      augment_4_id:
+        type: integer
+      augment_5_id:
+        type: integer
+      augment_6_id:
+        type: integer
+      charges:
+        type: integer
+      corpse_name:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      item_id:
+        type: integer
+      item_name:
+        type: string
+      npc_id:
+        type: integer
+    type: object
+  models.PlayerEventMerchantPurchase:
+    properties:
+      alternate_currency_id:
+        type: integer
+      charges:
+        type: integer
+      cost:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      item_id:
+        type: integer
+      item_name:
+        type: string
+      merchant_name:
+        type: string
+      merchant_type:
+        type: integer
+      npc_id:
+        type: integer
+      player_currency_balance:
+        type: integer
+      player_money_balance:
+        type: integer
+    type: object
+  models.PlayerEventMerchantSell:
+    properties:
+      alternate_currency_id:
+        type: integer
+      charges:
+        type: integer
+      cost:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      item_id:
+        type: integer
+      item_name:
+        type: string
+      merchant_name:
+        type: string
+      merchant_type:
+        type: integer
+      npc_id:
+        type: integer
+      player_currency_balance:
+        type: integer
+      player_money_balance:
+        type: integer
+    type: object
+  models.PlayerEventNpcHandin:
+    properties:
+      created_at:
+        type: string
+      handin_copper:
+        type: integer
+      handin_gold:
+        type: integer
+      handin_platinum:
+        type: integer
+      handin_silver:
+        type: integer
+      id:
+        type: integer
+      is_quest_handin:
+        type: integer
+      npc_id:
+        type: integer
+      npc_name:
+        type: string
+      return_copper:
+        type: integer
+      return_gold:
+        type: integer
+      return_platinum:
+        type: integer
+      return_silver:
+        type: integer
+    type: object
+  models.PlayerEventNpcHandinEntry:
+    properties:
+      augment_1_id:
+        type: integer
+      augment_2_id:
+        type: integer
+      augment_3_id:
+        type: integer
+      augment_4_id:
+        type: integer
+      augment_5_id:
+        type: integer
+      augment_6_id:
+        type: integer
+      charges:
+        type: integer
+      created_at:
+        type: string
+      evolve_amount:
+        type: integer
+      evolve_level:
+        type: integer
+      id:
+        type: integer
+      item_id:
+        type: integer
+      player_event_npc_handin_id:
+        type: integer
+      type:
+        type: integer
+    type: object
+  models.PlayerEventSpeech:
+    properties:
+      created_at:
+        type: string
+      from_char_id:
+        type: string
+      guild_id:
+        type: integer
+      id:
+        type: integer
+      message:
+        type: string
+      min_status:
+        type: integer
+      to_char_id:
+        type: string
+      type:
+        type: integer
+    type: object
+  models.PlayerEventTrade:
+    properties:
+      char_1_copper:
+        type: integer
+      char_1_gold:
+        type: integer
+      char_1_id:
+        type: integer
+      char_1_platinum:
+        type: integer
+      char_1_silver:
+        type: integer
+      char_2_copper:
+        type: integer
+      char_2_gold:
+        type: integer
+      char_2_id:
+        type: integer
+      char_2_platinum:
+        type: integer
+      char_2_silver:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+    type: object
+  models.PlayerEventTradeEntry:
+    properties:
+      augment_1_id:
+        type: integer
+      augment_2_id:
+        type: integer
+      augment_3_id:
+        type: integer
+      augment_4_id:
+        type: integer
+      augment_5_id:
+        type: integer
+      augment_6_id:
+        type: integer
+      char_id:
+        type: integer
+      charges:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      in_bag:
+        type: integer
+      item_id:
+        type: integer
+      player_event_trade_id:
+        type: integer
+      slot:
         type: integer
     type: object
   models.PlayerTitleset:
@@ -5221,6 +5961,8 @@ definitions:
   models.RespawnTime:
     properties:
       duration:
+        type: integer
+      expire_at:
         type: integer
       id:
         type: integer
@@ -5386,27 +6128,37 @@ definitions:
     type: object
   models.Sharedbank:
     properties:
-      acctid:
+      account_id:
         type: integer
-      augslot_1:
+      augment_five:
         type: integer
-      augslot_2:
+      augment_four:
         type: integer
-      augslot_3:
+      augment_one:
         type: integer
-      augslot_4:
+      augment_six:
         type: integer
-      augslot_5:
+      augment_three:
         type: integer
-      augslot_6:
+      augment_two:
         type: integer
       charges:
         type: integer
+      color:
+        type: integer
       custom_data:
         type: string
-      itemid:
+      guid:
         type: integer
-      slotid:
+      item_id:
+        type: integer
+      ornament_hero_model:
+        type: integer
+      ornament_icon:
+        type: integer
+      ornament_idfile:
+        type: integer
+      slot_id:
         type: integer
     type: object
   models.SkillCap:
@@ -6405,6 +7157,8 @@ definitions:
         type: integer
       char_zone_id:
         type: integer
+      char_zone_instance_id:
+        type: integer
       id:
         type: integer
       item_charges:
@@ -6415,6 +7169,8 @@ definitions:
         type: integer
       item_sn:
         type: integer
+      listing_date:
+        type: string
       slot_id:
         type: integer
     type: object
@@ -6450,6 +7206,10 @@ definitions:
         type: integer
       tradeskill:
         type: integer
+      tradeskill_recipe_entries:
+        items:
+          $ref: '#/definitions/models.TradeskillRecipeEntry'
+        type: array
       trivial:
         type: integer
     type: object
@@ -6649,6 +7409,8 @@ definitions:
         type: integer
       castoutdoor:
         type: integer
+      client_update_range:
+        type: integer
       content_flags:
         type: string
       content_flags_disabled:
@@ -6739,8 +7501,6 @@ definitions:
         type: integer
       max_level:
         type: integer
-      max_movement_update_range:
-        type: integer
       maxclients:
         type: integer
       maxclip:
@@ -6788,6 +7548,8 @@ definitions:
       safe_z:
         type: number
       seconds_before_idle:
+        type: integer
+      shard_at_player_count:
         type: integer
       short_name:
         type: string
@@ -6892,6 +7654,67 @@ definitions:
       zone:
         type: string
       zoneinst:
+        type: integer
+    type: object
+  models.ZoneStateSpawn:
+    properties:
+      anim:
+        type: integer
+      buffs:
+        type: string
+      condition_id:
+        type: integer
+      condition_min_value:
+        type: integer
+      created_at:
+        type: string
+      current_waypoint:
+        type: integer
+      decay_in_seconds:
+        type: integer
+      enabled:
+        type: integer
+      endurance:
+        type: integer
+      entity_variables:
+        type: string
+      grid:
+        type: integer
+      heading:
+        type: number
+      hp:
+        type: integer
+      id:
+        type: integer
+      instance_id:
+        type: integer
+      is_corpse:
+        type: integer
+      is_zone:
+        type: integer
+      loot_data:
+        type: string
+      mana:
+        type: integer
+      npc_id:
+        type: integer
+      path_when_zone_idle:
+        type: integer
+      respawn_time:
+        type: integer
+      spawn_2_id:
+        type: integer
+      spawngroup_id:
+        type: integer
+      variance:
+        type: integer
+      x:
+        type: number
+      "y":
+        type: number
+      z:
+        type: number
+      zone_id:
         type: integer
     type: object
 info:
@@ -7188,6 +8011,270 @@ paths:
       summary: Updates AaAbility
       tags:
       - AaAbility
+  /aa_editor/abilities:
+    get:
+      consumes:
+      - application/json
+      operationId: listAaEditorAbilities
+      parameters:
+      - description: Name or id search
+        in: query
+        name: search
+        type: string
+      - description: Category filter
+        in: query
+        name: category
+        type: integer
+      - description: Class bitmask filter
+        in: query
+        name: classes
+        type: integer
+      - description: Enabled filter (-1 any, 0 disabled, 1 enabled)
+        in: query
+        name: enabled
+        type: integer
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Rows per page
+        in: query
+        name: limit
+        type: integer
+      - description: Order by field
+        in: query
+        name: orderBy
+        type: string
+      - description: Order direction
+        in: query
+        name: orderDirection
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.AaAbilityListResult'
+      summary: Lists AA abilities
+      tags:
+      - AaEditor
+    put:
+      consumes:
+      - application/json
+      operationId: createAaEditorAbilityFull
+      parameters:
+      - description: Ability tree
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/aaeditor.AaAbilityInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.AaAbilityFull'
+      summary: Creates a full AA ability (ability + ranks + effects + prereqs + strings)
+      tags:
+      - AaEditor
+  /aa_editor/abilities/{id}:
+    delete:
+      operationId: deleteAaEditorAbilityFull
+      parameters:
+      - description: Ability id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+      summary: Deletes an AA ability and cascades to ranks/effects/prereqs (strings/spells
+        preserved)
+      tags:
+      - AaEditor
+    get:
+      consumes:
+      - application/json
+      operationId: getAaEditorAbilityFull
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.AaAbilityFull'
+      summary: Gets the full AA ability tree (ability + ranks + effects + prereqs
+        + strings + spell)
+      tags:
+      - AaEditor
+    patch:
+      consumes:
+      - application/json
+      operationId: saveAaEditorAbilityFull
+      parameters:
+      - description: Ability id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Ability tree
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/aaeditor.AaAbilityInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.AaAbilityFull'
+      summary: Saves (full replace) an AA ability tree
+      tags:
+      - AaEditor
+  /aa_editor/abilities/{id}/duplicate:
+    post:
+      consumes:
+      - application/json
+      operationId: duplicateAaEditorAbility
+      parameters:
+      - description: Source ability id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Duplicate options
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/aaeditor.DuplicateOptions'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.AaAbilityFull'
+      summary: Duplicates an existing AA ability (deep copy with re-linked rank chain)
+      tags:
+      - AaEditor
+  /aa_editor/export:
+    post:
+      consumes:
+      - application/json
+      operationId: exportAaEditorBundle
+      parameters:
+      - description: Ability ids
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/aaeditor.AaExportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.AaExportBundle'
+      summary: Exports selected AA abilities as a portable JSON bundle
+      tags:
+      - AaEditor
+  /aa_editor/import/apply:
+    post:
+      consumes:
+      - application/json
+      operationId: applyAaEditorImport
+      parameters:
+      - description: AA export bundle
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/aaeditor.AaExportBundle'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.AaImportApplyResult'
+      summary: Applies an AA bundle import to the active connection
+      tags:
+      - AaEditor
+  /aa_editor/import/preview:
+    post:
+      consumes:
+      - application/json
+      operationId: previewAaEditorImport
+      parameters:
+      - description: AA export bundle
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/aaeditor.AaExportBundle'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.AaImportPreviewResult'
+      summary: Previews an AA bundle import against the active connection
+      tags:
+      - AaEditor
+  /aa_editor/metadata:
+    get:
+      operationId: getAaEditorMetadata
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.AaMetadata'
+      summary: Gets AA editor metadata / constants for the GUI
+      tags:
+      - AaEditor
+  /aa_editor/ranks/preview:
+    post:
+      consumes:
+      - application/json
+      operationId: previewAaEditorRank
+      parameters:
+      - description: Ability tree
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/aaeditor.AaAbilityInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aaeditor.ValidationResult'
+      summary: Validates an AA ability tree (server-side validation)
+      tags:
+      - AaEditor
   /aa_rank:
     put:
       consumes:
@@ -12264,6 +13351,288 @@ paths:
       summary: Counts Books
       tags:
       - Book
+  /bot_blocked_buff:
+    put:
+      consumes:
+      - application/json
+      operationId: createBotBlockedBuff
+      parameters:
+      - description: BotBlockedBuff
+        in: body
+        name: bot_blocked_buff
+        required: true
+        schema:
+          $ref: '#/definitions/models.BotBlockedBuff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotBlockedBuff'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates BotBlockedBuff
+      tags:
+      - BotBlockedBuff
+  /bot_blocked_buff/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deleteBotBlockedBuff
+      parameters:
+      - description: botId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes BotBlockedBuff
+      tags:
+      - BotBlockedBuff
+    get:
+      consumes:
+      - application/json
+      operationId: getBotBlockedBuff
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotBlockedBuff'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets BotBlockedBuff
+      tags:
+      - BotBlockedBuff
+    patch:
+      consumes:
+      - application/json
+      operationId: updateBotBlockedBuff
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: BotBlockedBuff
+        in: body
+        name: bot_blocked_buff
+        required: true
+        schema:
+          $ref: '#/definitions/models.BotBlockedBuff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotBlockedBuff'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates BotBlockedBuff
+      tags:
+      - BotBlockedBuff
+  /bot_blocked_buffs:
+    get:
+      consumes:
+      - application/json
+      operationId: listBotBlockedBuffs
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotBlockedBuff'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists BotBlockedBuffs
+      tags:
+      - BotBlockedBuff
+  /bot_blocked_buffs/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getBotBlockedBuffsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotBlockedBuff'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets BotBlockedBuffs in bulk
+      tags:
+      - BotBlockedBuff
+  /bot_blocked_buffs/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getBotBlockedBuffsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotBlockedBuff'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts BotBlockedBuffs
+      tags:
+      - BotBlockedBuff
   /bot_buff:
     put:
       consumes:
@@ -16494,6 +17863,288 @@ paths:
       summary: Counts BotPets
       tags:
       - BotPet
+  /bot_setting:
+    put:
+      consumes:
+      - application/json
+      operationId: createBotSetting
+      parameters:
+      - description: BotSetting
+        in: body
+        name: bot_setting
+        required: true
+        schema:
+          $ref: '#/definitions/models.BotSetting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotSetting'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates BotSetting
+      tags:
+      - BotSetting
+  /bot_setting/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deleteBotSetting
+      parameters:
+      - description: characterId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes BotSetting
+      tags:
+      - BotSetting
+    get:
+      consumes:
+      - application/json
+      operationId: getBotSetting
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotSetting'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets BotSetting
+      tags:
+      - BotSetting
+    patch:
+      consumes:
+      - application/json
+      operationId: updateBotSetting
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: BotSetting
+        in: body
+        name: bot_setting
+        required: true
+        schema:
+          $ref: '#/definitions/models.BotSetting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotSetting'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates BotSetting
+      tags:
+      - BotSetting
+  /bot_settings:
+    get:
+      consumes:
+      - application/json
+      operationId: listBotSettings
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotSetting'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists BotSettings
+      tags:
+      - BotSetting
+  /bot_settings/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getBotSettingsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotSetting'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets BotSettings in bulk
+      tags:
+      - BotSetting
+  /bot_settings/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getBotSettingsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BotSetting'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts BotSettings
+      tags:
+      - BotSetting
   /bot_spell_casting_chance:
     put:
       consumes:
@@ -23544,6 +25195,288 @@ paths:
       summary: Counts CharacterEnabledtasks
       tags:
       - CharacterEnabledtask
+  /character_evolving_item:
+    put:
+      consumes:
+      - application/json
+      operationId: createCharacterEvolvingItem
+      parameters:
+      - description: CharacterEvolvingItem
+        in: body
+        name: character_evolving_item
+        required: true
+        schema:
+          $ref: '#/definitions/models.CharacterEvolvingItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterEvolvingItem'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates CharacterEvolvingItem
+      tags:
+      - CharacterEvolvingItem
+  /character_evolving_item/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deleteCharacterEvolvingItem
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes CharacterEvolvingItem
+      tags:
+      - CharacterEvolvingItem
+    get:
+      consumes:
+      - application/json
+      operationId: getCharacterEvolvingItem
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterEvolvingItem'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets CharacterEvolvingItem
+      tags:
+      - CharacterEvolvingItem
+    patch:
+      consumes:
+      - application/json
+      operationId: updateCharacterEvolvingItem
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: CharacterEvolvingItem
+        in: body
+        name: character_evolving_item
+        required: true
+        schema:
+          $ref: '#/definitions/models.CharacterEvolvingItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterEvolvingItem'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates CharacterEvolvingItem
+      tags:
+      - CharacterEvolvingItem
+  /character_evolving_items:
+    get:
+      consumes:
+      - application/json
+      operationId: listCharacterEvolvingItems
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterEvolvingItem'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists CharacterEvolvingItems
+      tags:
+      - CharacterEvolvingItem
+  /character_evolving_items/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getCharacterEvolvingItemsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterEvolvingItem'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets CharacterEvolvingItems in bulk
+      tags:
+      - CharacterEvolvingItem
+  /character_evolving_items/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getCharacterEvolvingItemsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterEvolvingItem'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts CharacterEvolvingItems
+      tags:
+      - CharacterEvolvingItem
   /character_exp_modifier:
     put:
       consumes:
@@ -27774,6 +29707,288 @@ paths:
       summary: Updates CharacterPetInventory
       tags:
       - CharacterPetInventory
+  /character_pet_name:
+    put:
+      consumes:
+      - application/json
+      operationId: createCharacterPetName
+      parameters:
+      - description: CharacterPetName
+        in: body
+        name: character_pet_name
+        required: true
+        schema:
+          $ref: '#/definitions/models.CharacterPetName'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterPetName'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates CharacterPetName
+      tags:
+      - CharacterPetName
+  /character_pet_name/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deleteCharacterPetName
+      parameters:
+      - description: characterId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes CharacterPetName
+      tags:
+      - CharacterPetName
+    get:
+      consumes:
+      - application/json
+      operationId: getCharacterPetName
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterPetName'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets CharacterPetName
+      tags:
+      - CharacterPetName
+    patch:
+      consumes:
+      - application/json
+      operationId: updateCharacterPetName
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: CharacterPetName
+        in: body
+        name: character_pet_name
+        required: true
+        schema:
+          $ref: '#/definitions/models.CharacterPetName'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterPetName'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates CharacterPetName
+      tags:
+      - CharacterPetName
+  /character_pet_names:
+    get:
+      consumes:
+      - application/json
+      operationId: listCharacterPetNames
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterPetName'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists CharacterPetNames
+      tags:
+      - CharacterPetName
+  /character_pet_names/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getCharacterPetNamesBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterPetName'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets CharacterPetNames in bulk
+      tags:
+      - CharacterPetName
+  /character_pet_names/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getCharacterPetNamesCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CharacterPetName'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts CharacterPetNames
+      tags:
+      - CharacterPetName
   /character_potionbelt:
     put:
       consumes:
@@ -33828,6 +36043,288 @@ paths:
       summary: Updates DynamicZone
       tags:
       - DynamicZone
+  /dynamic_zone_lockout:
+    put:
+      consumes:
+      - application/json
+      operationId: createDynamicZoneLockout
+      parameters:
+      - description: DynamicZoneLockout
+        in: body
+        name: dynamic_zone_lockout
+        required: true
+        schema:
+          $ref: '#/definitions/models.DynamicZoneLockout'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DynamicZoneLockout'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates DynamicZoneLockout
+      tags:
+      - DynamicZoneLockout
+  /dynamic_zone_lockout/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deleteDynamicZoneLockout
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes DynamicZoneLockout
+      tags:
+      - DynamicZoneLockout
+    get:
+      consumes:
+      - application/json
+      operationId: getDynamicZoneLockout
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DynamicZoneLockout'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets DynamicZoneLockout
+      tags:
+      - DynamicZoneLockout
+    patch:
+      consumes:
+      - application/json
+      operationId: updateDynamicZoneLockout
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: DynamicZoneLockout
+        in: body
+        name: dynamic_zone_lockout
+        required: true
+        schema:
+          $ref: '#/definitions/models.DynamicZoneLockout'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DynamicZoneLockout'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates DynamicZoneLockout
+      tags:
+      - DynamicZoneLockout
+  /dynamic_zone_lockouts:
+    get:
+      consumes:
+      - application/json
+      operationId: listDynamicZoneLockouts
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DynamicZoneLockout'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists DynamicZoneLockouts
+      tags:
+      - DynamicZoneLockout
+  /dynamic_zone_lockouts/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getDynamicZoneLockoutsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DynamicZoneLockout'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets DynamicZoneLockouts in bulk
+      tags:
+      - DynamicZoneLockout
+  /dynamic_zone_lockouts/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getDynamicZoneLockoutsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DynamicZoneLockout'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts DynamicZoneLockouts
+      tags:
+      - DynamicZoneLockout
   /dynamic_zone_member:
     put:
       consumes:
@@ -42839,7 +45336,7 @@ paths:
       - application/json
       operationId: deleteInventory
       parameters:
-      - description: charid
+      - description: characterId
         in: path
         name: id
         required: true
@@ -44065,6 +46562,288 @@ paths:
       summary: Counts Items
       tags:
       - Item
+  /items_evolving_detail:
+    put:
+      consumes:
+      - application/json
+      operationId: createItemsEvolvingDetail
+      parameters:
+      - description: ItemsEvolvingDetail
+        in: body
+        name: items_evolving_detail
+        required: true
+        schema:
+          $ref: '#/definitions/models.ItemsEvolvingDetail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ItemsEvolvingDetail'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates ItemsEvolvingDetail
+      tags:
+      - ItemsEvolvingDetail
+  /items_evolving_detail/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deleteItemsEvolvingDetail
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes ItemsEvolvingDetail
+      tags:
+      - ItemsEvolvingDetail
+    get:
+      consumes:
+      - application/json
+      operationId: getItemsEvolvingDetail
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ItemsEvolvingDetail'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets ItemsEvolvingDetail
+      tags:
+      - ItemsEvolvingDetail
+    patch:
+      consumes:
+      - application/json
+      operationId: updateItemsEvolvingDetail
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ItemsEvolvingDetail
+        in: body
+        name: items_evolving_detail
+        required: true
+        schema:
+          $ref: '#/definitions/models.ItemsEvolvingDetail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ItemsEvolvingDetail'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates ItemsEvolvingDetail
+      tags:
+      - ItemsEvolvingDetail
+  /items_evolving_details:
+    get:
+      consumes:
+      - application/json
+      operationId: listItemsEvolvingDetails
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ItemsEvolvingDetail'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists ItemsEvolvingDetails
+      tags:
+      - ItemsEvolvingDetail
+  /items_evolving_details/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getItemsEvolvingDetailsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ItemsEvolvingDetail'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets ItemsEvolvingDetails in bulk
+      tags:
+      - ItemsEvolvingDetail
+  /items_evolving_details/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getItemsEvolvingDetailsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ItemsEvolvingDetail'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts ItemsEvolvingDetails
+      tags:
+      - ItemsEvolvingDetail
   /keyring:
     put:
       consumes:
@@ -55083,6 +57862,1134 @@ paths:
       summary: Counts PetsEquipmentsets
       tags:
       - PetsEquipmentset
+  /player_event_aa_purchase:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventAaPurchase
+      parameters:
+      - description: PlayerEventAaPurchase
+        in: body
+        name: player_event_aa_purchase
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventAaPurchase'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventAaPurchase'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventAaPurchase
+      tags:
+      - PlayerEventAaPurchase
+  /player_event_aa_purchase/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventAaPurchase
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventAaPurchase
+      tags:
+      - PlayerEventAaPurchase
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventAaPurchase
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventAaPurchase'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventAaPurchase
+      tags:
+      - PlayerEventAaPurchase
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventAaPurchase
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventAaPurchase
+        in: body
+        name: player_event_aa_purchase
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventAaPurchase'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventAaPurchase'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventAaPurchase
+      tags:
+      - PlayerEventAaPurchase
+  /player_event_aa_purchases:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventAaPurchases
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventAaPurchase'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventAaPurchases
+      tags:
+      - PlayerEventAaPurchase
+  /player_event_aa_purchases/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventAaPurchasesBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventAaPurchase'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventAaPurchases in bulk
+      tags:
+      - PlayerEventAaPurchase
+  /player_event_aa_purchases/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventAaPurchasesCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventAaPurchase'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventAaPurchases
+      tags:
+      - PlayerEventAaPurchase
+  /player_event_killed_named_npc:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventKilledNamedNpc
+      parameters:
+      - description: PlayerEventKilledNamedNpc
+        in: body
+        name: player_event_killed_named_npc
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventKilledNamedNpc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNamedNpc'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventKilledNamedNpc
+      tags:
+      - PlayerEventKilledNamedNpc
+  /player_event_killed_named_npc/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventKilledNamedNpc
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventKilledNamedNpc
+      tags:
+      - PlayerEventKilledNamedNpc
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventKilledNamedNpc
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNamedNpc'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventKilledNamedNpc
+      tags:
+      - PlayerEventKilledNamedNpc
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventKilledNamedNpc
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventKilledNamedNpc
+        in: body
+        name: player_event_killed_named_npc
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventKilledNamedNpc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNamedNpc'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventKilledNamedNpc
+      tags:
+      - PlayerEventKilledNamedNpc
+  /player_event_killed_named_npcs:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventKilledNamedNpcs
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNamedNpc'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventKilledNamedNpcs
+      tags:
+      - PlayerEventKilledNamedNpc
+  /player_event_killed_named_npcs/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventKilledNamedNpcsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNamedNpc'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventKilledNamedNpcs in bulk
+      tags:
+      - PlayerEventKilledNamedNpc
+  /player_event_killed_named_npcs/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventKilledNamedNpcsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNamedNpc'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventKilledNamedNpcs
+      tags:
+      - PlayerEventKilledNamedNpc
+  /player_event_killed_npc:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventKilledNpc
+      parameters:
+      - description: PlayerEventKilledNpc
+        in: body
+        name: player_event_killed_npc
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventKilledNpc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNpc'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventKilledNpc
+      tags:
+      - PlayerEventKilledNpc
+  /player_event_killed_npc/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventKilledNpc
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventKilledNpc
+      tags:
+      - PlayerEventKilledNpc
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventKilledNpc
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNpc'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventKilledNpc
+      tags:
+      - PlayerEventKilledNpc
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventKilledNpc
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventKilledNpc
+        in: body
+        name: player_event_killed_npc
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventKilledNpc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNpc'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventKilledNpc
+      tags:
+      - PlayerEventKilledNpc
+  /player_event_killed_npcs:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventKilledNpcs
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNpc'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventKilledNpcs
+      tags:
+      - PlayerEventKilledNpc
+  /player_event_killed_npcs/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventKilledNpcsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNpc'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventKilledNpcs in bulk
+      tags:
+      - PlayerEventKilledNpc
+  /player_event_killed_npcs/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventKilledNpcsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledNpc'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventKilledNpcs
+      tags:
+      - PlayerEventKilledNpc
+  /player_event_killed_raid_npc:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventKilledRaidNpc
+      parameters:
+      - description: PlayerEventKilledRaidNpc
+        in: body
+        name: player_event_killed_raid_npc
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventKilledRaidNpc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledRaidNpc'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventKilledRaidNpc
+      tags:
+      - PlayerEventKilledRaidNpc
+  /player_event_killed_raid_npc/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventKilledRaidNpc
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventKilledRaidNpc
+      tags:
+      - PlayerEventKilledRaidNpc
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventKilledRaidNpc
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledRaidNpc'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventKilledRaidNpc
+      tags:
+      - PlayerEventKilledRaidNpc
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventKilledRaidNpc
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventKilledRaidNpc
+        in: body
+        name: player_event_killed_raid_npc
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventKilledRaidNpc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledRaidNpc'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventKilledRaidNpc
+      tags:
+      - PlayerEventKilledRaidNpc
+  /player_event_killed_raid_npcs:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventKilledRaidNpcs
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledRaidNpc'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventKilledRaidNpcs
+      tags:
+      - PlayerEventKilledRaidNpc
+  /player_event_killed_raid_npcs/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventKilledRaidNpcsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledRaidNpc'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventKilledRaidNpcs in bulk
+      tags:
+      - PlayerEventKilledRaidNpc
+  /player_event_killed_raid_npcs/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventKilledRaidNpcsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventKilledRaidNpc'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventKilledRaidNpcs
+      tags:
+      - PlayerEventKilledRaidNpc
   /player_event_log:
     put:
       consumes:
@@ -55647,6 +59554,2262 @@ paths:
       summary: Counts PlayerEventLogs
       tags:
       - PlayerEventLog
+  /player_event_loot_item:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventLootItem
+      parameters:
+      - description: PlayerEventLootItem
+        in: body
+        name: player_event_loot_item
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventLootItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventLootItem'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventLootItem
+      tags:
+      - PlayerEventLootItem
+  /player_event_loot_item/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventLootItem
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventLootItem
+      tags:
+      - PlayerEventLootItem
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventLootItem
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventLootItem'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventLootItem
+      tags:
+      - PlayerEventLootItem
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventLootItem
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventLootItem
+        in: body
+        name: player_event_loot_item
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventLootItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventLootItem'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventLootItem
+      tags:
+      - PlayerEventLootItem
+  /player_event_loot_items:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventLootItems
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventLootItem'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventLootItems
+      tags:
+      - PlayerEventLootItem
+  /player_event_loot_items/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventLootItemsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventLootItem'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventLootItems in bulk
+      tags:
+      - PlayerEventLootItem
+  /player_event_loot_items/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventLootItemsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventLootItem'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventLootItems
+      tags:
+      - PlayerEventLootItem
+  /player_event_merchant_purchase:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventMerchantPurchase
+      parameters:
+      - description: PlayerEventMerchantPurchase
+        in: body
+        name: player_event_merchant_purchase
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventMerchantPurchase'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantPurchase'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventMerchantPurchase
+      tags:
+      - PlayerEventMerchantPurchase
+  /player_event_merchant_purchase/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventMerchantPurchase
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventMerchantPurchase
+      tags:
+      - PlayerEventMerchantPurchase
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventMerchantPurchase
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantPurchase'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventMerchantPurchase
+      tags:
+      - PlayerEventMerchantPurchase
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventMerchantPurchase
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventMerchantPurchase
+        in: body
+        name: player_event_merchant_purchase
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventMerchantPurchase'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantPurchase'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventMerchantPurchase
+      tags:
+      - PlayerEventMerchantPurchase
+  /player_event_merchant_purchases:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventMerchantPurchases
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantPurchase'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventMerchantPurchases
+      tags:
+      - PlayerEventMerchantPurchase
+  /player_event_merchant_purchases/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventMerchantPurchasesBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantPurchase'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventMerchantPurchases in bulk
+      tags:
+      - PlayerEventMerchantPurchase
+  /player_event_merchant_purchases/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventMerchantPurchasesCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantPurchase'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventMerchantPurchases
+      tags:
+      - PlayerEventMerchantPurchase
+  /player_event_merchant_sell:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventMerchantSell
+      parameters:
+      - description: PlayerEventMerchantSell
+        in: body
+        name: player_event_merchant_sell
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventMerchantSell'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantSell'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventMerchantSell
+      tags:
+      - PlayerEventMerchantSell
+  /player_event_merchant_sell/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventMerchantSell
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventMerchantSell
+      tags:
+      - PlayerEventMerchantSell
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventMerchantSell
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantSell'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventMerchantSell
+      tags:
+      - PlayerEventMerchantSell
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventMerchantSell
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventMerchantSell
+        in: body
+        name: player_event_merchant_sell
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventMerchantSell'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantSell'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventMerchantSell
+      tags:
+      - PlayerEventMerchantSell
+  /player_event_merchant_sells:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventMerchantSells
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantSell'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventMerchantSells
+      tags:
+      - PlayerEventMerchantSell
+  /player_event_merchant_sells/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventMerchantSellsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantSell'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventMerchantSells in bulk
+      tags:
+      - PlayerEventMerchantSell
+  /player_event_merchant_sells/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventMerchantSellsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventMerchantSell'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventMerchantSells
+      tags:
+      - PlayerEventMerchantSell
+  /player_event_npc_handin:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventNpcHandin
+      parameters:
+      - description: PlayerEventNpcHandin
+        in: body
+        name: player_event_npc_handin
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventNpcHandin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandin'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventNpcHandin
+      tags:
+      - PlayerEventNpcHandin
+  /player_event_npc_handin/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventNpcHandin
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventNpcHandin
+      tags:
+      - PlayerEventNpcHandin
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventNpcHandin
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandin'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventNpcHandin
+      tags:
+      - PlayerEventNpcHandin
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventNpcHandin
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventNpcHandin
+        in: body
+        name: player_event_npc_handin
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventNpcHandin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandin'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventNpcHandin
+      tags:
+      - PlayerEventNpcHandin
+  /player_event_npc_handin_entries:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventNpcHandinEntries
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandinEntry'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventNpcHandinEntries
+      tags:
+      - PlayerEventNpcHandinEntry
+  /player_event_npc_handin_entries/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventNpcHandinEntriesBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandinEntry'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventNpcHandinEntries in bulk
+      tags:
+      - PlayerEventNpcHandinEntry
+  /player_event_npc_handin_entries/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventNpcHandinEntriesCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandinEntry'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventNpcHandinEntries
+      tags:
+      - PlayerEventNpcHandinEntry
+  /player_event_npc_handin_entry:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventNpcHandinEntry
+      parameters:
+      - description: PlayerEventNpcHandinEntry
+        in: body
+        name: player_event_npc_handin_entry
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventNpcHandinEntry'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandinEntry'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventNpcHandinEntry
+      tags:
+      - PlayerEventNpcHandinEntry
+  /player_event_npc_handin_entry/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventNpcHandinEntry
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventNpcHandinEntry
+      tags:
+      - PlayerEventNpcHandinEntry
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventNpcHandinEntry
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandinEntry'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventNpcHandinEntry
+      tags:
+      - PlayerEventNpcHandinEntry
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventNpcHandinEntry
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventNpcHandinEntry
+        in: body
+        name: player_event_npc_handin_entry
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventNpcHandinEntry'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandinEntry'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventNpcHandinEntry
+      tags:
+      - PlayerEventNpcHandinEntry
+  /player_event_npc_handins:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventNpcHandins
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandin'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventNpcHandins
+      tags:
+      - PlayerEventNpcHandin
+  /player_event_npc_handins/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventNpcHandinsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandin'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventNpcHandins in bulk
+      tags:
+      - PlayerEventNpcHandin
+  /player_event_npc_handins/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventNpcHandinsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventNpcHandin'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventNpcHandins
+      tags:
+      - PlayerEventNpcHandin
+  /player_event_speech:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventSpeech
+      parameters:
+      - description: PlayerEventSpeech
+        in: body
+        name: player_event_speech
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventSpeech'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventSpeech'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventSpeech
+      tags:
+      - PlayerEventSpeech
+  /player_event_speech/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventSpeech
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventSpeech
+      tags:
+      - PlayerEventSpeech
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventSpeech
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventSpeech'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventSpeech
+      tags:
+      - PlayerEventSpeech
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventSpeech
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventSpeech
+        in: body
+        name: player_event_speech
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventSpeech'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventSpeech'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventSpeech
+      tags:
+      - PlayerEventSpeech
+  /player_event_speeches:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventSpeeches
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventSpeech'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventSpeeches
+      tags:
+      - PlayerEventSpeech
+  /player_event_speeches/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventSpeechesBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventSpeech'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventSpeeches in bulk
+      tags:
+      - PlayerEventSpeech
+  /player_event_speeches/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventSpeechesCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventSpeech'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventSpeeches
+      tags:
+      - PlayerEventSpeech
+  /player_event_trade:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventTrade
+      parameters:
+      - description: PlayerEventTrade
+        in: body
+        name: player_event_trade
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventTrade'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTrade'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventTrade
+      tags:
+      - PlayerEventTrade
+  /player_event_trade/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventTrade
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventTrade
+      tags:
+      - PlayerEventTrade
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventTrade
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTrade'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventTrade
+      tags:
+      - PlayerEventTrade
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventTrade
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventTrade
+        in: body
+        name: player_event_trade
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventTrade'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTrade'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventTrade
+      tags:
+      - PlayerEventTrade
+  /player_event_trade_entries:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventTradeEntries
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTradeEntry'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventTradeEntries
+      tags:
+      - PlayerEventTradeEntry
+  /player_event_trade_entries/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventTradeEntriesBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTradeEntry'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventTradeEntries in bulk
+      tags:
+      - PlayerEventTradeEntry
+  /player_event_trade_entries/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventTradeEntriesCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTradeEntry'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventTradeEntries
+      tags:
+      - PlayerEventTradeEntry
+  /player_event_trade_entry:
+    put:
+      consumes:
+      - application/json
+      operationId: createPlayerEventTradeEntry
+      parameters:
+      - description: PlayerEventTradeEntry
+        in: body
+        name: player_event_trade_entry
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventTradeEntry'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTradeEntry'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates PlayerEventTradeEntry
+      tags:
+      - PlayerEventTradeEntry
+  /player_event_trade_entry/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deletePlayerEventTradeEntry
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes PlayerEventTradeEntry
+      tags:
+      - PlayerEventTradeEntry
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventTradeEntry
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTradeEntry'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventTradeEntry
+      tags:
+      - PlayerEventTradeEntry
+    patch:
+      consumes:
+      - application/json
+      operationId: updatePlayerEventTradeEntry
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PlayerEventTradeEntry
+        in: body
+        name: player_event_trade_entry
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerEventTradeEntry'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTradeEntry'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates PlayerEventTradeEntry
+      tags:
+      - PlayerEventTradeEntry
+  /player_event_trades:
+    get:
+      consumes:
+      - application/json
+      operationId: listPlayerEventTrades
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTrade'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists PlayerEventTrades
+      tags:
+      - PlayerEventTrade
+  /player_event_trades/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getPlayerEventTradesBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTrade'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets PlayerEventTrades in bulk
+      tags:
+      - PlayerEventTrade
+  /player_event_trades/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getPlayerEventTradesCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PlayerEventTrade'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts PlayerEventTrades
+      tags:
+      - PlayerEventTrade
   /player_titleset:
     put:
       consumes:
@@ -59595,6 +65758,288 @@ paths:
       summary: Counts SharedTasks
       tags:
       - SharedTask
+  /sharedbank:
+    put:
+      consumes:
+      - application/json
+      operationId: createSharedbank
+      parameters:
+      - description: Sharedbank
+        in: body
+        name: sharedbank
+        required: true
+        schema:
+          $ref: '#/definitions/models.Sharedbank'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Sharedbank'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates Sharedbank
+      tags:
+      - Sharedbank
+  /sharedbank/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deleteSharedbank
+      parameters:
+      - description: accountId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes Sharedbank
+      tags:
+      - Sharedbank
+    get:
+      consumes:
+      - application/json
+      operationId: getSharedbank
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Sharedbank'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets Sharedbank
+      tags:
+      - Sharedbank
+    patch:
+      consumes:
+      - application/json
+      operationId: updateSharedbank
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Sharedbank
+        in: body
+        name: sharedbank
+        required: true
+        schema:
+          $ref: '#/definitions/models.Sharedbank'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Sharedbank'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates Sharedbank
+      tags:
+      - Sharedbank
+  /sharedbanks:
+    get:
+      consumes:
+      - application/json
+      operationId: listSharedbanks
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Sharedbank'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists Sharedbanks
+      tags:
+      - Sharedbank
+  /sharedbanks/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getSharedbanksBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Sharedbank'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets Sharedbanks in bulk
+      tags:
+      - Sharedbank
+  /sharedbanks/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getSharedbanksCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Sharedbank'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts Sharedbanks
+      tags:
+      - Sharedbank
   /skill_cap:
     put:
       consumes:
@@ -67623,6 +74068,288 @@ paths:
       summary: Counts ZonePoints
       tags:
       - ZonePoint
+  /zone_state_spawn:
+    put:
+      consumes:
+      - application/json
+      operationId: createZoneStateSpawn
+      parameters:
+      - description: ZoneStateSpawn
+        in: body
+        name: zone_state_spawn
+        required: true
+        schema:
+          $ref: '#/definitions/models.ZoneStateSpawn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ZoneStateSpawn'
+            type: array
+        "500":
+          description: Error inserting entity
+          schema:
+            type: string
+      summary: Creates ZoneStateSpawn
+      tags:
+      - ZoneStateSpawn
+  /zone_state_spawn/{id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: deleteZoneStateSpawn
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Entity deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error deleting entity
+          schema:
+            type: string
+      summary: Deletes ZoneStateSpawn
+      tags:
+      - ZoneStateSpawn
+    get:
+      consumes:
+      - application/json
+      operationId: getZoneStateSpawn
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ZoneStateSpawn'
+            type: array
+        "404":
+          description: Entity not found
+          schema:
+            type: string
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets ZoneStateSpawn
+      tags:
+      - ZoneStateSpawn
+    patch:
+      consumes:
+      - application/json
+      operationId: updateZoneStateSpawn
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ZoneStateSpawn
+        in: body
+        name: zone_state_spawn
+        required: true
+        schema:
+          $ref: '#/definitions/models.ZoneStateSpawn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ZoneStateSpawn'
+            type: array
+        "404":
+          description: Cannot find entity
+          schema:
+            type: string
+        "500":
+          description: Error updating entity
+          schema:
+            type: string
+      summary: Updates ZoneStateSpawn
+      tags:
+      - ZoneStateSpawn
+  /zone_state_spawns:
+    get:
+      consumes:
+      - application/json
+      operationId: listZoneStateSpawns
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ZoneStateSpawn'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Lists ZoneStateSpawns
+      tags:
+      - ZoneStateSpawn
+  /zone_state_spawns/bulk:
+    post:
+      consumes:
+      - application/json
+      operationId: getZoneStateSpawnsBulk
+      parameters:
+      - description: body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/crudcontrollers.BulkFetchByIdsGetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ZoneStateSpawn'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Gets ZoneStateSpawns in bulk
+      tags:
+      - ZoneStateSpawn
+  /zone_state_spawns/count:
+    get:
+      consumes:
+      - application/json
+      operationId: getZoneStateSpawnsCount
+      parameters:
+      - description: Relationships [all] for all [number] for depth of relationships
+          to load or [.] separated relationship names
+        in: query
+        name: includes
+        type: string
+      - description: 'Filter on specific fields. Multiple conditions [.] separated
+          Example: col_like_value.col2__val2'
+        in: query
+        name: where
+        type: string
+      - description: 'Filter on specific fields (Chained ors). Multiple conditions
+          [.] separated Example: col_like_value.col2__val2'
+        in: query
+        name: whereOr
+        type: string
+      - description: 'Group by field. Multiple conditions [.] separated Example: field1.field2'
+        in: query
+        name: groupBy
+        type: string
+      - description: 'Rows to limit in response (Default: 10,000)'
+        in: query
+        name: limit
+        type: string
+      - description: Pagination page
+        in: query
+        name: page
+        type: integer
+      - description: Order by [field]
+        in: query
+        name: orderBy
+        type: string
+      - description: Order by field direction
+        in: query
+        name: orderDirection
+        type: string
+      - description: Column names [.] separated to fetch specific fields in response
+        in: query
+        name: select
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ZoneStateSpawn'
+            type: array
+        "500":
+          description: Bad query request
+          schema:
+            type: string
+      summary: Counts ZoneStateSpawns
+      tags:
+      - ZoneStateSpawn
   /zones:
     get:
       consumes:
