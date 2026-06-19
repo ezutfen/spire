@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import {ROUTE} from "@/routes";
-import * as util from "util";
+import * as util from "@/app/utility/util-shim";
 import {AppEnv} from "@/app/env/app-env";
 import {EventBus} from "@/app/event-bus/event-bus";
 import qs from "qs";

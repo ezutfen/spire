@@ -160,7 +160,7 @@ import {scrollToTarget}    from "../../app/utility/scrollToTarget";
 import {debounce}          from "../../app/utility/debounce";
 import BotSpellPreview     from "../../components/preview/BotSpellPreview";
 import EqDebug             from "../../components/eq-ui/EQDebug";
-import util                from "util";
+import util                from "@/app/utility/util-shim";
 
 const BotSpellsClient = (new NpcSpellApi(...SpireApi.cfg()))
 

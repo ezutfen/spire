@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import util               from "util";
+import util               from "@/app/utility/util-shim";
 import {RACES}            from "@/app/constants/eq-race-constants"
 import PageHeader         from "@/components/layout/PageHeader";
 import EqWindow           from "@/components/eq-ui/EQWindow";

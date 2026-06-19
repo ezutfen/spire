@@ -1684,7 +1684,7 @@ import {debounce}                     from "../../app/utility/debounce";
 import EqWindowSimple                 from "../../components/eq-ui/EQWindowSimple";
 import SpellConeVisualizer            from "./components/SpellConeVisualizer";
 import SpellNimbusAnimationSelector   from "./components/SpellNimbusAnimationSelector";
-import util                           from "util";
+import util                           from "@/app/utility/util-shim";
 import RangeVisualizer                from "../../components/tools/RangeVisualizer";
 import SpellTeleportZoneSelectorZone  from "./components/SpellTeleportZoneSelectorZone";
 import SpellTeleportZoneSelectorPet   from "./components/SpellTeleportZoneSelectorPet";

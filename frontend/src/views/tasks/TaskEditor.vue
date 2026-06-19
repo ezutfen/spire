@@ -1177,7 +1177,7 @@
 <script type="ts">
 import EqWindow from "@/components/eq-ui/EQWindow.vue";
 import ContentArea from "@/components/layout/ContentArea.vue";
-import util from "util";
+import util from "@/app/utility/util-shim";
 import {ROUTE} from "@/routes";
 import {Tasks} from "@/app/tasks";
 import EqCheckbox from "@/components/eq-ui/EQCheckbox.vue";

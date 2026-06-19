@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import util from "util";
+import util from "@/app/utility/util-shim";
 import ClipBoard from "@/app/clipboard/clipboard";
 import Analytics from "@/app/analytics/analytics";
 import {Notify} from "@/app/Notify";

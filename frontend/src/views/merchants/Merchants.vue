@@ -324,7 +324,7 @@ import {chunk}               from "../../app/utility/chunk";
 import {Npcs}                from "../../app/npcs";
 import MerchantlistEntryEdit from "./components/MerchantlistEntryEdit";
 import MerchantEdit          from "./MerchantEdit";
-import util                  from "util";
+import util                  from "@/app/utility/util-shim";
 
 const MILLISECONDS_BEFORE_WINDOW_RESET = 5000;
 

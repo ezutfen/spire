@@ -530,7 +530,7 @@ import EqWindow                            from "@/components/eq-ui/EQWindow";
 import {DB_BARD_SKILLS, DB_SKILLS}         from "@/app/constants/eq-skill-constants";
 import {AUG_TYPES}                         from "@/app/constants/eq-aug-constants";
 import {Spells}                            from "@/app/spells";
-import util                                from "util";
+import util                                from "@/app/utility/util-shim";
 import {ROUTE}                             from "@/routes";
 import EqCashDisplay                       from "@/components/eq-ui/EqCashDisplay";
 import {Items}                             from "@/app/items";

@@ -195,7 +195,7 @@ import MarkdownIt from "markdown-it";
 
 import EqWindow   from "@/components/eq-ui/EQWindow.vue";
 import {SpireApi} from "@/app/api/spire-api";
-import util       from "util";
+import util       from "@/app/utility/util-shim";
 import {ROUTE}    from "@/routes";
 import EqTabs     from "@/components/eq-ui/EQTabs.vue";
 import EqTab      from "@/components/eq-ui/EQTab.vue";

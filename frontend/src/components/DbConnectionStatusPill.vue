@@ -30,7 +30,7 @@
 import {SpireApi} from "@/app/api/spire-api";
 import {EventBus} from "@/app/event-bus/event-bus";
 import {ROUTE}    from "@/routes";
-import util       from "util";
+import util       from "@/app/utility/util-shim";
 
 export default {
   name: "DbConnectionStatusPill",

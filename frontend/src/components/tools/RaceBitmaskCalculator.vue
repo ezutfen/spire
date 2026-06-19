@@ -42,7 +42,7 @@
 
 <script>
 import {DB_PLAYER_RACES} from "@/app/constants/eq-races-constants";
-import util              from "util";
+import util              from "@/app/utility/util-shim";
 
 export default {
   name: "RaceBitmaskCalculator",

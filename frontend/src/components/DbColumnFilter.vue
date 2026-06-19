@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import util from "util";
+import util from "@/app/utility/util-shim";
 
 export default {
   name: "DbColumnFilter",

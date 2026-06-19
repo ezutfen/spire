@@ -64,7 +64,7 @@ import {TELEPORT_ZONE_SELECTOR_TYPE} from "@/app/constants/eq-spell-constants";
 import EqWindowSimple                from "@/components/eq-ui/EQWindowSimple";
 import {HorseApi}                    from "@/app/api/api/horse-api";
 import {SpireApi}              from "@/app/api/spire-api";
-import util                          from "util";
+import util                          from "@/app/utility/util-shim";
 import Expansions                    from "@/app/utility/expansions";
 import EqCheckbox                    from "@/components/eq-ui/EQCheckbox";
 import {SpireQueryBuilder}           from "@/app/api/spire-query-builder";

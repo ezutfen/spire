@@ -224,7 +224,7 @@ import {BotSpellsEntryApi}       from "../../app/api/api/bot-spells-entry-api";
 import {scrollToTarget}          from "../../app/utility/scrollToTarget";
 import InfoErrorBanner           from "../../components/InfoErrorBanner";
 import {ROUTE}                   from "../../routes";
-import util                      from "util";
+import util                      from "@/app/utility/util-shim";
 import EqCheckbox                from "../../components/eq-ui/EQCheckbox";
 import SpellPopover              from "../../components/SpellPopover";
 import {BOT_SPELL_TYPES}         from "../../app/constants/eq-bot-spells";

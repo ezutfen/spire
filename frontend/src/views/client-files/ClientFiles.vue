@@ -66,7 +66,7 @@ import {SpireApi}         from "../../app/api/spire-api";
 import EqWindowSimple     from "../../components/eq-ui/EQWindowSimple";
 import EqWindow           from "../../components/eq-ui/EQWindow";
 import LoaderFakeProgress from "../../components/LoaderFakeProgress";
-import util               from "util";
+import util               from "@/app/utility/util-shim";
 import ContentArea        from "../../components/layout/ContentArea";
 
 export default {

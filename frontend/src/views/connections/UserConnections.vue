@@ -226,7 +226,7 @@
 
 <script>
 import { nextTick }                from "vue";
-import util                         from "util";
+import util                         from "@/app/utility/util-shim";
 import {ROUTE}                      from "@/routes";
 import {SpireApi}                   from "@/app/api/spire-api";
 import {EventBus}                   from "@/app/event-bus/event-bus";

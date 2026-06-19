@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
         '~@': fileURLToPath(new URL('./src', import.meta.url)),
         '@/app/utility/debounce': fileURLToPath(new URL('./src/app/utility/debounce.ts', import.meta.url)),
-        util: 'util',
+        util: fileURLToPath(new URL('./src/app/utility/util-shim.ts', import.meta.url)),
         path: 'path-browserify',
         querystring: 'querystring-es3',
         vue: '@vue/compat',

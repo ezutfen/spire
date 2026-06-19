@@ -26,7 +26,7 @@ import MarkdownIt      from "markdown-it";
 import EqWindow        from "@/components/eq-ui/EQWindow";
 import UserContext     from "@/app/user/UserContext";
 import {SpireApi}      from "../app/api/spire-api";
-import * as util       from "util";
+import * as util       from "@/app/utility/util-shim";
 import VideoViewer     from "../app/video-viewer/video-viewer";
 import LazyImageLoader from "@/app/lazy-image-load/lazy-image-load";
 

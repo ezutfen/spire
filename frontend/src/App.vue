@@ -19,7 +19,7 @@
 <script>
 
 import "ninja-keys";
-import * as util from "util";
+import * as util from "@/app/utility/util-shim";
 import {App} from "@/constants/app";
 import {EventBus} from "@/app/event-bus/event-bus";
 import {AppEnv} from "@/app/env/app-env";

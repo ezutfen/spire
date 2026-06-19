@@ -135,7 +135,7 @@ import EqWindowSimple     from "../../../components/eq-ui/EQWindowSimple";
 import {TASK_TYPE}        from "@/app/constants/eq-task-constants";
 import {Tasks}            from "@/app/tasks";
 import {Zones}            from "@/app/zones";
-import util               from "util";
+import util               from "@/app/utility/util-shim";
 import ItemPopover        from "@/components/ItemPopover";
 import {Items}            from "@/app/items";
 import EqCashDisplay      from "@/components/eq-ui/EqCashDisplay";

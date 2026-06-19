@@ -1677,7 +1677,7 @@ import ItemStatScaleTool       from "./components/ItemStatScalePercentage";
 import ItemStatScalePercentage from "./components/ItemStatScalePercentage";
 import ItemStatScaleRange      from "./components/ItemStatScaleRange";
 import ItemColorSelector       from "./components/ItemColorSelector";
-import * as util               from "util";
+import * as util               from "@/app/utility/util-shim";
 import {RACES}              from "../../app/constants/eq-race-constants";
 import ItemMaterialPreview  from "./components/ItemMaterialPreview";
 import {BODYTYPES}          from "../../app/constants/eq-bodytype-constants";

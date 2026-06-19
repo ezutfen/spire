@@ -53,7 +53,7 @@
 <script>
 import {App}                   from "@/constants/app";
 import {DB_PLAYER_CLASSES_ALL} from "@/app/constants/eq-classes-constants";
-import util                    from "util";
+import util                    from "@/app/utility/util-shim";
 
 export default {
   name: "ClassBitmaskCalculator",
