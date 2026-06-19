@@ -66,7 +66,7 @@ export default {
       timer: null,
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timer)
   },
   mounted() {

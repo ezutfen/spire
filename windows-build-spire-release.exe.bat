@@ -1,8 +1,5 @@
 START /wait taskkill /f /im spire.exe
 
-:: packr for packing web assets into binary
-go install github.com/gobuffalo/packr/packr
-
 :: Install node env
 call npm install -g win-node-env
 
@@ -16,6 +13,4 @@ cd frontend && call npm run build & cd ..
 
 @REM xcopy "frontend\dist\" "public\" /s /e /y
 
-:: Pack frontend assets into binary
-packr clean
-packr build
+go build -o spire.exe

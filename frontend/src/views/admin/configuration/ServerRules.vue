@@ -22,10 +22,9 @@
 
       <div class="row">
         <div class="col-11">
-          <b-form-input
+          <input
             type="text"
             class="form-control list-search"
-            autofocus
             @keyup="updateQueryState()"
             v-model="search"
             placeholder="Search rules..."

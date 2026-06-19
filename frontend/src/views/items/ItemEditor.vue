@@ -26,7 +26,7 @@
             @on-selected="tabSelected = $event; updateQueryState()"
             id="item-edit-card"
             class="item-edit-card"
-            @mouseover.native="previewItem"
+            @mouseover="previewItem"
           >
             <eq-tab
               name="General"
@@ -1554,7 +1554,7 @@
           v-if="drawAugmentTypeCalculatorActive && item"
         >
           <aug-bitmask-calculator
-            :inputData.sync="item.augtype"
+            v-model:inputData="item.augtype"
             :mask="item.augtype"
           />
         </eq-window>
@@ -1677,7 +1677,7 @@ import ItemStatScaleTool       from "./components/ItemStatScalePercentage";
 import ItemStatScalePercentage from "./components/ItemStatScalePercentage";
 import ItemStatScaleRange      from "./components/ItemStatScaleRange";
 import ItemColorSelector       from "./components/ItemColorSelector";
-import * as util               from "util";
+import * as util               from "@/app/utility/util-shim";
 import {RACES}              from "../../app/constants/eq-race-constants";
 import ItemMaterialPreview  from "./components/ItemMaterialPreview";
 import {BODYTYPES}          from "../../app/constants/eq-bodytype-constants";
@@ -1981,7 +1981,7 @@ export default {
       immediate: true,
     },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
   },
   mounted() {

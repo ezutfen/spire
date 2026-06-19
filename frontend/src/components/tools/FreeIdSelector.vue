@@ -58,7 +58,7 @@
 
 <script>
 import {SpireApi} from "../../app/api/spire-api";
-import * as util  from "util";
+import * as util  from "@/app/utility/util-shim";
 import EqTabs           from "../eq-ui/EQTabs";
 import EqTab            from "../eq-ui/EQTab";
 

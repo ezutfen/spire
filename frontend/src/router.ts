@@ -1,16 +1,13 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import {ROUTE} from "@/routes";
-import * as util from "util";
+import * as util from "@/app/utility/util-shim";
 import {AppEnv} from "@/app/env/app-env";
 import {EventBus} from "@/app/event-bus/event-bus";
 import qs from "qs";
 import {scrollToHash} from "@/app/utility/scrollToTarget";
 
-Vue.use(Router)
-
-const router = new Router({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   linkActiveClass: 'active',
   linkExactActiveClass: 'active',
   stringifyQuery: query => {
@@ -45,7 +42,7 @@ const router = new Router({
           resolve(savedPosition)
         } else {
           if (Object.keys(to.query).length === 0) {
-            resolve({x: 0, y: 0})
+            resolve({left: 0, top: 0})
           }
         }
       }, 400)

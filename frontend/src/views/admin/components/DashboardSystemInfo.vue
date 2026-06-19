@@ -82,8 +82,6 @@
 </template>
 
 <script>
-import * as util from 'util'
-
 export default {
   name: 'DashboardSystemInfo',
   props: {
@@ -137,14 +135,7 @@ export default {
       return (Object.keys(this.sysinfo).length > 0 ? this.sysinfo.network.stats[0].rx_sec : 0)
     },
     osDisplay: function () {
-      return util.format(
-        '%s %s %s (%s) %s',
-        this.ucfirst(this.sysinfo.os.platform),
-        this.sysinfo.os.distro,
-        this.sysinfo.os.release,
-        this.sysinfo.os.codename,
-        this.sysinfo.os.arch
-      )
+      return `${this.ucfirst(this.sysinfo.os.platform)} ${this.sysinfo.os.distro} ${this.sysinfo.os.release} (${this.sysinfo.os.codename}) ${this.sysinfo.os.arch}`
     }
   }
 }

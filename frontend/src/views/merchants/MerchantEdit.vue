@@ -196,7 +196,7 @@ import {Merchants}               from "../../app/merchants";
 import ContentArea               from "../../components/layout/ContentArea";
 import {ROUTE}                   from "../../routes";
 import {Zones}                   from "../../app/zones";
-import util                      from "util";
+import util                      from "@/app/utility/util-shim";
 import {Items}                   from "../../app/items";
 import ItemSelector              from "../../components/selectors/ItemSelector";
 import MerchantlistEntryEdit     from "./components/MerchantlistEntryEdit";

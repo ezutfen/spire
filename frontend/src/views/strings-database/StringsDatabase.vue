@@ -173,7 +173,7 @@ import LoaderFakeProgress from "../../components/LoaderFakeProgress";
 import {ROUTE}             from "../../routes";
 import {DB_STR_TYPES}      from "../../app/constants/eq-db-str-constants";
 import {EditFormFieldUtil} from "../../app/forms/edit-form-field-util";
-import util                from "util";
+import util                from "@/app/utility/util-shim";
 import {SpireQueryBuilder} from "../../app/api/spire-query-builder";
 import InfoErrorBanner     from "../../components/InfoErrorBanner";
 

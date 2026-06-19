@@ -82,6 +82,8 @@
 </template>
 
 <script>
+import MarkdownIt from "markdown-it";
+
 import {LocalSettings} from "@/app/local-settings/localsettings";
 import {SpireApi} from "@/app/api/spire-api";
 import InfoErrorBanner from "@/components/InfoErrorBanner.vue";
@@ -116,7 +118,7 @@ export default {
   },
   watch: {
     release() {
-      const md = require("markdown-it")({
+      const md = new MarkdownIt({
         html: true,
         breaks: true,
         linkify: true

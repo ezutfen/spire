@@ -13,7 +13,7 @@ import {
 import {DB_RACE_NAMES} from "@/app/constants/eq-races-constants";
 import {DB_BARD_SKILLS, DB_SKILLS} from "@/app/constants/eq-skill-constants";
 import {BODYTYPES} from "@/app/constants/eq-bodytype-constants";
-import util from "util";
+import util from "@/app/utility/util-shim";
 import {DB_CLASSES, DB_CLASSES_WEAR_SHORT} from "@/app/constants/eq-classes-constants";
 import {DbStrApi, SpellsNewApi} from "@/app/api";
 import {SpireApi} from "./api/spire-api";

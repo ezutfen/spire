@@ -89,7 +89,7 @@ import InfoErrorBanner from "../../components/InfoErrorBanner";
 import {SpireApi}      from "../../app/api/spire-api";
 import Tablesort       from "../../app/utility/tablesort";
 import {ROUTE}         from "../../routes";
-import util            from "util";
+import util            from "@/app/utility/util-shim";
 import Time            from "@/app/time/time";
 
 export default {

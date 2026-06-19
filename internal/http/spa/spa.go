@@ -1,11 +1,15 @@
 package spa
 
 import (
-	"github.com/EQEmu/spire/internal/logger"
+	"io/fs"
+	"os"
+	"path/filepath"
 	"strings"
 
+	frontenddist "github.com/EQEmu/spire/frontend"
+	"github.com/EQEmu/spire/internal/logger"
+
 	"github.com/EQEmu/spire/internal/env"
-	"github.com/gobuffalo/packr"
 )
 
 type Spa struct {
@@ -25,14 +29,18 @@ const (
 )
 
 func NewSpa(logger *logger.AppLogger) *Spa {
-	// This is merely a no-op and simply informs the packr CLI utility what it needs to bundle
-	// since it parses the code separately on its own to know where to bundle
-	_ = packr.NewBox(SpireLocalBasePath)
+	assets, err := fs.Sub(frontenddist.DistFS, "dist")
+	if err != nil {
+		logger.Error().Err(err).Msg("error creating embedded frontend fs, falling back to local dist")
+		assets = os.DirFS(filepath.Clean(SpireLocalBasePath))
+	}
 
 	return &Spa{
 		logger: logger,
 		spa: NewPackedSpaService(
-			logger, PackedSpaServeConfig{
+			logger,
+			assets,
+			PackedSpaServeConfig{
 				BasePath:      SpireBasePath,
 				LocalBasePath: SpireLocalBasePath,
 				SpaIndex:      SpireSpaIndex,

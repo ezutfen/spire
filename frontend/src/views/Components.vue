@@ -242,7 +242,7 @@
         <eq-window style="width: 100%">
           <npc-special-abilities
             :show-special-abilities-result="true"
-            :inputData.sync="specialAbilityInput"
+            v-model:inputData="specialAbilityInput"
             :abilities="specialAbilityInput"
           />
 

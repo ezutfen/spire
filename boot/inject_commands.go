@@ -11,35 +11,10 @@ import (
 	"github.com/EQEmu/spire/internal/spire"
 	"github.com/EQEmu/spire/internal/user"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/google/wire"
 	"github.com/spf13/cobra"
 )
 
-// commandSet is a Wire provider set that returns a slice of commands
-var commandSet = wire.NewSet(
-	cmd.NewHelloWorldCommand,
-	user.NewCreateCommand,
-	model.NewGeneratorCommand,
-	cmd.NewHttpServeCommand,
-	questapi.NewParseCommand,
-	cmd.NewRoutesListCommand,
-	spire.NewMigrateCommand,
-	questapi.NewExampleTestCommand,
-	generators.NewRaceModelMapsCommand,
-	cmd.NewTestFilesystemCommand,
-	spire.NewInitCommand,
-	user.NewChangePasswordCommand,
-	spire.NewCrashAnalyticsCommand,
-	eqemuserver.NewUpdateCommand,
-	eqemuserver.NewLauncherCmd,
-	eqemuserver.NewLauncherShimCmd,
-	eqtraders.NewScrapeCommand,
-	eqtraders.NewImportCommand,
-	eqemuchangelog.NewChangelogCommand,
-	ProvideCommands,
-)
-
-// ProvideCommands is a Wire provider function that returns a slice of commands
+// ProvideCommands returns the application command list in startup order.
 func ProvideCommands(
 	helloWorldCommand *cmd.HelloWorldCommand,
 	userCreateCommand *user.CreateCommand,

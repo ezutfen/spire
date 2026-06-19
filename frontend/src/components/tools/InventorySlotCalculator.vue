@@ -55,7 +55,7 @@
 <script>
 import {PLAYER_INVENTORY_SLOT, PLAYER_INVENTORY_SLOTS} from "@/app/constants/eq-inventory-constants";
 import {App}                                           from "@/constants/app";
-import util                                            from "util";
+import util                                            from "@/app/utility/util-shim";
 
 export default {
   name: "InventorySlotCalculator",

@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import util       from "util";
 import {SpireApi} from "@/app/api/spire-api";
 import EqWindow   from "@/components/eq-ui/EQWindow.vue";
 //
@@ -62,11 +61,7 @@ export default {
   },
   methods: {
     download(a) {
-      return util.format(
-        "%s/eqemuserver/export-client-file/%s",
-        SpireApi.getBaseV1Path(),
-        a.path,
-      )
+      return `${SpireApi.getBaseV1Path()}/eqemuserver/export-client-file/${a.path}`
     }
   },
 }

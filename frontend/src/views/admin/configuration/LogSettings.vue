@@ -23,13 +23,12 @@
       <div style="max-height: 80vh; overflow-y: scroll; overflow-x: hidden">
         <div class="row mb-3">
           <div class="col-11">
-            <b-form-input
+            <input
               type="text"
               class="form-control list-search"
               @keyup="updateQueryState()"
               v-model="search"
               placeholder="Search log settings..."
-              autofocus
             />
           </div>
 
@@ -258,7 +257,6 @@ import {LogsysCategoryApi} from "@/app/api/api/logsys-category-api";
 import EqCheckbox          from "@/components/eq-ui/EQCheckbox.vue";
 import EqDebug             from "@/components/eq-ui/EQDebug.vue";
 import InfoErrorBanner     from "@/components/InfoErrorBanner.vue";
-import util                from "util";
 import {DiscordWebhookApi} from "@/app/api/api/discord-webhook-api";
 import {ROUTE}             from "@/routes";
 
@@ -352,11 +350,7 @@ export default {
           // we have to queue timeout to reset the notification dismiss timer
           setTimeout(() => {
             this.notification =
-              util.format(
-                "Settings updated for [%s] (%s)!",
-                e.log_category_description,
-                e.log_category_id
-              )
+              `Settings updated for [${e.log_category_description}] (${e.log_category_id})!`
           }, 1)
 
           const r = await SpireApi.v1().post("eqemuserver/reload/logs")

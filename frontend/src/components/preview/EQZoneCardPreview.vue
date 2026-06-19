@@ -306,7 +306,7 @@ import {Npcs}              from "../../app/npcs";
 import NpcPopover          from "../NpcPopover";
 import {EventBus}          from "../../app/event-bus/event-bus";
 import LoaderFakeProgress  from "../LoaderFakeProgress";
-import util                from "util";
+import util                from "@/app/utility/util-shim";
 import {ROUTE}             from "../../routes";
 import {Spawn}             from "../../app/spawn";
 
@@ -328,7 +328,7 @@ export default {
     // cycle background images
     this.interval = setInterval(this.setBackgroundImage, 3 * 1000)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.interval) {
       clearInterval(this.interval)
     }

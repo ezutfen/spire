@@ -24,7 +24,7 @@
 
 <script>
 import EqAssets from "../../../app/eq-assets/eq-assets";
-import util     from "util";
+import util     from "@/app/utility/util-shim";
 
 export default {
   name: "SpellIconSelector",

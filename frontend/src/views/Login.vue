@@ -141,15 +141,14 @@ export default {
     this.githubAuthEnabled = AppEnv.isGithubAuthEnabled()
 
     // check query params user,password,redirect
-    this.$router.onReady(async () => {
-      const query = this.$route.query
-      if (query && query.user && query.password) {
-        console.log("login with query params")
-        this.username = query.user
-        this.password = query.password
-        await this.loginSpire()
-      }
-    })
+    await this.$router.isReady()
+    const query = this.$route.query
+    if (query && query.user && query.password) {
+      console.log("login with query params")
+      this.username = query.user
+      this.password = query.password
+      await this.loginSpire()
+    }
   },
   methods: {
     async loginSpire() {

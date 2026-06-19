@@ -12,7 +12,7 @@
  * @param {Boolean} whether to execute at the beginning (`false`)
  * @api public
  */
-function debounce(func, wait, immediate){
+export function debounce(func, wait, immediate){
     var timeout, args, context, timestamp, result;
     if (null == wait) wait = 100;
 
@@ -64,7 +64,4 @@ function debounce(func, wait, immediate){
     return debounced;
 };
 
-// Adds compatibility for ES modules
-debounce.debounce = debounce;
-
-module.exports = debounce;
+export default debounce;

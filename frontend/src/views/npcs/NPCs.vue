@@ -165,7 +165,7 @@ import {DbSchema}              from "../../app/db-schema";
 import {ROUTE}                 from "../../routes";
 import {EditFormFieldUtil} from "../../app/forms/edit-form-field-util";
 import NpcsBulkEditor      from "./components/NpcsBulkEditor";
-import util                from "util";
+import util                from "@/app/utility/util-shim";
 import NpcPopover              from "../../components/NpcPopover";
 import {Npcs}                  from "../../app/npcs";
 
@@ -210,7 +210,7 @@ export default {
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
 
     if (this.interval) {

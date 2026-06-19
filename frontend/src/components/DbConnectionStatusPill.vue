@@ -30,7 +30,7 @@
 import {SpireApi} from "@/app/api/spire-api";
 import {EventBus} from "@/app/event-bus/event-bus";
 import {ROUTE}    from "@/routes";
-import util       from "util";
+import util       from "@/app/utility/util-shim";
 
 export default {
   name: "DbConnectionStatusPill",
@@ -47,7 +47,7 @@ export default {
   created() {
     EventBus.$on("DB_CONNECTION_CHANGE", this.fetchConnection);
   },
-  destroyed() {
+  unmounted() {
     EventBus.$off("DB_CONNECTION_CHANGE", this.fetchConnection);
   },
 

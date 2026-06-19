@@ -281,7 +281,7 @@ export default {
 
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     VideoViewer.destroyScrollListener()
   },
   props: {

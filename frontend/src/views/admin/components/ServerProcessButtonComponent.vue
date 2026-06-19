@@ -319,7 +319,7 @@ export default {
     window.addEventListener('keypress', this.keypressHandler)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('keypress', this.keypressHandler);
   },
 
@@ -339,8 +339,8 @@ export default {
       this.delayedStop = value;
     },
 
-    startServerModal() {
-      this.$root.$emit('bv::show::modal', 'start-server-modal')
+    startServerModal(event) {
+      event?.preventDefault()
       this.showStartServerModal = true;
     },
 
@@ -449,16 +449,17 @@ export default {
     /**
      * Stop
      */
-    stopServerModal() {
+    stopServerModal(event) {
+      event?.preventDefault()
       this.showStopServerModal = true
-      // this.$root.$emit('bv::show::modal', 'stop-server-modal')
     },
     async stopServer() {
+      const delay = this.delayedStop
       try {
-        await SpireApi.v1().post('eqemuserver/server/stop', { timer: this.delayedStop })
+        await SpireApi.v1().post('eqemuserver/server/stop', { timer: delay })
         this.delayedStop = 0;
 
-        if (this.delayedStop > 0) {
+        if (delay > 0) {
           this.notify("Server Stopped", "Server delayed stop timer started!");
         } else if (!this.cancelledRestart) {
           this.notify("Server Stopped", "Server has been stopped!");
@@ -476,19 +477,21 @@ export default {
     /**
      * Restart
      */
-    restartServerModal() {
+    restartServerModal(event) {
+      event?.preventDefault()
       this.showRestartServerModal = true
       this.delayedRestart         = 0;
     },
     async restartServer() {
+      const delay = this.delayedRestart
       try {
-        await SpireApi.v1().post('eqemuserver/server/restart', { timer: this.delayedRestart })
+        await SpireApi.v1().post('eqemuserver/server/restart', { timer: delay })
         this.delayedRestart = 0;
       } catch (e) {
         console.log(e)
       }
 
-      if (this.delayedRestart > 0) {
+      if (delay > 0) {
         this.notify("Server Restarted", "Server restart warning timer has been started!");
       } else if (!this.cancelledRestart) {
         this.notify("Server Restarted", "Server has been restarted!");
@@ -499,7 +502,8 @@ export default {
     /**
      * Cancel
      */
-    cancelServerRestartModal() {
+    cancelServerRestartModal(event) {
+      event?.preventDefault()
       this.showCancelRestartModal = true
       this.delayedRestart = 0;
     },
@@ -546,7 +550,6 @@ export default {
 
       switch (String.fromCharCode(e.keyCode)) {
         case 'p':
-          // this.$root.$emit('bv::show::modal', 'start-server-modal')
           this.startServerModal()
           break
         case 'r':

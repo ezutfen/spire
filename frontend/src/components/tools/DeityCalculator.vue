@@ -48,7 +48,7 @@
 <script>
 import {App}             from "@/constants/app";
 import {DB_DIETIES_FULL} from "@/app/constants/eq-deities-constants";
-import * as util         from "util";
+import * as util         from "@/app/utility/util-shim";
 
 export default {
   name: "DeityBitmaskCalculator",

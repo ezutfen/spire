@@ -2,20 +2,15 @@
   <div>
     <app-loader :is-loading="loading"/>
 
-    <b-modal
-      id="release-notes"
-      centered
-      :title="`Release Notes`"
-      size="lg"
+    <eq-modal
+      v-if="releaseNotesVisible"
+      title="Release Notes"
+      @close="releaseNotesVisible = false"
     >
-      <v-runtime-template class="changelog" :template="releaseNotes"/>
-
-      <template #modal-footer>
-        <div class="">
-
-        </div>
+      <template #body>
+        <v-runtime-template class="changelog" :template="releaseNotes"/>
       </template>
-    </b-modal>
+    </eq-modal>
 
     <eq-window
       title="Official Releases"
@@ -59,27 +54,27 @@
             :style="(versionGreater(r.tag_name, version) ? 'opacity: 1' : 'opacity: .4')"
           >
             <td class="text-center">
-              <b-button
-                variant="primary"
-                class="btn-dark btn-sm btn-dark"
+              <button
+                type="button"
+                class="btn btn-dark btn-sm"
                 style="padding: 0px 6px;"
                 title="View Release Notes"
                 @click="viewReleaseNotes(r)"
               >
                 <i class="fa fa-sticky-note-o"></i> Changelog
-              </b-button>
+              </button>
             </td>
             <td>{{ r.name }}</td>
             <td class="text-center">
-              <b-button
-                variant="primary"
-                class="btn-dark btn-sm btn-dark"
+              <button
+                type="button"
+                class="btn btn-dark btn-sm"
                 style="padding: 0px 6px;"
                 title="Install"
                 @click="installRelease(r)"
               >
                 <i class="fa fa-cloud-download"></i> Install
-              </b-button>
+              </button>
             </td>
             <td>{{ countChanges(r) }}</td>
             <td>{{ formatTime(r.published_at) }} ({{ formatDate(r.published_at) }})</td>
@@ -108,15 +103,15 @@
               {{ getCrashCount(r) }}
             </td>
             <td class="text-center">
-              <b-button
-                variant="primary"
-                class="btn-dark btn-sm btn-dark ml-1"
+              <button
+                type="button"
+                class="btn btn-dark btn-sm ml-1"
                 style="padding: 0px 6px; width: 50px"
                 title="View Release Crashes"
                 @click="goToRelease(r.name.replaceAll('v', ''))"
               >
                 <i class="fa fa-arrow-right"></i>
-              </b-button>
+              </button>
             </td>
           </tr>
           </tbody>
@@ -146,8 +141,9 @@
 </template>
 
 <script>
+import MarkdownIt from "markdown-it";
+
 import EqWindow        from "@/components/eq-ui/EQWindow.vue";
-import util            from "util";
 import {ROUTE}         from "@/routes";
 import EqTabs          from "@/components/eq-ui/EQTabs.vue";
 import EqTab           from "@/components/eq-ui/EQTab.vue";
@@ -157,10 +153,12 @@ import {AppEnv}        from "@/app/env/app-env";
 import {SpireApi}      from "@/app/api/spire-api";
 import InfoErrorBanner from "@/components/InfoErrorBanner.vue";
 import Time            from "@/app/time/time";
+import EqModal         from "@/components/eq-ui/EQModal.vue";
 
 export default {
   name: "UpdateReleases",
   components: {
+    EqModal,
     InfoErrorBanner,
     EqTab,
     EqTabs,
@@ -180,6 +178,7 @@ export default {
       loading: false,
 
       releaseNotes: "",
+      releaseNotesVisible: false,
 
       releases: [],
 
@@ -237,7 +236,6 @@ export default {
 
     // state
     updateQueryState() {
-      console.log("trigger")
       let q = {};
       if (this.tabSelected !== "") {
         q.s = this.tabSelected
@@ -266,22 +264,16 @@ export default {
     },
 
     viewReleaseNotes(r) {
-      setTimeout(() => {
-        this.$bvModal.show('release-notes')
-        this.releaseNotes = r.body
+      const md = new MarkdownIt({
+        html: true,
+        xhtmlOut: false,
+        breaks: true,
+        typographer: false,
+        linkify: true
+      });
 
-        const md = require("markdown-it")({
-          html: true,
-          xhtmlOut: false,
-          breaks: true,
-          typographer: false,
-          linkify: true
-        });
-
-        let markdownRaw   = md.render(r.body);
-        this.releaseNotes = "<div>" + markdownRaw + "</div>"
-
-      }, 10)
+      this.releaseNotes = `<div>${md.render(r.body)}</div>`
+      this.releaseNotesVisible = true
     },
     formatTime(time) {
       return Time.fromNow(time)
@@ -290,7 +282,7 @@ export default {
       return Time.format(time, "MMM D YYYY")
     },
     goToRelease(r) {
-      window.open(util.format("http://spire.eqemu.dev/dev/release/%s", r), 'release_' + r);
+      window.open(`http://spire.eqemu.dev/dev/release/${r}`, `release_${r}`);
     },
     async loadCounts() {
       return new Promise(async (resolve) => {

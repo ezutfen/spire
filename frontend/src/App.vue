@@ -19,7 +19,7 @@
 <script>
 
 import "ninja-keys";
-import * as util from "util";
+import * as util from "@/app/utility/util-shim";
 import {App} from "@/constants/app";
 import {EventBus} from "@/app/event-bus/event-bus";
 import {AppEnv} from "@/app/env/app-env";
@@ -72,15 +72,14 @@ export default {
 
     EventBus.$emit('APP_ENV_LOADED', true);
 
-    this.$router.onReady(async () => {
-      if (!this.$route.fullPath.includes(ROUTE.LOGIN)) {
-        console.log("login route, skipping auth check")
-        this.user = await UserContext.getUser()
-        await this.checkIfUserNeedsToAuth()
-      }
+    await this.$router.isReady()
+    if (!this.$route.fullPath.includes(ROUTE.LOGIN)) {
+      console.log("login route, skipping auth check")
+      this.user = await UserContext.getUser()
+      await this.checkIfUserNeedsToAuth()
+    }
 
-      AppEnv.routeCheckSpireInitialized(this.$route, this.$router)
-    })
+    AppEnv.routeCheckSpireInitialized(this.$route, this.$router)
 
     setTimeout(() => {
       AppEnv.routeCheckSpireInitialized(this.$route, this.$router)
@@ -95,7 +94,7 @@ export default {
     EventBus.$on("CHECK_SPIRE_UPDATE", this.checkSpireUpdate);
     SpireWebsocket.addEventListener('message', this.handleWebsocketMessage);
   },
-  destroyed() {
+  unmounted() {
     EventBus.$off("SPELL_LEGACY_ICONS_ENABLED", this.loadSpellIconSettings);
     EventBus.$off("CHECK_SPIRE_UPDATE", this.checkSpireUpdate);
     SpireWebsocket.removeEventListener('message', this.handleWebsocketMessage);

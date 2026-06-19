@@ -12,7 +12,6 @@ import (
 	"github.com/EQEmu/spire/internal/eqemuchangelog"
 	"github.com/EQEmu/spire/internal/eqemuserver"
 	"github.com/EQEmu/spire/internal/eqemuserverconfig"
-	apphttp "github.com/EQEmu/spire/internal/http"
 	"github.com/EQEmu/spire/internal/http/controllers"
 	appmiddleware "github.com/EQEmu/spire/internal/http/middleware"
 	"github.com/EQEmu/spire/internal/http/routes"
@@ -25,48 +24,10 @@ import (
 	"github.com/EQEmu/spire/internal/system"
 	"github.com/EQEmu/spire/internal/user"
 	"github.com/EQEmu/spire/internal/websocket"
-	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"net/http"
 	"time"
-)
-
-var httpSet = wire.NewSet(
-	apphttp.NewServer,
-	user.NewContextMiddleware,
-	appmiddleware.NewRequestLogMiddleware,
-	appmiddleware.NewReadOnlyMiddleware,
-	appmiddleware.NewPermissionsMiddleware,
-	appmiddleware.NewLocalUserAuthMiddleware,
-	analytics.NewController,
-	controllers.NewHelloWorldController,
-	controllers.NewConnectionsController,
-	user.NewMeController,
-	auth.NewController,
-	questapi.NewController,
-	app.NewController,
-	query.NewController,
-	eqemuanalytics.NewController,
-	eqemuanalytics.NewAuthedController,
-	eqemuchangelog.NewController,
-	clientfiles.NewController,
-	assets.NewController,
-	permissions.NewController,
-	user.NewController,
-	spire.NewSettingController,
-	staticmaps.NewStaticMapController,
-	eqemuserver.NewController,
-	eqemuserver.NewPublicController,
-	eqemuserver.NewQuestEditorController,
-	eqemuserverconfig.NewController,
-	websocket.NewController,
-	backup.NewController,
-	system.NewController,
-	models.NewController,
-	aaeditor.NewAaEditorController,
-	provideControllers,
-	NewRouter,
 )
 
 type appControllerGroups struct {

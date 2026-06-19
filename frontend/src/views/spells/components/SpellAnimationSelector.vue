@@ -68,7 +68,7 @@
 import PageHeader     from "@/components/layout/PageHeader";
 import {App}          from "@/constants/app";
 import EqWindow       from "@/components/eq-ui/EQWindow";
-import * as util      from "util";
+import * as util      from "@/app/utility/util-shim";
 import VideoViewer    from "@/app/video-viewer/video-viewer";
 import EqWindowSimple from "@/components/eq-ui/EQWindowSimple";
 import EqAssets       from "@/app/eq-assets/eq-assets";

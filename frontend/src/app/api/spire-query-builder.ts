@@ -1,4 +1,4 @@
-import util from "util";
+import util from "@/app/utility/util-shim";
 
 type QueryBuilderRequest = {
   select: string;

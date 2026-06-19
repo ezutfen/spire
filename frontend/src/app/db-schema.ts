@@ -1,5 +1,5 @@
 import {SpireApi} from "./api/spire-api";
-import util from "util";
+import util from "@/app/utility/util-shim";
 
 export class DbSchema {
   public static async getTableSchema(tableName: string) {

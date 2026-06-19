@@ -30,7 +30,7 @@
             @on-selected="tabSelected = $event; updateQueryState()"
             id="spell-edit-card"
             class="spell-edit-card"
-            @mouseover.native="previewSpell(false)"
+            @mouseover="previewSpell(false)"
           >
             <eq-tab
               name="Basic"
@@ -237,7 +237,7 @@
 
                   <b-form-select
                     :id="'effectid_' + i"
-                    @mouseover.native="drawSpaDetailPane(spell['effectid_' + i], i)"
+                    @mouseover="drawSpaDetailPane(spell['effectid_' + i], i)"
                     @change="getSpaDefaultValues(spell['effectid_' + i], i); drawSpaDetailPane(spell['effectid_' + i], i)"
                     v-model.number="spell['effectid_' + i]"
                     style="width: 150px"
@@ -271,7 +271,7 @@
 
                   <b-form-input
                     :id="'formula_' + i"
-                    @mouseover.native="drawSpaFormulasPane('formula_' + i)"
+                    @mouseover="drawSpaFormulasPane('formula_' + i)"
                     v-model.number="spell['formula_' + i]"
                     :class="getSpaSpellHighlights(spell['effectid_' + i], 'formula')"
                     @click="processSpaFieldAction(i, spell['effectid_' + i], 'formula')"
@@ -1492,7 +1492,7 @@
         >
           <spell-icon-selector
             :selected-icon="spell.new_icon"
-            :inputData.sync="spell.new_icon"
+            v-model:inputData="spell.new_icon"
           />
         </eq-window>
 
@@ -1504,7 +1504,7 @@
         >
           <spell-animation-selector
             :selected-animation="spell.spellanim"
-            :inputData.sync="spell.spellanim"
+            v-model:inputData="spell.spellanim"
           />
         </div>
 
@@ -1516,7 +1516,7 @@
         >
           <spell-nimbus-animation-selector
             :selected-animation="spell.nimbuseffect"
-            :inputData.sync="spell.nimbuseffect"
+            v-model:inputData="spell.nimbuseffect"
           />
         </div>
 
@@ -1561,7 +1561,7 @@
         >
           <spell-casting-animation-selector
             :selected-animation="spell[castingAnimField]"
-            :inputData.sync="spell[castingAnimField]"
+            v-model:inputData="spell[castingAnimField]"
           />
         </div>
 
@@ -1684,7 +1684,7 @@ import {debounce}                     from "../../app/utility/debounce";
 import EqWindowSimple                 from "../../components/eq-ui/EQWindowSimple";
 import SpellConeVisualizer            from "./components/SpellConeVisualizer";
 import SpellNimbusAnimationSelector   from "./components/SpellNimbusAnimationSelector";
-import util                           from "util";
+import util                           from "@/app/utility/util-shim";
 import RangeVisualizer                from "../../components/tools/RangeVisualizer";
 import SpellTeleportZoneSelectorZone  from "./components/SpellTeleportZoneSelectorZone";
 import SpellTeleportZoneSelectorPet   from "./components/SpellTeleportZoneSelectorPet";

@@ -543,7 +543,6 @@ export default {
   },
   methods: {
     updateQueryState() {
-      console.log("trigger")
       let q = {};
       if (this.tabSelected !== "") {
         q.s = this.tabSelected

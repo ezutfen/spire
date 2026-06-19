@@ -103,17 +103,29 @@
               class="col-3 text-center"
             >
               <span class="font-weight-bold">Branch</span>
-              <b-input-group>
-                <b-select v-model="currentBranch" :options="branches" :disabled="buildRunning"/>
-                <b-input-group-append>
+              <div class="input-group">
+                <select
+                  v-model="currentBranch"
+                  class="form-select"
+                  :disabled="buildRunning"
+                >
+                  <option
+                    v-for="branch in branches"
+                    :key="branch"
+                    :value="branch"
+                  >
+                    {{ branch }}
+                  </option>
+                </select>
+                <div class="input-group-append">
 
-                  <b-button variant="white" class="btn-sm" @click="setBranch" :disabled="buildRunning">
+                  <button type="button" class="btn btn-white btn-sm" @click="setBranch" :disabled="buildRunning">
                     <i class="fa fa-dot-circle-o mr-2"></i>
                     Set
-                  </b-button>
+                  </button>
 
-                </b-input-group-append>
-              </b-input-group>
+                </div>
+              </div>
             </div>
             <div
               :style="(buildRunning ? 'opacity: .5' : 'opacity: 1')"
@@ -226,9 +238,6 @@ import LoaderFakeProgress from "@/components/LoaderFakeProgress.vue";
 import EqProgressBar      from "@/components/eq-ui/EQProgressBar.vue";
 import {Navbar}           from "@/app/navbar";
 
-const Convert = require('ansi-to-html');
-const convert = new Convert();
-
 function readChunks(reader) {
   return {
     async* [Symbol.asyncIterator]() {
@@ -269,6 +278,7 @@ export default {
       buildPercent: 0,
       buildNotification: "",
       buildError: "",
+      outputContainer: null,
 
       BUILD_TYPE: {
         RELEASE: 'release',
@@ -277,7 +287,7 @@ export default {
 
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand();
   },
   beforeRouteLeave(to, from, next) {
@@ -295,27 +305,22 @@ export default {
 
     this.output = ""
 
+    Navbar.collapse();
+  },
+  mounted() {
     // windows default
     if (this.os !== 'linux') {
       if (AppEnv.getSettingValue('SERVER_UPDATE_TYPE') !== this.BUILD_TYPE.RELEASE) {
         AppEnv.setSetting('SERVER_UPDATE_TYPE', this.BUILD_TYPE.RELEASE)
       }
     }
-
-    setTimeout(() => {
-      this.outputContainer = document.getElementById("output");
-    }, 1000)
-
-    const pattern = [
-      '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
-      '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))'
-    ].join('|');
-
-    this.ansiRegex = new RegExp(pattern);
-
-    Navbar.collapse();
   },
   methods: {
+    syncOutputContainer() {
+      if (!this.outputContainer) {
+        this.outputContainer = document.getElementById("output");
+      }
+    },
     updateSourceLocation() {
       try {
         AppEnv.setSetting("BUILD_LOCATION", this.sourceLocation)
@@ -341,6 +346,7 @@ export default {
       this.$forceUpdate()
 
       setTimeout(() => {
+        this.syncOutputContainer()
         if (this.outputContainer) {
           this.outputContainer.scrollTop = this.outputContainer.scrollHeight + 100;
         }
@@ -352,7 +358,10 @@ export default {
 
       this.buildRunning = true
       this.output       = "Sending job to build\n"
+      this.buildNotification = ""
+      this.buildError = ""
       this.$forceUpdate()
+      this.syncOutputContainer()
 
       fetch(SpireApi.getBasePath() + '/api/v1/eqemuserver/build', {
         method: 'post',
@@ -366,6 +375,9 @@ export default {
           'Content-Type': "application/json",
         },
       }).then(async (response) => {
+        if (!response.ok || !response.body) {
+          throw new Error(`Build failed with status ${response.status}`)
+        }
         const textDecoder = new TextDecoder();
         const reader      = response.body.getReader();
         for await (const chunk of readChunks(reader)) {
@@ -397,15 +409,22 @@ export default {
           }
           this.renderOutput()
         }
+      }).catch((error) => {
+        this.buildError = error?.message || "Build failed"
       }).finally(() => {
-        this.buildNotification = "Build complete!"
+        if (!this.buildError) {
+          this.buildNotification = "Build complete!"
+        }
         this.buildRunning      = false
       });
     },
 
     async buildClean() {
       this.output = "Sending clean to system\n"
+      this.buildNotification = ""
+      this.buildError = ""
       this.$forceUpdate()
+      this.syncOutputContainer()
 
       fetch(SpireApi.getBasePath() + '/api/v1/eqemuserver/build-clean', {
         method: 'post',
@@ -418,6 +437,9 @@ export default {
           'Content-Type': "application/json",
         },
       }).then(async (response) => {
+        if (!response.ok || !response.body) {
+          throw new Error(`Clean failed with status ${response.status}`)
+        }
         const textDecoder = new TextDecoder();
         const reader      = response.body.getReader();
         for await (const chunk of readChunks(reader)) {
@@ -429,14 +451,21 @@ export default {
           }
           this.renderOutput()
         }
+      }).catch((error) => {
+        this.buildError = error?.message || "Clean failed"
       }).finally(() => {
-        this.buildNotification = "Clean complete!"
+        if (!this.buildError) {
+          this.buildNotification = "Clean complete!"
+        }
       });
     },
 
     async buildCancel() {
       this.output = "Sending cancel to system\n"
+      this.buildNotification = ""
+      this.buildError = ""
       this.$forceUpdate()
+      this.syncOutputContainer()
 
       fetch(SpireApi.getBasePath() + '/api/v1/eqemuserver/build-cancel', {
         method: 'post',
@@ -449,6 +478,9 @@ export default {
           'Content-Type': "application/json",
         },
       }).then(async (response) => {
+        if (!response.ok || !response.body) {
+          throw new Error(`Cancel failed with status ${response.status}`)
+        }
         const textDecoder = new TextDecoder();
         const reader      = response.body.getReader();
         for await (const chunk of readChunks(reader)) {
@@ -460,8 +492,12 @@ export default {
           }
           this.renderOutput()
         }
+      }).catch((error) => {
+        this.buildError = error?.message || "Cancel failed"
       }).finally(() => {
-        this.buildNotification = "Cancel complete!"
+        if (!this.buildError) {
+          this.buildNotification = "Cancel complete!"
+        }
       });
     },
 

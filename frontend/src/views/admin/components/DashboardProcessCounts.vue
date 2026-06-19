@@ -152,7 +152,7 @@ export default {
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     EventBus.$off('server-stats')
   },
 

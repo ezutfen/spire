@@ -177,7 +177,7 @@ import {ItemApi, SpellsNewApi} from "@/app/api/api";
 import EqWindow from "@/components/eq-ui/EQWindow.vue";
 import {SpireApi} from "../../../app/api/spire-api";
 import EqItemCardPreview from "@/components/preview/EQItemCardPreview.vue";
-import * as util from "util";
+import * as util from "@/app/utility/util-shim";
 import EqSpellPreview from "@/components/preview/EQSpellCardPreview.vue";
 import {DB_CLASSES_ICONS} from "@/app/constants/eq-class-icon-constants";
 import {App} from "@/constants/app";

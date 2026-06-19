@@ -111,9 +111,9 @@ Want to help contribute to Spire? Anyone can submit [pull requests](https://gith
 | Path | Description |
 |-:|--|
 | ./main.go | Application entrypoint |
-| ./boot| Application dependency injection folder. Where the application gets wired up, Google Wire is ran, wire sets are defined |
+| ./boot| Application bootstrap folder where the app is composed with explicit constructors |
 | ./boot/app.go | Where the application object itself is defined |
-| ./boot/wire.go | Main Google wire definition file, builds the application from wire sets defined and produces `wire_gen.go` which is used by `main.go` |
+| ./boot/wire_gen.go | Explicit application bootstrap used by `main.go` |
 | ./boot/docs | Where Swagger documentation gets automatically generated `make generate-swagger` (Ran from host). Also where echo-web serves the Swagger documentation which can be navigated at `/swagger/index.html` (API Docs in left navpane in Spire) |
 | ./internal | Where core application packages are held. These are internal packages unique to Spire |
 | ./internal/models | Where GORM models are kept |
@@ -160,7 +160,6 @@ Want to help contribute to Spire? Anyone can submit [pull requests](https://gith
 | Backend | Go CLI Library used in Spire| [Cobra Github](https://github.com/spf13/cobra) |
 | Backend | Web Framework Used in Spire | [Echo Web Labstack Docs](https://echo.labstack.com/)
 | Backend | Database Interaction (ORM) | [Gorm - The fantastic ORM library for Golang](https://gorm.io/) |
-| Backend | Google Wire - Dependency Injection | [Google Wire Github](https://github.com/google/wire) - [Tutorial](https://github.com/google/wire/blob/main/_tutorial/README.md)
 | Backend | Go Dot Env (.env file loader) | [joho/godotenv](https://github.com/joho/godotenv) |
 | Backend | Echo Swagger - Used to serve swagger docs | [Echo Swagger Github](https://github.com/swaggo/echo-swagger) |
 | Backend | Swaggo Generator - Used to code generate swagger documentation | [Swaggo](https://github.com/swaggo/swag) |

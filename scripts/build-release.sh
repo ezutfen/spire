@@ -5,9 +5,8 @@ cwd=$(pwd)
 # shellcheck disable=SC2046
 if [ $(curl -s "https://api.github.com/repos/EQEmu/spire/tags" | jq -r '.[0].name' | sed 's/v//') = $(cat package.json | jq -r '.version') ]; then echo "Version tag is same as latest release exiting build"; exit; else echo "Local version different from remote, building..."; fi
 
-# packr for packing web assets into binary
-#go install github.com/gobuffalo/packr/packr
-
+# The frontend build is embedded directly into the Go binary via go:embed.
+#
 # This step originally packed static assets in the binary
 # as of this writing it's gotten up to roughly 500-600MB uncompressed
 #

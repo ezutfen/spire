@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import * as util from "util";
+import * as util from "@/app/utility/util-shim";
 import EqAssets  from "../../../app/eq-assets/eq-assets";
 
 export default {

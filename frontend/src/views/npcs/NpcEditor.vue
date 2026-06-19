@@ -10,7 +10,7 @@
             v-if="npc"
             id="npc-edit-card"
             class="npc-edit-card minified-inputs"
-            @mouseover.native="previewMain()"
+            @mouseover="previewMain()"
           >
             <eq-tab
               :name="tab.name"
@@ -145,7 +145,7 @@
         <eq-window v-if="selectorActive['special_abilities']">
           <npc-special-abilities
             :abilities="npc.special_abilities"
-            :inputData.sync="npc.special_abilities"
+            v-model:inputData="npc.special_abilities"
           />
         </eq-window>
 

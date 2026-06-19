@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import util                  from "util";
+import util                  from "@/app/utility/util-shim";
 import itemSlots             from "@/constants/item-slots.json"
 import itemSlotIdFileMapping from "@/constants/item-slot-idfile-mapping.json"
 import itemTypes             from "@/constants/item-types.json"

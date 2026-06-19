@@ -45,24 +45,24 @@
 
           <div class="col-1 text-center font-weight-bold">
             Zone ID
-            <b-form-input
+            <input
               type="text"
               class="form-control list-search"
               @keyup="updateQueryState()"
               v-model="zoneId"
               placeholder="Zone ID"
-            />
+            >
           </div>
 
           <div class="col-1 text-center font-weight-bold">
             Character ID
-            <b-form-input
+            <input
               type="text"
               class="form-control list-search"
               @keyup="updateQueryState()"
               v-model="characterId"
               placeholder="Character ID"
-            />
+            >
           </div>
 
           <div class="col-1 text-center font-weight-bold">
@@ -86,7 +86,6 @@
               :fade-when-not-true="true"
               :true-value="true"
               :false-value="false"
-              @click.native="autoRefreshEnabled = !autoRefreshEnabled"
               v-model="autoRefreshEnabled"
             />
           </div>
@@ -139,15 +138,14 @@
                 v-on:keyup.enter="updateQueryState()"
               >
 
-              <b-button
+              <button
                 @click="deleteFilter(f)"
-                size="sm"
-                class="ml-3"
-                variant="outline-danger"
+                type="button"
+                class="btn btn-outline-danger btn-sm ml-3"
                 title="Remove Filter"
               >
                 <i class="fa fa-remove"></i>
-              </b-button>
+              </button>
 
             </div>
 
@@ -283,16 +281,22 @@
           Pages ({{ commify(Math.round(totalRows / pageLimit)) }})
         </div>
 
-        <b-pagination
+        <div
           v-if="!loading && currentPage > 0"
-          :disabled="loading"
-          class="mb-1 mt-1"
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :hide-ellipsis="true"
-          :per-page="pageLimit"
-          @change="paginate"
-        />
+          class="d-inline-flex flex-wrap justify-content-center mb-1 mt-1"
+        >
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            type="button"
+            class="page-link border-0"
+            :class="{ active: page === currentPage }"
+            :disabled="loading"
+            @click="setCurrentPage(page)"
+          >
+            {{ page }}
+          </button>
+        </div>
 
         <div class="ml-3 d-inline-block">
           Rows ({{ commify(events.length) }})
@@ -323,7 +327,6 @@ import LoaderFakeProgress          from "@/components/LoaderFakeProgress.vue";
 import hljs                        from "highlight.js/lib/highlight";
 import {Navbar}                    from "@/app/navbar";
 import {Characters}                from "@/app/characters";
-import util                        from "util";
 import InfoErrorBanner             from "@/components/InfoErrorBanner.vue";
 import EqCheckbox                  from "@/components/eq-ui/EQCheckbox.vue";
 import Time                        from "@/app/time/time";
@@ -427,7 +430,13 @@ export default {
       pageLimit: 100,
 
       objCount: 0,
+      requesting: false,
     }
+  },
+  computed: {
+    totalPages() {
+      return Math.max(1, Math.ceil(this.totalRows / this.pageLimit))
+    },
   },
   watch: {
     $route(to, from) {
@@ -440,6 +449,10 @@ export default {
       setTimeout(() => {
         this.loadEvents();
       }, 1)
+    },
+    refreshInterval() {
+      this.stopTimer()
+      this.startTimer()
     }
   },
   methods: {
@@ -510,44 +523,30 @@ export default {
         let value    = values.join(":")
         let rawValue = values.join(":")
         if (!Number.isInteger(value)) {
-          value = util.format('"%s"', value)
+          value = `"${value}"`
         }
 
-        let equalLink = util.format(
-          "<a href=\"#\" event=\"%s\" filter-key=\"%s\" value=\"%s\"><i class='fa fa-filter'></i> = [%s]</a>",
-          e.event_type_id,
-          key,
-          rawValue,
-          rawValue
-        );
+        let equalLink = `<a href="#" event="${e.event_type_id}" filter-key="${key}" value="${rawValue}"><i class='fa fa-filter'></i> = [${rawValue}]</a>`
 
         let anyLink = ""
         if (key.includes("[")) {
           let label       = key.split("]")[1].trim()
           const filterKey = key.replace(/\[.*]/, '[*]')
 
-          anyLink = util.format(
-            "<a href=\"#\" event=\"%s\" filter-key=\"%s\" value=\"%s\"><i class='fa fa-filter'></i> Any [%s] = [%s]</a>",
-            e.event_type_id,
-            filterKey,
-            rawValue,
-            label,
-            rawValue
-          );
+          anyLink = `<a href="#" event="${e.event_type_id}" filter-key="${filterKey}" value="${rawValue}"><i class='fa fa-filter'></i> Any [${label}] = [${rawValue}]</a>`
         }
 
         lines.push(
-          util.format(
-            '  "%s": %s, %s %s',
-            key,
-            value,
-            equalLink,
-            anyLink
-          )
+          `  "${key}": ${value}, ${equalLink} ${anyLink}`
         )
       }
 
-      return util.format("{\n%s\n}", lines.join("\n"));
+      return `{\n${lines.join("\n")}\n}`;
+    },
+
+    setCurrentPage(page) {
+      this.currentPage = page
+      this.paginate()
     },
 
     paginate() {
@@ -562,9 +561,8 @@ export default {
       this.$forceUpdate()
 
       setTimeout(() => {
-        // hljs.initHighlighting()
         for (let b of document.querySelectorAll('pre code')) {
-          hljs.highlightBlock(b)
+          hljs.highlightElement(b)
         }
       }, 10)
     },
@@ -719,7 +717,6 @@ export default {
 
       let events = []
       try {
-        // @ts-ignore
         this.requesting = true
         const r         = await (new PlayerEventLogApi(...SpireApi.cfg()))
           .listPlayerEventLogs(
@@ -729,13 +726,14 @@ export default {
             }
           )
         if (r.status === 200) {
-          events          = r.data
-          this.requesting = false
+          events = r.data
         }
       } catch (e) {
         if (e.response && e.response.data && e.response.data.error) {
           this.error = e.response.data.error
         }
+      } finally {
+        this.requesting = false
       }
 
       // get total count
@@ -859,7 +857,7 @@ export default {
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
     this.stopTimer()
     window.removeEventListener("click", this.handleClick);
@@ -869,9 +867,6 @@ export default {
     Navbar.collapse()
 
     window.addEventListener("click", this.handleClick);
-
-    // non-reactive
-    this.requesting = false;
 
     this.loadQueryState()
     const r = await (new PlayerEventLogSettingApi(...SpireApi.cfg())).listPlayerEventLogSettings()

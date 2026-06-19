@@ -223,8 +223,6 @@ build-frontend: ##@build Builds frontend to be packed into binary
 	cd frontend && npm install && npm run build
 
 build-binary: ##@build Build and packs release binary
-	packr clean
-	packr --compress
 	GOOS=linux GOARCH=amd64 go build -o spire-linux-amd64
 	go install github.com/tc-hib/go-winres@latest
 	go-winres make

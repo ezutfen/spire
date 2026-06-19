@@ -134,7 +134,7 @@ export default {
       error: "",
     }
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener('file-download-progress', this.handleFileDownloadProgress, false)
   },
   created() {

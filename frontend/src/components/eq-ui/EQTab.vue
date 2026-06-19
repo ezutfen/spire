@@ -23,8 +23,21 @@ export default {
     }
   },
 
+  inject: {
+    eqTabsApi: { default: null }
+  },
+
   mounted() {
     this.isActive = this.selected;
+    if (this.eqTabsApi) {
+      this.eqTabsApi.register(this);
+    }
+  },
+
+  beforeUnmount() {
+    if (this.eqTabsApi) {
+      this.eqTabsApi.unregister(this);
+    }
   }
 }
 </script>

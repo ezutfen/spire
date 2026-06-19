@@ -27,7 +27,7 @@ export default {
   created() {
     EventBus.$on("DEBUG_UPDATED", this.debugUpdatedListener);
   },
-  destroyed() {
+  unmounted() {
     EventBus.$off("DEBUG_UPDATED", this.debugUpdatedListener);
   },
   data() {

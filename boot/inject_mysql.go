@@ -14,15 +14,7 @@ import (
 	"time"
 
 	"fmt"
-
-	"github.com/google/wire"
 	"gorm.io/gorm"
-)
-
-// wire set for loading the stores.
-var databaseSet = wire.NewSet(
-	provideEQEmuLocalDatabase,
-	provideAppDbConnections,
 )
 
 // we need to do this because

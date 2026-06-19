@@ -33,7 +33,7 @@
                 :add-only-state-enabled="selectOnlyClassEnabled"
                 @fired="selectClass()"
                 @selectOnly="selectOnlyClassEnabled = $event"
-                :inputData.sync="selectedClasses"
+                v-model:inputData="selectedClasses"
                 :mask="selectedClasses"
               />
             </div>
@@ -45,7 +45,7 @@
                 :centered-buttons="false"
                 :display-all-none="true"
                 @fired="selectRaces()"
-                :inputData.sync="selectedRaces"
+                v-model:inputData="selectedRaces"
                 :mask="selectedRaces"
               />
             </div>
@@ -57,7 +57,7 @@
                 :centered-buttons="false"
                 :display-all-none="true"
                 @fired="selectDeities()"
-                :inputData.sync="selectedDeities"
+                v-model:inputData="selectedDeities"
                 :mask="selectedDeities"
               />
             </div>
@@ -69,7 +69,7 @@
                 :skip-duplicate-slots="true"
                 :display-all-none="true"
                 @fired="selectSlots()"
-                :inputData.sync="selectedSlots"
+                v-model:inputData="selectedSlots"
                 :mask="selectedSlots"
               />
             </div>

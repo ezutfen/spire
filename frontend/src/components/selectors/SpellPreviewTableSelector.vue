@@ -80,7 +80,7 @@ import {DB_SPELL_TARGETS} from "@/app/constants/eq-spell-constants";
 import {DB_CLASSES_ICONS} from "@/app/constants/eq-class-icon-constants";
 import {DB_CLASSES_SHORT} from "@/app/constants/eq-classes-constants";
 import {ROUTE}            from "@/routes";
-import * as util          from "util";
+import * as util          from "@/app/utility/util-shim";
 
 export default {
   name: "SpellPreviewTableSelector",

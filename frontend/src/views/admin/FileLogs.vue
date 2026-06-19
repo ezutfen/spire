@@ -28,7 +28,7 @@
 
             <div class="row">
               <div class="col-12">
-                <b-input-group>
+                <div class="input-group">
                   <input
                     type="text"
                     class="form-control"
@@ -37,45 +37,52 @@
                     v-on:keyup.enter="searchAll()"
                     autofocus
                   >
-                  <b-input-group-append>
-                    <b-button size="sm" variant="outline-warning" @click="searchAll()">
+                  <div class="input-group-append">
+                    <button
+                      type="button"
+                      class="btn btn-outline-warning btn-sm"
+                      @click="searchAll()"
+                    >
                       <i class="fa fa-search"></i>
-                    </b-button>
-                  </b-input-group-append>
+                    </button>
+                  </div>
 
-                </b-input-group>
+                </div>
               </div>
             </div>
 
             <div class="mt-3 ml-1 row">
               <div class="col-12 p-0">
-                <b-button
+                <button
                   v-for="f in filterTypes"
                   :key="`${f.label}-${countLogs(f.search)}`"
-                  class="btn-sm mr-2 btn-dark btn-dark fade-in"
+                  type="button"
+                  class="btn btn-dark btn-sm mr-2 fade-in"
                   @click="filterOn(f)"
                   :style="`opacity: ${(filterType.length > 0 && filterType !== f.search ? '.2' : '1')}`"
                 >
                   <i class="fa fa-filter"></i>
                   {{ f.label }}
                   ({{ countLogs(f.search) }})
-                </b-button>
+                </button>
 
-                <b-button
-                  class="btn-sm mr-2 btn-outline-danger btn-dark"
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm mr-2"
                   @click="deleteAllLogFiles()"
                   title="Delete all log files in view"
                 >
                   <i class="fa fa-trash"></i>
-                </b-button>
+                </button>
 
-                <b-button
-                  class="btn-sm mr-2 btn-dark"
+                <button
+                  type="button"
+                  class="btn btn-dark btn-sm mr-2"
                   @click="resetAll()"
                   title="Reset"
                 >
                   <i class="fa fa-dot-circle-o"></i>
-                </b-button>
+                </button>
               </div>
             </div>
 
@@ -108,21 +115,23 @@
                   :key="`${f.path}-${f.modified_time}`"
                 >
                   <td class="text-center p-1">
-                    <b-button
-                      class="btn-danger btn-sm"
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
                       @click="deleteFile(f)"
                       title="Delete File"
                     >
                       <i class="fa fa-trash"></i>
-                    </b-button>
+                    </button>
 
-                    <b-button
-                      class="btn-white btn-sm ml-1"
+                    <button
+                      type="button"
+                      class="btn btn-white btn-sm ml-1"
                       @click="viewLog(f)"
                       title="View and watch log file"
                     >
                       <i class="fa fa-eye"></i>
-                    </b-button>
+                    </button>
                   </td>
                   <td class="text-center">{{ formatTime(f.modified_time) }} {{
                       `(${formatTimeFromNow(f.modified_time)})`
@@ -161,38 +170,45 @@
           <div
             style="position: absolute; top: 25px; z-index: 999999; left: 21px;"
           >
-            <b-spinner small v-if="watchTimer"/>
+            <span
+              v-if="watchTimer"
+              class="spinner-border spinner-border-sm"
+              role="status"
+            />
           </div>
 
           <div
             class="minified-inputs row p- mb-3"
           >
             <div class="col-2 pr-0 text-center">
-              <b-button
-                class="btn-danger btn-sm mb-1"
+              <button
+                type="button"
+                class="btn btn-danger btn-sm mb-1"
                 title="Stop log stream"
                 @click="stopLogStream()"
                 :disabled="!watchTimer"
               >
                 <i class="fa fa-stop"></i>
-              </b-button>
+              </button>
 
-              <b-button
-                class="btn-white btn-sm ml-1 mb-1"
+              <button
+                type="button"
+                class="btn btn-white btn-sm ml-1 mb-1"
                 title="Play log stream"
                 :disabled="watchTimer && parseInt(watchTimer) > 0"
                 @click="startLogStream()"
               >
                 <i class="fa fa-play"></i>
-              </b-button>
+              </button>
 
-              <b-button
-                class="btn-white btn-sm ml-1 mb-1"
+              <button
+                type="button"
+                class="btn btn-white btn-sm ml-1 mb-1"
                 title="Copy to clipboard"
                 @click="copyFileContentsToClipboard()"
               >
                 <i class="fa fa-copy"></i>
-              </b-button>
+              </button>
             </div>
 
             <div class="col-10 pl-0">
@@ -314,12 +330,13 @@ export default {
     },
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     Navbar.expand()
 
     this.stopLogStream()
     if (this.fileListingTimer) {
       clearInterval(this.fileListingTimer);
+      this.fileListingTimer = null
     }
   },
   created() {

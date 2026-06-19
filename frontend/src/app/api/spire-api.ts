@@ -2,15 +2,15 @@ import axios from "axios";
 import UserContext from "@/app/user/UserContext";
 import Debug from "@/app/debug/debug";
 import {ROUTE} from "@/routes";
+import {RuntimeEnv} from "@/app/env/runtime-env";
 
 
 const PUBLIC_SPIRE = "https://spire.eqemu.dev/api/v1";
 
 export class SpireApi {
   static getBasePath() {
-    return process.env.VUE_APP_BACKEND_BASE_URL && process.env.NODE_ENV !== 'production' ?
-      process.env.VUE_APP_BACKEND_BASE_URL :
-      window.location.origin
+    const explicitBasePath = RuntimeEnv.getBackendBaseUrl()
+    return import.meta.env.DEV ? explicitBasePath : window.location.origin
   }
 
   static getPublicWithLocalFallbacks(): Array<any> {

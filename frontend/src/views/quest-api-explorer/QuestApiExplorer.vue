@@ -314,7 +314,7 @@ import EqWindowSimple from "@/components/eq-ui/EQWindowSimple.vue";
 import EqTabs from "@/components/eq-ui/EQTabs.vue";
 import EqTab from "@/components/eq-ui/EQTab.vue";
 import slugify from "slugify";
-import * as util from "util";
+import * as util from "@/app/utility/util-shim";
 import QuestApiDisplayMethods from "@/views/quest-api-explorer/components/QuestApiDisplayMethods.vue";
 import Analytics from "@/app/analytics/analytics";
 import QuestApiDisplayConstants from "@/views/quest-api-explorer/components/QuestApiDisplayConstants.vue";
@@ -408,7 +408,7 @@ export default {
     }
   },
 
-  destroyed() {
+  unmounted() {
     Debug.log("[deactivated]")
 
     document.body.removeEventListener('keyup', this.closeExampleKeyHandler)

@@ -1,4 +1,4 @@
-import * as util from 'util'
+import * as util from "@/app/utility/util-shim"
 import {SpireApi} from "@/app/api/spire-api";
 
 export class EqemuWebsocketClient {

@@ -30,6 +30,9 @@
 </template>
 
 <script>
+import MarkdownIt from "markdown-it";
+import hljs       from "highlight.js/lib/core";
+
 import {SpireApi} from "@/app/api/spire-api";
 
 export default {
@@ -68,7 +71,7 @@ export default {
         if (response.data && response.data.data) {
 
           // const hljs = require("highlight.js");
-          const md   = require("markdown-it")({
+          const md   = new MarkdownIt({
             html: true,
             xhtmlOut: false,
             breaks: true,
@@ -77,7 +80,7 @@ export default {
               if (lang && hljs.getLanguage(lang)) {
                 try {
                   return "<div class='card'><div class='card-footer bg-dark'><pre class=\"highlight html bg-dark hljs mb-0 " + lang + "\">" +
-                    hljs.highlight(lang, str, true).value +
+                    hljs.highlight(str, {language: lang}).value +
                     "</pre></div></div>";
                 } catch (__) {
                 }
@@ -170,6 +173,12 @@ export default {
     });
 
     this.docInit();
+  },
+  beforeUnmount() {
+    if (this.routeWatcher) {
+      this.routeWatcher()
+      this.routeWatcher = null
+    }
   }
 }
 </script>

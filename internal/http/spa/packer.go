@@ -3,26 +3,25 @@ package spa
 import (
 	"github.com/EQEmu/spire/internal/http/routes"
 	"github.com/EQEmu/spire/internal/logger"
-	"github.com/gobuffalo/packr"
 	"github.com/labstack/echo/v4"
+	"io/fs"
 	"net/http"
 	"net/url"
 	"path"
-	"path/filepath"
 	"strings"
 )
 
 // Packaged SPA is a single page application that is compiled into the resulting
 // go application binary and ultimately served using echo in our monorepo framework
 //
-// Packaged bundler (https://github.com/gobuffalo/packr)
+// The production SPA is embedded into the Go binary and served by echo.
 
 type Packer struct {
-	fs      http.Handler
-	handler echo.HandlerFunc
-	box     packr.Box
-	logger  *logger.AppLogger
-	config  PackedSpaServeConfig
+	fileServer http.Handler
+	handler    echo.HandlerFunc
+	assets     fs.FS
+	logger     *logger.AppLogger
+	config     PackedSpaServeConfig
 }
 
 func (s Packer) Handler() echo.HandlerFunc {
@@ -38,14 +37,13 @@ type PackedSpaServeConfig struct {
 }
 
 // NewPackedSpaService creates a new instance of the PackedSpaService
-func NewPackedSpaService(logger *logger.AppLogger, config PackedSpaServeConfig) *Packer {
+func NewPackedSpaService(logger *logger.AppLogger, assets fs.FS, config PackedSpaServeConfig) *Packer {
 	s := &Packer{}
 	s.config = config
 	s.logger = logger
-	s.box = packr.NewBox(s.config.LocalBasePath)
-	s.fs = http.FileServer(s.box)
-	//s.handler = echo.WrapHandler(http.StripPrefix(s.config.BasePath, s.fs))
-	s.handler = WrapCachedHandler(http.StripPrefix(s.config.BasePath, s.fs))
+	s.assets = assets
+	s.fileServer = http.FileServer(http.FS(s.assets))
+	s.handler = WrapCachedHandler(http.StripPrefix(s.config.BasePath, s.fileServer))
 
 	return s
 }
@@ -95,9 +93,9 @@ func (s Packer) MiddlewareHandler() echo.MiddlewareFunc {
 				return
 			}
 
-			name := filepath.Join(s.config.BasePath, path.Clean("/"+p))
-			if name == "/" || name == "\\" {
-				index, err := s.box.Find(s.config.SpaIndex)
+			requestPath := path.Clean(strings.TrimPrefix(p, "/"))
+			if requestPath == "." {
+				index, err := fs.ReadFile(s.assets, s.config.SpaIndex)
 				if err != nil {
 					s.logger.Error().Err(err).Msg("error finding spa index")
 				}
@@ -106,8 +104,8 @@ func (s Packer) MiddlewareHandler() echo.MiddlewareFunc {
 
 			// If we find a valid non-index file in the box, continue the request as normal
 			// and let the static asset handler pick up the request later
-			fileRequest := strings.Replace(c.Request().RequestURI, s.config.BasePath, "", -1)
-			_, err = s.box.Find(fileRequest)
+			fileRequest := path.Clean(strings.TrimPrefix(strings.Replace(c.Request().URL.Path, s.config.BasePath, "", 1), "/"))
+			_, err = fs.Stat(s.assets, fileRequest)
 			if err == nil {
 				return next(c)
 			}
@@ -115,7 +113,7 @@ func (s Packer) MiddlewareHandler() echo.MiddlewareFunc {
 			// If we didn't find a non-index asset at this point, we need to return the
 			// spa index when nested SPA route requests are made
 			// eg: /spa/nested/route
-			index, err := s.box.Find(s.config.SpaIndex)
+			index, err := fs.ReadFile(s.assets, s.config.SpaIndex)
 			if err != nil {
 				s.logger.Error().Err(err).Msg("error finding spa index")
 				return next(c)

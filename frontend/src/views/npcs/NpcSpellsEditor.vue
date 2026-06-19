@@ -230,7 +230,7 @@ import {Npcs}              from "../../app/npcs";
 import NpcPopover          from "../../components/NpcPopover";
 import NpcSpellPreview     from "../../components/preview/NpcSpellPreview";
 import EqDebug             from "../../components/eq-ui/EQDebug";
-import util                from "util";
+import util                from "@/app/utility/util-shim";
 import {NpcSpellsEntryApi} from "../../app/api/api/npc-spells-entry-api";
 
 const NpcSpellsClient = (new NpcSpellApi(...SpireApi.cfg()))

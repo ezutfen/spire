@@ -21,11 +21,12 @@
 </template>
 
 <script>
+import MarkdownIt      from "markdown-it";
 
 import EqWindow        from "@/components/eq-ui/EQWindow";
 import UserContext     from "@/app/user/UserContext";
 import {SpireApi}      from "../app/api/spire-api";
-import * as util       from "util";
+import * as util       from "@/app/utility/util-shim";
 import VideoViewer     from "../app/video-viewer/video-viewer";
 import LazyImageLoader from "@/app/lazy-image-load/lazy-image-load";
 
@@ -67,7 +68,7 @@ export default {
           }
         })
 
-        const md = require("markdown-it")({
+        const md = new MarkdownIt({
           html: true,
           xhtmlOut: false,
           breaks: true,
@@ -146,6 +147,10 @@ export default {
         }
       }
     }
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.handleRender, false)
+    LazyImageLoader.destroyScrollListener()
   },
   deactivated() {
     window.removeEventListener("scroll", this.handleRender, false)
