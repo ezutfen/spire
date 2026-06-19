@@ -21,7 +21,7 @@ Keep entries short, factual, and action-oriented.
 - Date: `2026-06-18`
 - Branch: `feature/option-2-migration-foundation`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native` sweep complete across editor-heavy and shared routes (0 remaining occurrences); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration (tab navigation now works under Vue 3 across all 12 consumers); the three admin configuration routes (`LogSettings`/`ServerRules`/`ServerConfig`) cleaned off BootstrapVue form inputs and Node `util` debt; the remaining `.sync` compat debt has been swept to Vue 3 `v-model:inputData` (0 `.sync` occurrences remain in `frontend/src`); the next admin compat seam was reduced further by removing browser-unsafe `util` usage and simple BootstrapVue modal/input/button/pagination wrappers from the player-event-log, update-releases, zone-server, and file-log routes
+- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native` sweep complete across editor-heavy and shared routes (0 remaining occurrences); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration (tab navigation now works under Vue 3 across all 12 consumers); the three admin configuration routes (`LogSettings`/`ServerRules`/`ServerConfig`) cleaned off BootstrapVue form inputs and Node `util` debt; the remaining `.sync` compat debt has been swept to Vue 3 `v-model:inputData` (0 `.sync` occurrences remain in `frontend/src`); the player-event-log, update-releases, zone-server, and file-log admin routes cleaned of browser-unsafe `util` and simple BootstrapVue wrappers; the server-update branch control, zone-log copy, discord-webhook add/delete, launcher-options numeric inputs, client-assets download link, and dashboard system-info admin seams converted off BootstrapVue and Node `util` (0 admin-side `util` debt remains); a stale 12MB untracked packr box artifact (`internal/http/spa/a_spa-packr.go`) removed so `go build ./...` passes cleanly again
 
 ## Completed Steps
 
@@ -200,11 +200,24 @@ Completed the next handoff-targeted admin slice by removing the remaining browse
   - [frontend/src/views/admin/server-update/UpdateReleases.vue](/home/zutfen/code/spire/frontend/src/views/admin/server-update/UpdateReleases.vue): replaced the `b-modal` + `$bvModal.show(...)` release-notes flow with local `releaseNotesVisible` state and [frontend/src/components/eq-ui/EQModal.vue](/home/zutfen/code/spire/frontend/src/components/eq-ui/EQModal.vue), converted the release action `b-button`s to native `<button>`, removed the stray `console.log("trigger")`, and removed the `util` import from the crash-link opener
 - Cleaned the zone/file admin routes:
   - [frontend/src/views/admin/ZoneServers.vue](/home/zutfen/code/spire/frontend/src/views/admin/ZoneServers.vue): replaced the search `b-form-input` with a native `<input>` and removed the `util` import from the player tooltip formatter
-  - [frontend/src/views/admin/FileLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/FileLogs.vue): replaced the search `b-input-group`, file/filter/action `b-button`s, and `b-spinner` with native Bootstrap-markup equivalents
+          - [frontend/src/views/admin/FileLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/FileLogs.vue): replaced the search `b-input-group`, file/filter/action `b-button`s, and `b-spinner` with native Bootstrap-markup equivalents
+
+### 15. Admin Update/Zone/Webhook/Launcher Compat + Stale packr Cleanup
+
+Completed the next handoff-targeted admin slice by converting the remaining BootstrapVue (`b-input-group`/`b-button`/`b-form-input`) usage in the listed admin routes to native Bootstrap markup and removing the last admin-side browser-unsafe Node `util` imports. Also removed a stale untracked packr artifact that was silently breaking `go build ./...`.
+
+- Cleaned the server-update branch control into native markup in [frontend/src/views/admin/server-update/ServerUpdate.vue](/home/zutfen/code/spire/frontend/src/views/admin/server-update/ServerUpdate.vue): replaced `b-input-group`/`b-input-group-append`/`b-button` with `<div class="input-group">`/`<div class="input-group-append">`/`<button class="btn btn-white btn-sm">` (matching the FileLogs Step-14 pattern)
+- Cleaned the zone-log copy control in [frontend/src/views/admin/ZoneLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/ZoneLogs.vue): replaced the copy-to-clipboard `b-button` with a native `<button class="btn btn-white btn-sm ml-1">`
+- Cleaned the discord-webhook add/delete actions in [frontend/src/views/admin/configuration/DiscordWebhooks.vue](/home/zutfen/code/spire/frontend/src/views/admin/configuration/DiscordWebhooks.vue): replaced both `b-button`s (add-webhook and per-row delete) with native `<button>`s, preserving the `variant`→`btn-*` class mapping (`outline-warning btn-dark` / `primary btn-dark`) and `size`/class/style props
+- Cleaned the launcher-options numeric inputs in [frontend/src/views/admin/components/LauncherOptions.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/LauncherOptions.vue): replaced both `b-form-input` (min zone processes / log retention days) with native `<input type="number" class="form-control">`
+- Removed the last admin-side browser-unsafe Node `util` imports and converted `util.format(...)` to template literals:
+  - [frontend/src/views/admin/tools/ClientAssets.vue](/home/zutfen/code/spire/frontend/src/views/admin/tools/ClientAssets.vue): removed `import util from "util"`, download URL now a template literal (result: 0 admin-side `util` imports remain)
+  - [frontend/src/views/admin/components/DashboardSystemInfo.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/DashboardSystemInfo.vue): removed `import * as util from 'util'`, `osDisplay` now a template literal
+- Removed the stale untracked packr box artifact `internal/http/spa/a_spa-packr.go` (12MB, generated, no build tag, imported `github.com/gobuffalo/packr` which is no longer in `go.mod`/`go.sum`). It was the sole reason `go build ./...` failed; deletion is safe (the file was never git-tracked; SPA serving uses the tracked `go:embed` files `spa.go`/`packer.go`)
 
 ## Verification
 
-Last verified successfully (`2026-06-18`, after Step 14):
+Last verified successfully (`2026-06-18`, after Step 15):
 
 - `cd frontend && npm install --legacy-peer-deps --package-lock=false` (local dependency refresh required because this checkout's `node_modules` was incomplete and plain `npm ci` hits the expected Vue 2/3 peer-dependency conflict during the migration)
 - `cd frontend && npm run build`
@@ -213,13 +226,15 @@ Last verified successfully (`2026-06-18`, after Step 14):
 - `rg -n "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src` (`.vue` files) → 0 matches
 - `rg -n "\$children" frontend/src` (excluding `assets/vendors/`) → 0 matches
 - `rg -n "\.sync=" frontend/src --type-add 'vue:*.vue' --type vue` → 0 matches
-- `rg -n "import util from \"util\"|util\.format|console\.log\(\"trigger\"\)|<b-form-input|<b-input-group|<b-input-group-append|<b-button|<b-modal|<b-pagination" frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue frontend/src/views/admin/player-event-logs/PlayerEventLogSettings.vue frontend/src/views/admin/server-update/UpdateReleases.vue frontend/src/views/admin/ZoneServers.vue frontend/src/views/admin/FileLogs.vue` → 0 matches
+- `rg -n "<b-(form-input|input-group|button|modal|pagination|spinner|form-select|form-tag|select)|import (\* as )?util from ['\"]util['\"]|util\.format" frontend/src/views/admin/server-update/ServerUpdate.vue frontend/src/views/admin/ZoneLogs.vue frontend/src/views/admin/configuration/DiscordWebhooks.vue frontend/src/views/admin/components/LauncherOptions.vue frontend/src/views/admin/tools/ClientAssets.vue frontend/src/views/admin/components/DashboardSystemInfo.vue` → 0 matches
+- `rg -nl "import (\* as )?util from ['\"]util['\"]" frontend/src/views/admin` → 0 files (admin-side `util` debt fully cleared)
+- `rg -n "\$listeners|\$scopedSlots|Vue\.set" frontend/src` (excluding `assets/vendors/`) → 0 matches
 - `git diff --check`
 
 ## Open Risks / Warnings
 
 - App still boots under Vue's migration build (`configureCompat({ MODE: 2 })`). The targeted sweeps cleared all `beforeDestroy`/`destroyed`/`$set`/`.native` usages, the single real `$children` usage, and the repo-wide `.sync` debt in `frontend/src` (verified: 0 matches each). Other Vue 2-only instance APIs may still be present outside the scanned set and would surface when scanning for compat-mode deprecation warnings in the browser; those remain intentionally out of scope until a dedicated compat-warning pass
-- **Admin `util` import debt is reduced, not gone**: the handoff-targeted admin routes are clean, but browser-unsafe `util` usage still exists in at least `frontend/src/views/admin/tools/ClientAssets.vue` and `frontend/src/views/admin/components/DashboardSystemInfo.vue`; there is also non-admin/shared `util` debt in selectors/previews/tools components
+- **Admin `util` import debt is fully cleared**: the last two admin-side browser-unsafe `util` imports (`frontend/src/views/admin/tools/ClientAssets.vue` and `frontend/src/views/admin/components/DashboardSystemInfo.vue`) were removed in Step 15. Non-admin/shared `util` debt still exists broadly (selectors/previews/tools/spells.ts/router.ts/db-schema.ts and ~40 call sites); that remains intentionally out of scope. A browser-safe `util.format` shim module repointing the `import util from "util"` lines is a viable high-leverage follow-up to clear the rest in one pass
 - Fresh frontend dependency installs still need the legacy peer resolver while Vue 2 bridge packages remain in tree: plain `npm ci` currently fails on the expected `vue-class-component@7.2.6` peer conflict against Vue 3, while `npm install --legacy-peer-deps --package-lock=false` restored a working local build
 - Frontend build still emits non-fatal warnings:
   - deprecated Sass legacy JS API
@@ -233,6 +248,8 @@ Last verified successfully (`2026-06-18`, after Step 14):
 - Step 11 lifecycle-hook/`.native` sweep is build-verified but not yet browser-smoke-tested; the `@mouseover` fallthrough behavior (eq-tabs/eq-window-simple root `div`, b-form-select/b-form-input via `...attrs` spread) should be confirmed in the browser for the editor/preview hover flows
 - Step 12 `EQTabs`/`EQTab` `provide`/`inject` rewrite is build-verified but not yet browser-smoke-tested; tab selection (incl. nested `eq-tabs` in `ServerConfig` and the v-for loginserver tabs), hover-to-select, and the `selected` query-string restore should be confirmed in the browser. The three admin configuration routes are likewise build-verified only
 - Step 14 admin log/release/zone/file cleanup is build-verified only; browser smoke should confirm the release-notes modal open/close flow, player-event-log page switching/filter deletion, zone-server search, and file-log search/watch controls
+- Step 15 admin update/zone/webhook/launcher compat + `util` removal is build-verified only; browser smoke should confirm the server-update branch select+Set append control, zone-log copy-to-clipboard button, discord-webhook add/delete buttons, and launcher-options numeric inputs. `ServerProcessButtonComponent.vue` still contains `b-button`/`b-spinner` usage (preflight/start/stop/restart controls) but was intentionally left out of this slice as it was already touched in Step 7 and is not a blocker
+- `go build ./...` now passes cleanly after removing the stale untracked packr artifact (Step 15); prior "GO BUILD OK" lines in earlier verification runs were masked by piping through `tail`, so the packr breakage had been silently present since the Step-4 embed migration. Going forward, run `go build ./...` without a pipe (or check `$?`) to catch this class of regression
 - Large editor-heavy routes are not yet intentionally re-architected; current success is foundation-first
 - Vue 2 specialty libraries are still present as dependency debt even though the app now builds on the new shell
 - `docs/project-assessment-2026-06.md` still references Wire historically; that is acceptable unless we want the assessment updated to reflect implementation progress
@@ -244,13 +261,13 @@ Recommended next phase:
 - Continue Phase 2 frontend migration: finish the remaining admin/shared compat cleanup around lingering BootstrapVue-style inputs/buttons and browser-unsafe Node shims
 - Goal: keep shrinking the compat surface before any browser warning pass or compat-mode removal attempt
 
-Suggested next targets:
+The Step-15 suggested targets (`ServerUpdate.vue`, `ZoneLogs.vue`, `DiscordWebhooks.vue`, `LauncherOptions.vue`, `ClientAssets.vue`, `DashboardSystemInfo.vue`) are now complete; admin-side `util` debt is fully cleared. Suggested next targets:
 
-- `frontend/src/views/admin/server-update/ServerUpdate.vue` (still uses `b-input-group` / `b-button` in the branch/build controls and is adjacent to the admin releases flow that was just cleaned)
-- `frontend/src/views/admin/tools/ClientAssets.vue` and `frontend/src/views/admin/components/DashboardSystemInfo.vue` (remaining admin-side browser-unsafe `util` imports)
-- `frontend/src/views/admin/ZoneLogs.vue`, `frontend/src/views/admin/configuration/DiscordWebhooks.vue`, and `frontend/src/views/admin/components/LauncherOptions.vue` (still contain simple `b-button` / `b-form-input` usage worth converting to native markup in the same style)
+- `frontend/src/views/admin/components/ServerProcessButtonComponent.vue` (still uses `b-button`/`b-spinner` in the preflight/start/stop/restart controls — the last significant BootstrapVue cluster in the admin shell; already touched in Step 7 so re-check before editing)
+- **Clear the remaining shared/non-admin `util` debt in one pass** via a browser-safe `util.format` shim module (e.g. `frontend/src/app/utility/util-shim.ts`) and repoint the ~15 `import util from "util"` / `import * as util from 'util'` lines across `app/spells.ts`, `app/db-schema.ts`, `app/api/*`, `router.ts`, and the asset/quest/item/spell/npc/merchant/client-files views and selectors. This is higher-leverage than continuing the per-file template-literal conversion across ~40 remaining call sites
+- `frontend/src/views/client-files/ClientFiles.vue` and `frontend/src/components/DbColumnFilter.vue` / `DbConnectionStatusPill.vue` (remaining shared non-admin BootstrapVue/`util` clusters worth converting once the shim lands)
 
-The Vue 2 lifecycle / `$set` / `.native` sweep (Step 11), the `$children` removal (Step 12), the `.sync` sweep (Step 13), and the Step 14 admin compat cleanup above are complete. The remaining Vue 2-only instance API scan stays clean with `rg -n "\\\$listeners|\\\$scopedSlots|Vue\\.set" frontend/src` (0 matches on 2026-06-18).
+The Vue 2 lifecycle / `$set` / `.native` sweep (Step 11), the `$children` removal (Step 12), the `.sync` sweep (Step 13), the Step 14 admin compat cleanup, and the Step 15 admin compat + packr cleanup above are complete. The remaining Vue 2-only instance API scan stays clean with `rg -n "\\\$listeners|\\\$scopedSlots|Vue\\.set" frontend/src` (0 matches on 2026-06-18).
 
 ## Session Notes
 

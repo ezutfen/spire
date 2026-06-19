@@ -103,7 +103,7 @@
               class="col-3 text-center"
             >
               <span class="font-weight-bold">Branch</span>
-              <b-input-group>
+              <div class="input-group">
                 <select
                   v-model="currentBranch"
                   class="form-select"
@@ -117,15 +117,15 @@
                     {{ branch }}
                   </option>
                 </select>
-                <b-input-group-append>
+                <div class="input-group-append">
 
-                  <b-button variant="white" class="btn-sm" @click="setBranch" :disabled="buildRunning">
+                  <button type="button" class="btn btn-white btn-sm" @click="setBranch" :disabled="buildRunning">
                     <i class="fa fa-dot-circle-o mr-2"></i>
                     Set
-                  </b-button>
+                  </button>
 
-                </b-input-group-append>
-              </b-input-group>
+                </div>
+              </div>
             </div>
             <div
               :style="(buildRunning ? 'opacity: .5' : 'opacity: 1')"

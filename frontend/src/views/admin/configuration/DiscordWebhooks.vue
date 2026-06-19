@@ -23,14 +23,14 @@
 
         <div class="row">
           <div class="col-12">
-            <b-button
-              size="sm"
-              variant="outline-warning btn-dark"
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-warning btn-dark"
               @click="add()"
             >
               <i class="fa fa-plus mr-1"></i>
               Add Webhook
-            </b-button>
+            </button>
           </div>
         </div>
 
@@ -67,15 +67,15 @@
           <tbody>
           <tr v-for="w in discordWebhooks" :key="w.id">
             <td class="text-center p-0 m-0">
-              <b-button
-                variant="primary"
-                class="btn-dark btn-sm ml-1"
+              <button
+                type="button"
+                class="btn btn-primary btn-dark btn-sm ml-1"
                 style="padding: 0px 6px;"
                 title="Delete"
                 @click="deleteWebhook(w)"
               >
                 <i class="fa fa-trash"></i>
-              </b-button>
+              </button>
 
             </td>
             <td class="text-center">{{ w.id }}</td>

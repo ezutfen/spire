@@ -89,13 +89,14 @@
               >
                 <i class="fa fa-play pr-1"></i>
               </button>
-              <b-button
-                class="btn-white btn-sm ml-1"
+              <button
+                type="submit"
+                class="btn btn-white btn-sm ml-1"
                 title="Copy to clipboard"
                 @click="copyFileContentsToClipboard()"
               >
                 <i class="fa fa-copy"></i>
-              </b-button>
+              </button>
             </div>
 
             <div class="col-11">

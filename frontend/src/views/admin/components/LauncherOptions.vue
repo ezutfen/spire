@@ -132,8 +132,9 @@
             booted.
           </p>
         </div>
-        <b-form-input
+        <input
           type="number"
+          class="form-control"
           v-model.number="launcher.minZoneProcesses"
           @change="saveLauncherOptions()"
         />
@@ -149,8 +150,9 @@
             Files older than this will be deleted periodically. Set to -1 to disable.
           </p>
         </div>
-        <b-form-input
+        <input
           type="number"
+          class="form-control"
           v-model.number="launcher.deleteLogFilesOlderThanDays"
           @change="saveLauncherOptions()"
         />
