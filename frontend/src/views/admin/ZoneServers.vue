@@ -27,13 +27,13 @@
       <div>
         <div class="row">
           <div class="col-lg-10 col-sm-12">
-            <b-form-input
+            <input
               type="text"
               class="form-control list-search mt-1"
               @keyup="debouncedUpdateQueryState()"
               v-model="search"
               placeholder="Search zone servers by zone name or player name..."
-            />
+            >
           </div>
 
           <div class="text-center col-lg-1 col-sm-12 font-weight-bold">
@@ -252,7 +252,6 @@ import {ROUTE}                     from "@/routes";
 import {SpireApi}                  from "@/app/api/spire-api";
 import InfoErrorBanner             from "@/components/InfoErrorBanner.vue";
 import {DB_RACES_ICONS}            from "@/app/constants/eq-race-icon-constants";
-import util                        from "util";
 import {DB_PLAYER_CLASSES}         from "@/app/constants/eq-classes-constants";
 import {DB_CLASSES_ICONS}          from "@/app/constants/eq-class-icon-constants";
 import EqWindow                    from "@/components/eq-ui/EQWindow.vue";
@@ -439,11 +438,7 @@ export default {
     },
 
     formatPlayerTooltip(c) {
-      return util.format(
-        "%s (%s)",
-        c.name,
-        DB_PLAYER_CLASSES[c.class] ? DB_PLAYER_CLASSES[c.class] : c.class
-      )
+      return `${c.name} (${DB_PLAYER_CLASSES[c.class] ? DB_PLAYER_CLASSES[c.class] : c.class})`
     },
 
     filterClients(clients) {
