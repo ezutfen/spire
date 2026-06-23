@@ -74,6 +74,10 @@ type Launcher struct {
 	staticZonesToBoot    []string
 	currentOnlineStatics []string
 	currentProcessCounts map[string]int
+	// currentZoneProcInfos is the most recent snapshot of live zone children,
+	// captured by pollProcessCounts (the single per-cycle process scan) and
+	// reused by reconciliation so it never re-scans the process table.
+	currentZoneProcInfos []zoneProcInfo
 	stopTimer            int // timer in seconds to stop the server
 	stopType             string
 	bootedTotalDynamics  int
@@ -82,11 +86,19 @@ type Launcher struct {
 	processSleepTime     time.Duration
 	zoneAssignedDynamics int
 
+	// stale-zone reconciliation (self-healing) tunables + state
+	reconcileStaleZones       bool
+	staleZoneGraceSeconds     int
+	maxStaleZoneKillsPerCycle int
+	staleZoneSince            map[int32]time.Time // dynamic zone pid -> first-seen-unregistered time
+	reconcileKillTimes        []time.Time         // rolling window of successful kills for rate limiting
+
 	// mutexes
 	pollProcessMutex  sync.Mutex
 	nodesMutex        sync.Mutex
 	configMutex       sync.Mutex
 	setZoneCountMutex sync.Mutex
+	reconcileMutex    sync.Mutex
 }
 
 func NewLauncher(
@@ -110,6 +122,7 @@ func NewLauncher(
 		websocketMgr:         websocketMgr,
 		processSleepTime:     1 * time.Second,
 		crashLogWatcher:      crashLogWatcher,
+		staleZoneSince:       make(map[int32]time.Time),
 	}
 
 	return l
@@ -564,6 +577,13 @@ func (l *Launcher) Supervisor() error {
 		}
 	}
 
+	// reconcile stale dynamic zone children (alive but no longer registered with
+	// world) before the boot loop. Killed children are recounted by the next
+	// cycle's pollProcessCounts(), so the pool is replenished on the following
+	// cycle. Skipped while world is unreachable (we returned above) or while a
+	// stop/restart is pending.
+	l.reconcileStaleZoneProcesses(list)
+
 	// boot statics if needed
 	if len(l.staticZonesToBoot) > 0 {
 		var staticsToBoot []string
@@ -679,6 +699,21 @@ func (l *Launcher) loadServerConfig() {
 	l.minZoneProcesses = cfg.WebAdmin.Launcher.MinZoneProcesses
 	l.updateOpcodesOnStart = cfg.WebAdmin.Launcher.UpdateOpcodesOnStart
 	l.deleteLogFilesOlderThanDays = cfg.WebAdmin.Launcher.DeleteLogFilesOlderThanDays
+
+	// stale-zone reconciliation tunables (self-healing); safe defaults so the
+	// feature is on without requiring operators to edit eqemu_config.json
+	l.reconcileStaleZones = true
+	if cfg.WebAdmin.Launcher.ReconcileStaleZones != nil {
+		l.reconcileStaleZones = *cfg.WebAdmin.Launcher.ReconcileStaleZones
+	}
+	l.staleZoneGraceSeconds = cfg.WebAdmin.Launcher.StaleZoneGraceSeconds
+	if l.staleZoneGraceSeconds <= 0 {
+		l.staleZoneGraceSeconds = defaultStaleZoneGraceSeconds
+	}
+	l.maxStaleZoneKillsPerCycle = cfg.WebAdmin.Launcher.MaxStaleZoneKillsPerCycle
+	if l.maxStaleZoneKillsPerCycle <= 0 {
+		l.maxStaleZoneKillsPerCycle = defaultMaxStaleZoneKillsPerCycle
+	}
 
 	if l.minZoneProcesses < 1 {
 		l.minZoneProcesses = 5
@@ -1365,8 +1400,11 @@ func (l *Launcher) pollProcessCounts() {
 	// reset
 	l.currentProcessCounts = make(map[string]int)
 	l.currentOnlineStatics = []string{}
+	l.currentZoneProcInfos = nil
 	l.currentZoneDynamics = 0
 	l.currentZoneStatics = 0
+
+	now := time.Now()
 
 	processes, _ := process.Processes()
 	for _, p := range processes {
@@ -1384,30 +1422,30 @@ func (l *Launcher) pollProcessCounts() {
 				}
 
 				if s == zoneProcessName {
-					// cmdline path can contain spaces which will break the split
-					cmdline := proc.Cmdline
-					cmdline = strings.ReplaceAll(cmdline, proc.Cwd, "")
-					cmdline = strings.TrimSpace(cmdline)
+					staticName := l.zoneStaticArg(proc)
 
-					// get arg
-					// check if it's in the static zones
-					// if it is, add it to the current online statics
-					arg := strings.Split(cmdline, " ")
-					if len(arg) > 1 {
-						for _, z := range l.staticZonesToBoot {
-							if z == arg[1] {
-								// make sure it's not already in the list
-								isInList := false
-								for _, cz := range l.currentOnlineStatics {
-									if cz == z {
-										isInList = true
-										break
-									}
-								}
-								if !isInList {
-									l.currentOnlineStatics = append(l.currentOnlineStatics, z)
-								}
+					// record a snapshot of this zone child for reconciliation
+					// (reused so reconcile never re-scans the process table)
+					zpi := zoneProcInfo{Pid: p.Pid, StaticName: staticName}
+					if ct, err := p.CreateTime(); err == nil && ct > 0 {
+						zpi.Age = now.Sub(time.UnixMilli(ct))
+						if zpi.Age < 0 {
+							zpi.Age = 0
+						}
+					}
+					l.currentZoneProcInfos = append(l.currentZoneProcInfos, zpi)
+
+					if staticName != "" {
+						// make sure it's not already in the list
+						isInList := false
+						for _, cz := range l.currentOnlineStatics {
+							if cz == staticName {
+								isInList = true
+								break
 							}
+						}
+						if !isInList {
+							l.currentOnlineStatics = append(l.currentOnlineStatics, staticName)
 						}
 						l.currentZoneStatics++
 					} else {
