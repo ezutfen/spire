@@ -45,6 +45,33 @@ type WebAdminLauncherConfig struct {
 	UpdateOpcodesOnStart        bool   `json:"updateOpcodesOnStart"`
 	DeleteLogFilesOlderThanDays int    `json:"deleteLogFilesOlderThanDays"`
 
+	// Stale-zone reconciliation (launcher self-healing).
+	//
+	// A launcher child zone process can be "alive" (present in the process
+	// table) but no longer registered with the world server as a usable zone
+	// server (e.g. hung in allocator/futex, lost its world socket, etc). Such a
+	// process still counts toward the dynamic zone pool, so the launcher never
+	// boots a replacement and world's usable zone_count silently drains to
+	// zero ("No zoneserver available to boot up").
+	//
+	// When ReconcileStaleZones is enabled (default), the launcher reconciles
+	// local zone child process liveness against world's authoritative
+	// registered zoneserver list and terminates stale dynamic zone children
+	// after a grace period so the normal boot loop replaces them.
+	ReconcileStaleZones *bool `json:"reconcileStaleZones,omitempty"`
+
+	// StaleZoneGraceSeconds is how long a dynamic zone child may remain alive
+	// but unregistered with world before it is considered stale and killed.
+	// Also doubles as the minimum process age required before any kill, so
+	// slow-booting or reconnecting zones are not killed prematurely. Defaults
+	// to 120s when unset.
+	StaleZoneGraceSeconds int `json:"staleZoneGraceSeconds,omitempty"`
+
+	// MaxStaleZoneKillsPerCycle bounds the number of stale zone children the
+	// launcher will terminate in a single reconciliation pass. Defaults to 2
+	// when unset.
+	MaxStaleZoneKillsPerCycle int `json:"maxStaleZoneKillsPerCycle,omitempty"`
+
 	// leaf nodes do not run any process but zones
 	DistributedNodeType     string `json:"distributed_node_type,omitempty"`      // root or leaf
 	DistributedMaxZoneCount int    `json:"distributed_max_zone_count,omitempty"` // max zone count for leaf nodes
