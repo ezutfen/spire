@@ -224,7 +224,7 @@ import {BotSpellsEntryApi}       from "../../app/api/api/bot-spells-entry-api";
 import {scrollToTarget}          from "../../app/utility/scrollToTarget";
 import InfoErrorBanner           from "../../components/InfoErrorBanner";
 import {ROUTE}                   from "../../routes";
-import util                      from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import EqCheckbox                from "../../components/eq-ui/EQCheckbox";
 import SpellPopover              from "../../components/SpellPopover";
 import {BOT_SPELL_TYPES}         from "../../app/constants/eq-bot-spells";
@@ -376,7 +376,7 @@ export default {
 
       this.$router.push(
         {
-          path: util.format(ROUTE.BOT_SPELL_EDIT, npcSpellsId),
+          path: stringFormat(ROUTE.BOT_SPELL_EDIT, npcSpellsId),
           query: queryState
         }
       ).catch(() => {

@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import * as util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import EqAssets  from "../../../app/eq-assets/eq-assets";
 
 export default {
@@ -40,7 +40,7 @@ export default {
       const r = await EqAssets.getItemModelFileNames()
       r.forEach((fileName) => {
         const modelId =
-                util.format(
+                stringFormat(
                   "%s",
                   fileName.toString()
                     .replace("CTN_", "")

@@ -149,7 +149,7 @@
 import MarkdownIt from "markdown-it";
 
 import EqWindow        from "@/components/eq-ui/EQWindow.vue";
-import util            from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {ROUTE}         from "@/routes";
 import EqTabs          from "@/components/eq-ui/EQTabs.vue";
 import EqTab           from "@/components/eq-ui/EQTab.vue";
@@ -239,7 +239,6 @@ export default {
 
     // state
     updateQueryState() {
-      console.log("trigger")
       let q = {};
       if (this.tabSelected !== "") {
         q.s = this.tabSelected
@@ -292,7 +291,7 @@ export default {
       return Time.format(time, "MMM D YYYY")
     },
     goToRelease(r) {
-      window.open(util.format("http://spire.eqemu.dev/dev/release/%s", r), 'release_' + r);
+      window.open(stringFormat("http://spire.eqemu.dev/dev/release/%s", r), 'release_' + r);
     },
     async loadCounts() {
       return new Promise(async (resolve) => {

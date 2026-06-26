@@ -82,7 +82,7 @@ import {DB_SPELL_TARGETS} from "@/app/constants/eq-spell-constants";
 import {DB_CLASSES_ICONS} from "@/app/constants/eq-class-icon-constants";
 import {DB_CLASSES_SHORT} from "@/app/constants/eq-classes-constants";
 import {ROUTE}            from "@/routes";
-import * as util          from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import SpellPopover       from "@/components/SpellPopover";
 
 export default {
@@ -141,7 +141,7 @@ export default {
     editSpell(spellId) {
       this.$router.push(
         {
-          path: util.format(ROUTE.SPELL_EDIT, spellId),
+          path: stringFormat(ROUTE.SPELL_EDIT, spellId),
           query: {}
         }
       ).catch(() => {

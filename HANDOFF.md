@@ -18,10 +18,10 @@ Keep entries short, factual, and action-oriented.
 
 ## Current Status
 
-- Date: `2026-06-17`
+- Date: `2026-06-24`
 - Branch: `feature/option-2-migration-foundation`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and building; SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native` sweep complete across editor-heavy and shared routes (0 remaining occurrences); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration (tab navigation now works under Vue 3 across all 12 consumers); the three admin configuration routes (`LogSettings`/`ServerRules`/`ServerConfig`) cleaned off BootstrapVue form inputs and Node `util` debt
+- State: frontend foundation is migrated and now builds on plain Vue 3 (no `@vue/compat`, no `configureCompat({ MODE: 2 })`); SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native`/`.sync` sweep complete across editor-heavy and shared routes (0 remaining occurrences for those searches); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration; first-party frontend `util.format` usage removed behind a browser-safe helper; `EqZoneMap` moved off `vue2-leaflet` to `@vue-leaflet/vue-leaflet`
 
 ## Completed Steps
 
@@ -173,52 +173,79 @@ The single remaining real `this.$children` usage (`frontend/src/components/eq-ui
   - [frontend/src/views/admin/configuration/ServerRules.vue](/home/zutfen/code/spire/frontend/src/views/admin/configuration/ServerRules.vue): replaced `b-form-input` with a native `<input>`
   - [frontend/src/views/admin/configuration/ServerConfig.vue](/home/zutfen/code/spire/frontend/src/views/admin/configuration/ServerConfig.vue): removed stray `console.log("trigger")` debug noise (route was already on native inputs and `eq-tabs`/`eq-tab`, now fixed via the `EQTabs` change above)
 
+### 13. Pure Vue 3 Cutover
+
+- Replaced the final 28 `:inputData.sync="..."` bindings with `v-model:inputData="..."` across the remaining editor / selector parents:
+  - [frontend/src/views/Calculators.vue](/home/zutfen/code/spire/frontend/src/views/Calculators.vue)
+  - [frontend/src/views/Components.vue](/home/zutfen/code/spire/frontend/src/views/Components.vue)
+  - [frontend/src/views/items/Items.vue](/home/zutfen/code/spire/frontend/src/views/items/Items.vue)
+  - [frontend/src/views/items/ItemEditor.vue](/home/zutfen/code/spire/frontend/src/views/items/ItemEditor.vue)
+  - [frontend/src/views/npcs/NpcEditor.vue](/home/zutfen/code/spire/frontend/src/views/npcs/NpcEditor.vue)
+  - [frontend/src/views/spells/SpellEditor.vue](/home/zutfen/code/spire/frontend/src/views/spells/SpellEditor.vue)
+  - [frontend/src/views/spells/components/SpellItemSelector.vue](/home/zutfen/code/spire/frontend/src/views/spells/components/SpellItemSelector.vue)
+  - [frontend/src/views/tasks/components/TaskItemSelector.vue](/home/zutfen/code/spire/frontend/src/views/tasks/components/TaskItemSelector.vue)
+  - [frontend/src/components/selectors/ItemSelector.vue](/home/zutfen/code/spire/frontend/src/components/selectors/ItemSelector.vue)
+- Added a browser-safe formatter helper and tests:
+  - [frontend/src/app/utility/string-format.ts](/home/zutfen/code/spire/frontend/src/app/utility/string-format.ts)
+  - [frontend/src/app/utility/string-format.test.ts](/home/zutfen/code/spire/frontend/src/app/utility/string-format.test.ts)
+- Replaced first-party `util.format(...)` / `import ... from "util"` usage across the frontend with `stringFormat(...)`, including the targeted admin files (`PlayerEventLogs`, `PlayerEventLogSettings`, `UpdateReleases`, `ZoneServers`) plus the shared routes/helpers that still depended on the polyfill
+- Removed the Vue compat cutover scaffolding:
+  - deleted `configureCompat({ MODE: 2 })` from [frontend/src/main.ts](/home/zutfen/code/spire/frontend/src/main.ts)
+  - removed the `vue: '@vue/compat'` and `util: 'util'` aliases from [frontend/vite.config.ts](/home/zutfen/code/spire/frontend/vite.config.ts)
+  - removed `@vue/compat` and `util` from [frontend/package.json](/home/zutfen/code/spire/frontend/package.json)
+- Fixed the post-compat map build blocker by swapping [frontend/src/components/EqZoneMap.vue](/home/zutfen/code/spire/frontend/src/components/EqZoneMap.vue) from `vue2-leaflet` to `@vue-leaflet/vue-leaflet` and updating the frontend dependency set accordingly
+- Removed clearly stray debug noise in the touched admin / mirrored release views:
+  - [frontend/src/views/admin/server-update/UpdateReleases.vue](/home/zutfen/code/spire/frontend/src/views/admin/server-update/UpdateReleases.vue)
+  - [frontend/src/views/server-developer/Releases.vue](/home/zutfen/code/spire/frontend/src/views/server-developer/Releases.vue)
+  - [frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue)
+  - [frontend/src/views/admin/FileLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/FileLogs.vue)
+
 ## Verification
 
-Last verified successfully (`2026-06-17`, after Step 12):
+Last verified successfully (`2026-06-24`, after Step 13):
 
 - `go build ./...`
 - `go build ./internal/http/spa`
+- `cd frontend && npm test`
 - `cd frontend && npm run build`
+- `rg -n "\.sync=" frontend/src --type-add 'vue:*.vue' --type vue` → 0 matches
+- `rg -n "util\.format\(|from [\"']util[\"']" frontend/src` → 0 matches
+- `rg -n "@vue/compat|configureCompat|MODE: 2" frontend -g '!frontend/package-lock.json'` → 0 matches
 - `rg -n "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src` (`.vue` files) → 0 matches
 - `rg -n "\$children" frontend/src` (excluding `assets/vendors/`) → 0 matches
 
 ## Open Risks / Warnings
 
-- App still boots under Vue's migration build (`configureCompat({ MODE: 2 })`). The targeted sweeps cleared all `beforeDestroy`/`destroyed`/`$set`/`.native` usages and the single real `$children` usage (verified: 0 matches each). Other Vue 2-only instance APIs may still be present (e.g. `this.$listeners`, `this.$scopedSlots`, `Vue.set`, `.sync`) and would surface when scanning for compat-mode deprecation warnings in the browser; these were intentionally out of scope for this sweep
-- **`.sync` modifier debt**: 28 `:prop.sync="..."` usages remain across editor/selector routes (`frontend/src/views/Calculators.vue`, `frontend/src/views/Components.vue`, `frontend/src/views/spells/`, `frontend/src/views/items/`, `frontend/src/views/npcs/NpcEditor.vue`, `frontend/src/views/tasks/components/`, `frontend/src/components/selectors/`). Under compat mode these emit deprecation warnings and must become `v-model:prop` before compat is dropped
-- **Node `util` import debt**: `import util from "util"` (browser-unsafe, currently polyfilled by the bundler) still exists in 5 admin routes outside this step's scope: `frontend/src/views/admin/tools/ClientAssets.vue`, `frontend/src/views/admin/server-update/UpdateReleases.vue`, `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue`, `frontend/src/views/admin/player-event-logs/PlayerEventLogSettings.vue`, `frontend/src/views/admin/ZoneServers.vue` (plus a stray `console.log("trigger")` in `UpdateReleases.vue`)
 - Frontend build still emits non-fatal warnings:
   - deprecated Sass legacy JS API
   - deprecated Vue deep selector syntax (`>>>` / `/deep/`)
   - existing duplicate `case 503` warning in `frontend/src/app/spells.ts`
-- Connections/user modal fixes are build-verified but not yet browser-smoke-tested end-to-end
-- Admin modal/timer fixes are build-verified but not yet browser-smoke-tested end-to-end
-- Admin dashboard/zone/lifecycle hook fixes (`$set`, `.native`, `beforeDestroy`/`destroyed`) are build-verified but not yet browser-smoke-tested end-to-end
-- Launcher options static-zone add/remove flow is build-verified but not yet browser-smoke-tested end-to-end
-- Server update branch switching/build controls and Discord webhook CRUD are build-verified but not yet browser-smoke-tested end-to-end
-- Step 11 lifecycle-hook/`.native` sweep is build-verified but not yet browser-smoke-tested; the `@mouseover` fallthrough behavior (eq-tabs/eq-window-simple root `div`, b-form-select/b-form-input via `...attrs` spread) should be confirmed in the browser for the editor/preview hover flows
-- Step 12 `EQTabs`/`EQTab` `provide`/`inject` rewrite is build-verified but not yet browser-smoke-tested; tab selection (incl. nested `eq-tabs` in `ServerConfig` and the v-for loginserver tabs), hover-to-select, and the `selected` query-string restore should be confirmed in the browser. The three admin configuration routes are likewise build-verified only
-- Large editor-heavy routes are not yet intentionally re-architected; current success is foundation-first
-- Vue 2 specialty libraries are still present as dependency debt even though the app now builds on the new shell
+- `/img/eq-wallpaper-1.b2319219.jpg` still reports a runtime-resolution warning during `vite build`
+- The pure Vue 3 cutover is build-verified but not yet browser-smoke-tested end-to-end:
+  - connections / user modals
+  - `EQTabs` / nested `ServerConfig` tab selection, hover-to-select, and `selected` query restore
+  - launcher options static-zone add/remove
+  - player event log explorer + settings save / reload notifications
+  - update / release views (modal open, install-cancel path, release-detail navigation)
+  - zone/admin lifecycle views, file log streaming, and editor hover flows previously affected by `.native`
+  - `EqZoneMap` rendering / zoom / marker interactions after the `@vue-leaflet/vue-leaflet` swap
+- Vue 2-era dependency debt still exists outside the build blocker fixed here (`vue2-ace-editor`, `vue2-dropzone`, `vuex`, `vue-property-decorator`, `vue-class-component`); the app now builds without compat, but those packages should be revalidated or retired in future cleanup
 - `docs/project-assessment-2026-06.md` still references Wire historically; that is acceptable unless we want the assessment updated to reflect implementation progress
 
 ## Next Step
 
 Recommended next phase:
 
-- Continue Phase 2 frontend migration: finish the remaining admin/shared modal-heavy routes
-- Goal: replace real BootstrapVue usage on ordinary CRUD/admin flows with the new local Vue 3 wrapper layer and remove timing-sensitive modal behavior
+- Run the manual browser smoke checklist against the pure Vue 3 build
+- Goal: confirm runtime behavior on the migrated admin/editor flows and capture any remaining regressions now that compat mode is gone
 
 Suggested next targets:
 
-- `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue` / `PlayerEventLogSettings.vue` (still use `b-form-input`, `b-pagination`, and the Node `util` import)
-- `frontend/src/views/admin/server-update/UpdateReleases.vue` (uses `b-modal`/`b-button` and the Node `util` import + a stray `console.log("trigger")`)
-- `frontend/src/views/admin/ZoneServers.vue` and `frontend/src/views/admin/FileLogs.vue` (still use `b-form-input` / `b-input-group` / `b-button`)
-
-The Vue 2 lifecycle / `$set` / `.native` sweep (Step 11) and the `$children` removal (Step 12) are complete. The highest-value remaining compat-noise follow-up is the **`.sync` modifier sweep**: 28 `:prop.sync="..."` usages need to become `v-model:prop="..."` (a mechanical drop-in since the child components already emit `update:<prop>`). Scan with `rg -n "\.sync=" frontend/src --type-add 'vue:*.vue' --type vue`. Editor/selector routes touched: `Calculators.vue`, `Components.vue`, `spells/`, `items/`, `npcs/NpcEditor.vue`, `tasks/components/`, `components/selectors/`.
-
-The remaining Vue 2-only instance APIs can also be swept with `rg -n "\\\$listeners|\\\$scopedSlots|Vue\\.set" frontend/src` (currently 0 matches for those three).
+- `frontend/src/views/connections/UserConnections.vue` plus the user modal flows (`CreateUserModal`, `ResetUserPasswordModal`)
+- `frontend/src/views/admin/configuration/ServerConfig.vue` / `frontend/src/components/eq-ui/EQTabs.vue`
+- `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue` / `PlayerEventLogSettings.vue`
+- `frontend/src/views/admin/server-update/UpdateReleases.vue` and `frontend/src/views/server-developer/Releases.vue`
+- `frontend/src/views/admin/ZoneServers.vue`, `frontend/src/views/admin/FileLogs.vue`, and [frontend/src/components/EqZoneMap.vue](/home/zutfen/code/spire/frontend/src/components/EqZoneMap.vue)
 
 ## Session Notes
 

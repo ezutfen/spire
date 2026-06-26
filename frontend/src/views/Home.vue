@@ -26,7 +26,7 @@ import MarkdownIt      from "markdown-it";
 import EqWindow        from "@/components/eq-ui/EQWindow";
 import UserContext     from "@/app/user/UserContext";
 import {SpireApi}      from "../app/api/spire-api";
-import * as util       from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import VideoViewer     from "../app/video-viewer/video-viewer";
 import LazyImageLoader from "@/app/lazy-image-load/lazy-image-load";
 
@@ -59,8 +59,8 @@ export default {
 
               // replace markdown code for html
               markdownRaw = markdownRaw.replace(
-                util.format("[![](https://img.youtube.com/vi/%s/0.jpg)](https://www.youtube.com/watch?v=%s)", videoCode, videoCode),
-                util.format('<div class="container"><iframe allow="autoplay" class="video lazy-video" data-src="https://www.youtube.com/embed/%s?mute=1&showinfo=0&controls=0&modestbranding=1&rel=0&loop=1&showsearch=0&iv_load_policy=3&playlist=%s" title="YouTube video player" frameborder="0" allowfullscreen></iframe></div>\n', videoCode, videoCode)
+                stringFormat("[![](https://img.youtube.com/vi/%s/0.jpg)](https://www.youtube.com/watch?v=%s)", videoCode, videoCode),
+                stringFormat('<div class="container"><iframe allow="autoplay" class="video lazy-video" data-src="https://www.youtube.com/embed/%s?mute=1&showinfo=0&controls=0&modestbranding=1&rel=0&loop=1&showsearch=0&iv_load_policy=3&playlist=%s" title="YouTube video player" frameborder="0" allowfullscreen></iframe></div>\n', videoCode, videoCode)
               )
 
               // console.log("Video code is [%s]", videoCode)

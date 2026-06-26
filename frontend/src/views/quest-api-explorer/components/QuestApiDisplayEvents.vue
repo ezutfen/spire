@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import ClipBoard from "@/app/clipboard/clipboard";
 import Analytics from "@/app/analytics/analytics";
 import {Notify} from "@/app/Notify";
@@ -83,7 +83,7 @@ export default {
     eventSelectionFormatName(ev) {
       const entity = ev.split("-")[0]
       const event  = ev.split("-")[1]
-      return util.format("[%s] %s", entity, event)
+      return stringFormat("[%s] %s", entity, event)
     },
     getLangEventPrefix() {
       return this.languageSelection === "perl" ? "sub" : "function"

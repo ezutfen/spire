@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import itemSlots from "@/constants/item-slots.json"
 import itemSlotIdFileMapping from "@/constants/item-slot-idfile-mapping.json"
 import itemTypes from "@/constants/item-types.json"
@@ -302,7 +302,7 @@ export default {
     itemModels = [];
 
     for (let itemId = 0; itemId <= MAX_ITEM_IDFILE; itemId++) {
-      const modelKey = util.format("CTN_%s.png", itemId);
+      const modelKey = stringFormat("CTN_%s.png", itemId);
 
       if (modelFiles[modelKey]) {
         itemModels.push(itemId)
@@ -317,7 +317,7 @@ export default {
 
       let modelCountDescription = "";
       if (itemSlotIdFileMapping[slotNumbers] && itemSlotIdFileMapping[slotNumbers].length > 0) {
-        modelCountDescription = util.format(" (%s models)", itemSlotIdFileMapping[slotNumbers].length)
+        modelCountDescription = stringFormat(" (%s models)", itemSlotIdFileMapping[slotNumbers].length)
       }
 
       this.itemSlotOptions.push(
@@ -334,7 +334,7 @@ export default {
 
       let modelCountDescription = "";
       if (itemTypesModelMapping[type] && itemTypesModelMapping[type].length > 0) {
-        modelCountDescription = util.format(" (%s models)", itemTypesModelMapping[type].length)
+        modelCountDescription = stringFormat(" (%s models)", itemTypesModelMapping[type].length)
       }
 
       if (itemTypesModelMapping[type].length > 0) {

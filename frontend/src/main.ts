@@ -1,5 +1,5 @@
 import { createPinia } from 'pinia'
-import { createApp, configureCompat, defineAsyncComponent } from 'vue'
+import { createApp, defineAsyncComponent } from 'vue'
 import { Icon } from 'leaflet'
 
 import App from './App.vue'
@@ -24,10 +24,6 @@ import hljs from 'highlight.js/lib/core'
 import json from 'highlight.js/lib/languages/json'
 
 hljs.registerLanguage('json', json)
-
-configureCompat({
-  MODE: 2,
-})
 
 delete (Icon.Default.prototype as any)._getIconUrl
 Icon.Default.mergeOptions({

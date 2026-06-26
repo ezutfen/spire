@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 
 export default {
   name: "DbColumnFilter",
@@ -153,8 +153,8 @@ export default {
 
     removeFilter(filter) {
       this.filters = this.filters.filter((f) => {
-        let a = util.format("%s-%s-%s", f.field, f.operator, f.value)
-        let b = util.format("%s-%s-%s", filter.field, filter.operator, filter.value)
+        let a = stringFormat("%s-%s-%s", f.field, f.operator, f.value)
+        let b = stringFormat("%s-%s-%s", filter.field, filter.operator, filter.value)
 
         return a !== b
       })
@@ -163,7 +163,7 @@ export default {
     },
 
     formatFilterHuman(filter) {
-      return util.format(
+      return stringFormat(
         "%s %s %s",
         filter.f,
         filter.o,

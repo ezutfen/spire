@@ -226,7 +226,7 @@
 
 <script>
 import { nextTick }                from "vue";
-import util                         from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {ROUTE}                      from "@/routes";
 import {SpireApi}                   from "@/app/api/spire-api";
 import {EventBus}                   from "@/app/event-bus/event-bus";
@@ -289,7 +289,7 @@ export default {
     viewAuditLog(connectionId) {
       this.$router.push(
         {
-          path: util.format(ROUTE.DATABASE_CONNECTION_AUDIT_LOG, connectionId)
+          path: stringFormat(ROUTE.DATABASE_CONNECTION_AUDIT_LOG, connectionId)
         }
       ).catch(() => {
       })

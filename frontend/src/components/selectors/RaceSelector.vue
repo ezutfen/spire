@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import util               from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {RACES}            from "@/app/constants/eq-race-constants"
 import PageHeader         from "@/components/layout/PageHeader";
 import EqWindow           from "@/components/eq-ui/EQWindow";
@@ -274,7 +274,7 @@ export default {
     getRaceImages: function (raceId) {
       let raceImages = []
       modelFiles[raceId].forEach((file) => {
-        if (file.includes(util.format("CTN_%s", raceId))) {
+        if (file.includes(stringFormat("CTN_%s", raceId))) {
 
           // replace for css formatting
           file = file.replace(".png", "")
@@ -297,7 +297,7 @@ export default {
     getImageTitleDescription(img) {
       const meta = this.getMetaDataFromImage(img);
 
-      return util.format(
+      return stringFormat(
         "Race: %s Gender: %s Texture: %s Helm: %s",
         meta[0],
         meta[1],

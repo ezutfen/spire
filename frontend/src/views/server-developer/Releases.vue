@@ -195,7 +195,7 @@ import MarkdownIt from "markdown-it";
 
 import EqWindow   from "@/components/eq-ui/EQWindow.vue";
 import {SpireApi} from "@/app/api/spire-api";
-import util       from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {ROUTE}    from "@/routes";
 import EqTabs     from "@/components/eq-ui/EQTabs.vue";
 import EqTab      from "@/components/eq-ui/EQTab.vue";
@@ -233,7 +233,6 @@ export default {
   methods: {
     // state
     updateQueryState() {
-      console.log("trigger")
       let q = {};
       if (this.tabSelected !== "") {
         q.s = this.tabSelected
@@ -288,7 +287,7 @@ export default {
     goToRelease(r) {
       this.$router.push(
         {
-          path: util.format(ROUTE.RELEASE, r),
+          path: stringFormat(ROUTE.RELEASE, r),
         }
       ).catch(() => {
       })
@@ -396,8 +395,6 @@ export default {
     },
     getUniqueCrashResolvedCount(r) {
       const version = r.name.replaceAll("v", "")
-
-      console.log(this.uniqueCounts)
 
       let total = 0;
       for (let v of this.uniqueCounts) {

@@ -53,7 +53,7 @@
 import PageHeader     from "@/components/layout/PageHeader";
 import {App}          from "@/constants/app";
 import EqWindow       from "@/components/eq-ui/EQWindow";
-import * as util      from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import VideoViewer    from "@/app/video-viewer/video-viewer";
 import EqWindowSimple from "@/components/eq-ui/EQWindowSimple";
 import EqAssets       from "@/app/eq-assets/eq-assets";
@@ -96,7 +96,7 @@ export default {
         // we need 100ms delay because the videos haven't been rendered yet
         setTimeout(() => {
           const container = document.getElementById("video-view-port");
-          const target    = document.getElementById(util.format("spell-%s", this.selectedAnimation))
+          const target    = document.getElementById(stringFormat("spell-%s", this.selectedAnimation))
 
           // 230 is height of video to offset
           if (container && target) {

@@ -64,7 +64,7 @@ import {TELEPORT_ZONE_SELECTOR_TYPE} from "@/app/constants/eq-spell-constants";
 import EqWindowSimple                from "@/components/eq-ui/EQWindowSimple";
 import {HorseApi}                    from "@/app/api/api/horse-api";
 import {SpireApi}              from "@/app/api/spire-api";
-import util                          from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import Expansions                    from "@/app/utility/expansions";
 import EqCheckbox                    from "@/components/eq-ui/EQCheckbox";
 import {SpireQueryBuilder}           from "@/app/api/spire-query-builder";
@@ -153,7 +153,7 @@ export default {
 
     setTimeout(() => {
       const container = document.getElementById("horse-view-container");
-      const target    = document.getElementById(util.format("horse-%s", this.selectedHorse))
+      const target    = document.getElementById(stringFormat("horse-%s", this.selectedHorse))
       if (container && target) {
         const top           = target.getBoundingClientRect().top
         container.scrollTop = container.scrollTop + top - 300;

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import {ROUTE} from "@/routes";
-import * as util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {AppEnv} from "@/app/env/app-env";
 import {EventBus} from "@/app/event-bus/event-bus";
 import qs from "qs";
@@ -144,7 +144,7 @@ const router = createRouter({
           meta: {title: "Spells Browser"},
         },
         {
-          path: util.format(ROUTE.SPELL_EDIT, ":id"),
+          path: stringFormat(ROUTE.SPELL_EDIT, ":id"),
           component: () => import('./views/spells/SpellEditor.vue'),
           meta: {title: "Spell Edit"},
         },
@@ -154,7 +154,7 @@ const router = createRouter({
           meta: {title: "Items Browser"},
         },
         {
-          path: util.format(ROUTE.ITEM_EDIT, ":id"),
+          path: stringFormat(ROUTE.ITEM_EDIT, ":id"),
           component: () => import('./views/items/ItemEditor.vue'),
           meta: {title: "Item Edit"},
         },
@@ -174,7 +174,7 @@ const router = createRouter({
           meta: {title: "Releases"},
         },
         {
-          path: util.format(ROUTE.RELEASE, ":version"),
+          path: stringFormat(ROUTE.RELEASE, ":version"),
           component: () => import('./views/server-developer/Release.vue'),
           meta: {title: "Release"},
         },
@@ -189,7 +189,7 @@ const router = createRouter({
           meta: {title: "Merchants"},
         },
         {
-          path: util.format(ROUTE.MERCHANT_EDIT, ":id"),
+          path: stringFormat(ROUTE.MERCHANT_EDIT, ":id"),
           component: () => import('./views/merchants/MerchantEdit.vue'),
           meta: {title: "Merchant Edit"},
         },
@@ -214,7 +214,7 @@ const router = createRouter({
           meta: {title: "NPC Spells Editor"},
         },
         {
-          path: util.format(ROUTE.NPC_SPELL_EDIT, ":id"),
+          path: stringFormat(ROUTE.NPC_SPELL_EDIT, ":id"),
           component: () => import('./views/npcs/NpcSpellListEditor.vue'),
           meta: {title: "NPC Spells List Editor"},
         },
@@ -234,7 +234,7 @@ const router = createRouter({
           meta: {title: "Manage Spire Users"},
         },
         {
-          path: util.format(ROUTE.DATABASE_CONNECTION_AUDIT_LOG, ":connection"),
+          path: stringFormat(ROUTE.DATABASE_CONNECTION_AUDIT_LOG, ":connection"),
           component: () => import('./views/connections/AuditLog.vue'),
           meta: {title: "Audit Log"},
         },
@@ -274,7 +274,7 @@ const router = createRouter({
           meta: {title: "Bot Spells List Editor"},
         },
         {
-          path: util.format(ROUTE.BOT_SPELL_EDIT, ":id"),
+          path: stringFormat(ROUTE.BOT_SPELL_EDIT, ":id"),
           component: () => import('./views/bots/BotSpellListEditor.vue'),
           meta: {title: "Bot Spells List Editor"},
         },

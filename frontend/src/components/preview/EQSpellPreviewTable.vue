@@ -134,7 +134,7 @@ import {DB_SPELL_TARGETS} from "@/app/constants/eq-spell-constants";
 import {DB_CLASSES_ICONS} from "@/app/constants/eq-class-icon-constants";
 import {DB_CLASSES_SHORT} from "@/app/constants/eq-classes-constants";
 import {ROUTE}            from "@/routes";
-import * as util          from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import SpellPopover       from "@/components/SpellPopover";
 import {Items}            from "@/app/items";
 import {WindowManager} from "@/app/window";
@@ -204,7 +204,7 @@ export default {
     editSpell(spellId, clone = false) {
       this.$router.push(
         {
-          path: util.format(ROUTE.SPELL_EDIT + (clone ? "?clone" : ""), spellId),
+          path: stringFormat(ROUTE.SPELL_EDIT + (clone ? "?clone" : ""), spellId),
           query: {}
         }
       ).catch(() => {

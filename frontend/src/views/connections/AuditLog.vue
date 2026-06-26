@@ -89,7 +89,7 @@ import InfoErrorBanner from "../../components/InfoErrorBanner";
 import {SpireApi}      from "../../app/api/spire-api";
 import Tablesort       from "../../app/utility/tablesort";
 import {ROUTE}         from "../../routes";
-import util            from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import Time            from "@/app/time/time";
 
 export default {
@@ -133,7 +133,7 @@ export default {
       const connectionId = this.$route.params.connection
       this.$router.push(
         {
-          path: util.format(ROUTE.DATABASE_CONNECTION_AUDIT_LOG, connectionId),
+          path: stringFormat(ROUTE.DATABASE_CONNECTION_AUDIT_LOG, connectionId),
           query: queryState
         }
       ).catch(() => {

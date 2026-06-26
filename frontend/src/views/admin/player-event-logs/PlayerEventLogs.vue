@@ -322,7 +322,7 @@ import LoaderFakeProgress          from "@/components/LoaderFakeProgress.vue";
 import hljs                        from "highlight.js/lib/highlight";
 import {Navbar}                    from "@/app/navbar";
 import {Characters}                from "@/app/characters";
-import util                        from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import InfoErrorBanner             from "@/components/InfoErrorBanner.vue";
 import EqCheckbox                  from "@/components/eq-ui/EQCheckbox.vue";
 import Time                        from "@/app/time/time";
@@ -514,10 +514,10 @@ export default {
         let value    = values.join(":")
         let rawValue = values.join(":")
         if (!Number.isInteger(value)) {
-          value = util.format('"%s"', value)
+          value = stringFormat('"%s"', value)
         }
 
-        let equalLink = util.format(
+        let equalLink = stringFormat(
           "<a href=\"#\" event=\"%s\" filter-key=\"%s\" value=\"%s\"><i class='fa fa-filter'></i> = [%s]</a>",
           e.event_type_id,
           key,
@@ -530,7 +530,7 @@ export default {
           let label       = key.split("]")[1].trim()
           const filterKey = key.replace(/\[.*]/, '[*]')
 
-          anyLink = util.format(
+          anyLink = stringFormat(
             "<a href=\"#\" event=\"%s\" filter-key=\"%s\" value=\"%s\"><i class='fa fa-filter'></i> Any [%s] = [%s]</a>",
             e.event_type_id,
             filterKey,
@@ -541,7 +541,7 @@ export default {
         }
 
         lines.push(
-          util.format(
+          stringFormat(
             '  "%s": %s, %s %s',
             key,
             value,
@@ -551,7 +551,7 @@ export default {
         )
       }
 
-      return util.format("{\n%s\n}", lines.join("\n"));
+      return stringFormat("{\n%s\n}", lines.join("\n"));
     },
 
     paginate() {
@@ -829,7 +829,6 @@ export default {
             Items.loadItemsBulk(itemIds)
           ]
         ).then(async (r) => {
-          console.log("Preloading done")
           this.events         = events
           this.initialLoading = false
           this.loading        = false

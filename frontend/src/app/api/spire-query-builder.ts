@@ -1,4 +1,4 @@
-import util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 
 type QueryBuilderRequest = {
   select: string;
@@ -94,7 +94,7 @@ export class SpireQueryBuilder {
   }
 
   where(field, operator, value) {
-    const where = util.format(
+    const where = stringFormat(
       "%s%s%s",
       field,
       this.translateOperator(operator),
@@ -107,7 +107,7 @@ export class SpireQueryBuilder {
   }
 
   whereJson(dbField, jsonField, operator, value) {
-    const where = util.format(
+    const where = stringFormat(
       "%s%s%s%s%s",
       dbField,
       this.translateOperator(operator),
@@ -122,7 +122,7 @@ export class SpireQueryBuilder {
   }
 
   whereOr(field, operator, value) {
-    const where = util.format(
+    const where = stringFormat(
       "%s%s%s",
       field,
       this.translateOperator(operator),

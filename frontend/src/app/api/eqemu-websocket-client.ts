@@ -1,4 +1,4 @@
-import * as util from 'util'
+import { stringFormat } from "@/app/utility/string-format";
 import {SpireApi} from "@/app/api/spire-api";
 
 export class EqemuWebsocketClient {
@@ -37,19 +37,19 @@ export class EqemuWebsocketClient {
       console.log(auth)
 
       this.ws.onerror = (event: any) => {
-        this.log(util.format('Error %s', JSON.stringify(event)))
+        this.log(stringFormat('Error %s', JSON.stringify(event)))
         reject(event)
       }
 
       this.ws.onclose = (event: any) => {
-        this.log(util.format('Closed %s', JSON.stringify(event)))
+        this.log(stringFormat('Closed %s', JSON.stringify(event)))
         reject(event)
       }
 
       try {
         this.ws.onopen = (event: any) => {
           console.log("open")
-          this.log(util.format('Opened %s', JSON.stringify(event)))
+          this.log(stringFormat('Opened %s', JSON.stringify(event)))
           // @ts-ignore
           this.send('login', [auth.account_name, auth.password])
           this.ws.onmessage = (event: any) => {
@@ -87,7 +87,7 @@ export class EqemuWebsocketClient {
    * @param parameters
    */
   public send(method: string, parameters: any[] = []) {
-    this.log(util.format('Method: \'%s\' Params %s', method, JSON.stringify(parameters)))
+    this.log(stringFormat('Method: \'%s\' Params %s', method, JSON.stringify(parameters)))
 
     this.ws.send(
       JSON.stringify(

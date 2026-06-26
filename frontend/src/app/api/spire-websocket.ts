@@ -1,4 +1,4 @@
-import util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {SpireApi} from "@/app/api/spire-api";
 import UserContext from "@/app/user/UserContext";
 
@@ -21,7 +21,7 @@ export class SpireWebsocket {
       basePath = basePath.replace("https://", "")
     }
 
-    const uri = util.format(
+    const uri = stringFormat(
       "%s:%s/api/v1/websocket?jwt=%s",
       protocol,
       basePath,

@@ -1554,7 +1554,7 @@
           v-if="drawAugmentTypeCalculatorActive && item"
         >
           <aug-bitmask-calculator
-            :inputData.sync="item.augtype"
+            v-model:inputData="item.augtype"
             :mask="item.augtype"
           />
         </eq-window>
@@ -1677,7 +1677,7 @@ import ItemStatScaleTool       from "./components/ItemStatScalePercentage";
 import ItemStatScalePercentage from "./components/ItemStatScalePercentage";
 import ItemStatScaleRange      from "./components/ItemStatScaleRange";
 import ItemColorSelector       from "./components/ItemColorSelector";
-import * as util               from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {RACES}              from "../../app/constants/eq-race-constants";
 import ItemMaterialPreview  from "./components/ItemMaterialPreview";
 import {BODYTYPES}          from "../../app/constants/eq-bodytype-constants";
@@ -2121,7 +2121,7 @@ export default {
 
             this.$router.push(
               {
-                path: util.format(ROUTE.ITEM_EDIT, this.item.id)
+                path: stringFormat(ROUTE.ITEM_EDIT, this.item.id)
               }
             ).catch(() => { })
           }
@@ -2152,7 +2152,7 @@ export default {
 
           Object.assign(this.originalItem, item);
 
-          let hex = util.format("#%s", this.toHex(this.item.color))
+          let hex = stringFormat("#%s", this.toHex(this.item.color))
 
           // color has RR GG BB format however it appears that opacity is first
           // opacity is pretty much always 1 or FF

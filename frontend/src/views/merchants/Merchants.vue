@@ -324,7 +324,7 @@ import {chunk}               from "../../app/utility/chunk";
 import {Npcs}                from "../../app/npcs";
 import MerchantlistEntryEdit from "./components/MerchantlistEntryEdit";
 import MerchantEdit          from "./MerchantEdit";
-import util                  from "util";
+import { stringFormat } from "@/app/utility/string-format";
 
 const MILLISECONDS_BEFORE_WINDOW_RESET = 5000;
 
@@ -635,7 +635,7 @@ export default {
 
       this.$router.push(
         {
-          path: util.format(ROUTE.MERCHANT_EDIT, merchantId),
+          path: stringFormat(ROUTE.MERCHANT_EDIT, merchantId),
           query: {
             return: JSON.stringify(this.$route.query)
           }

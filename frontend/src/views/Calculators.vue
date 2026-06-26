@@ -15,7 +15,7 @@
             <div class="col-12 p-0">
               <eq-window style="width: 500px">
                 <race-bitmask-calculator
-                  :inputData.sync="racesBitmask"
+                  v-model:inputData="racesBitmask"
                   :mask="racesBitmask"/>
 
                 <div class="row">
@@ -43,7 +43,7 @@
             <div class="col-12 p-0">
               <eq-window style="width: 500px">
                 <class-bitmask-calculator
-                  :inputData.sync="classesBitmask"
+                  v-model:inputData="classesBitmask"
                   :mask="classesBitmask"/>
 
                 <div class="row">
@@ -70,7 +70,7 @@
             <div class="col-12 p-0">
               <eq-window style="width: 500px">
                 <deity-bitmask-calculator
-                  :inputData.sync="deityBitmask"
+                  v-model:inputData="deityBitmask"
                   :mask="deityBitmask"/>
 
                 <div class="row">
@@ -97,7 +97,7 @@
             <div class="col-12 p-0">
               <eq-window style="width: 500px">
                 <client-version-calculator
-                  :inputData.sync="clientVersionBitmask"
+                  v-model:inputData="clientVersionBitmask"
                   :mask="clientVersionBitmask"/>
 
                 <div class="row">
@@ -124,7 +124,7 @@
             <div class="col-12 p-0">
               <eq-window style="width: 500px">
                 <expansion-bitmask-calculator
-                  :inputData.sync="expansionBitmask"
+                  v-model:inputData="expansionBitmask"
                   :mask="expansionBitmask"/>
 
                 <div class="row">
@@ -151,7 +151,7 @@
             <div class="col-12 p-0">
               <eq-window style="width: 500px">
                 <aug-bitmask-calculator
-                  :inputData.sync="augBitmask"
+                  v-model:inputData="augBitmask"
                   :mask="augBitmask"/>
 
                 <div class="row">
@@ -179,7 +179,7 @@
               <eq-window style="width: 500px">
 
                 <inventory-slot-calculator
-                  :inputData.sync="inventorySlotBitmask"
+                  v-model:inputData="inventorySlotBitmask"
                   :mask="inventorySlotBitmask"
                 />
 
@@ -208,7 +208,7 @@
               <eq-window style="width: 100%">
 
                 <npc-special-abilities
-                  :inputData.sync="specialAbilityInput"
+                  v-model:inputData="specialAbilityInput"
                   :abilities="specialAbilityInput"/>
 
                 <div class="row">

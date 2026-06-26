@@ -530,7 +530,7 @@ import EqWindow                            from "@/components/eq-ui/EQWindow";
 import {DB_BARD_SKILLS, DB_SKILLS}         from "@/app/constants/eq-skill-constants";
 import {AUG_TYPES}                         from "@/app/constants/eq-aug-constants";
 import {Spells}                            from "@/app/spells";
-import util                                from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {ROUTE}                             from "@/routes";
 import EqCashDisplay                       from "@/components/eq-ui/EqCashDisplay";
 import {Items}                             from "@/app/items";
@@ -706,7 +706,7 @@ export default {
     editItem(itemId) {
       this.$router.push(
         {
-          path: util.format(ROUTE.ITEM_EDIT, itemId),
+          path: stringFormat(ROUTE.ITEM_EDIT, itemId),
           query: {}
         }
       ).catch(() => {

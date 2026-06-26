@@ -314,7 +314,7 @@ import EqWindowSimple from "@/components/eq-ui/EQWindowSimple.vue";
 import EqTabs from "@/components/eq-ui/EQTabs.vue";
 import EqTab from "@/components/eq-ui/EQTab.vue";
 import slugify from "slugify";
-import * as util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import QuestApiDisplayMethods from "@/views/quest-api-explorer/components/QuestApiDisplayMethods.vue";
 import Analytics from "@/app/analytics/analytics";
 import QuestApiDisplayConstants from "@/views/quest-api-explorer/components/QuestApiDisplayConstants.vue";
@@ -999,7 +999,7 @@ export default {
       const org         = "ProjectEQ"
       const repo        = "projecteqquests"
       const branch      = "master"
-      const exampleRepo = util.format('/quest-api/source-examples/org/%s/repo/%s/branch/%s', org, repo, branch)
+      const exampleRepo = stringFormat('/quest-api/source-examples/org/%s/repo/%s/branch/%s', org, repo, branch)
       const response    = await SpireApi.v1().post(exampleRepo, {
         "search_terms": searchTerms,
         "language": this.languageSelection

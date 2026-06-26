@@ -257,7 +257,7 @@ import {NpcSpellsEntryApi} from "../../app/api/api/npc-spells-entry-api";
 import {scrollToTarget}    from "../../app/utility/scrollToTarget";
 import InfoErrorBanner     from "../../components/InfoErrorBanner";
 import {ROUTE}             from "../../routes";
-import util                from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import EqCheckbox          from "../../components/eq-ui/EQCheckbox";
 import SpellPopover        from "../../components/SpellPopover";
 import {NPC_SPELL_TYPES}   from "../../app/constants/eq-npc-spells";
@@ -443,7 +443,7 @@ export default {
 
       this.$router.push(
         {
-          path: util.format(ROUTE.NPC_SPELL_EDIT, npcSpellsId),
+          path: stringFormat(ROUTE.NPC_SPELL_EDIT, npcSpellsId),
           query: queryState
         }
       ).catch(() => {

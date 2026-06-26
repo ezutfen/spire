@@ -42,7 +42,7 @@
 
 <script>
 import {DB_PLAYER_RACES} from "@/app/constants/eq-races-constants";
-import util              from "util";
+import { stringFormat } from "@/app/utility/string-format";
 
 export default {
   name: "RaceBitmaskCalculator",
@@ -99,7 +99,7 @@ export default {
   },
   methods: {
     getImageSize() {
-      return util.format("width: %spx; height %spx;", this.imageSize, this.imageSize)
+      return stringFormat("width: %spx; height %spx;", this.imageSize, this.imageSize)
     },
     selectAll() {
       Object.keys(this.races).reverse().forEach((raceId) => {

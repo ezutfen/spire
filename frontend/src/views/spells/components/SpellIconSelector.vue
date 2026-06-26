@@ -24,7 +24,7 @@
 
 <script>
 import EqAssets from "../../../app/eq-assets/eq-assets";
-import util     from "util";
+import { stringFormat } from "@/app/utility/string-format";
 
 export default {
   name: "SpellIconSelector",
@@ -48,7 +48,7 @@ export default {
       setTimeout(() => {
         console.time("[SpellIconSelector] scrollTo");
         const container = document.getElementById("spell-icon-view-port");
-        const target    = document.getElementById(util.format("spell-icon-%s", this.selectedIcon))
+        const target    = document.getElementById(stringFormat("spell-icon-%s", this.selectedIcon))
 
         // 230 is height of video to offset
         if (container && target) {

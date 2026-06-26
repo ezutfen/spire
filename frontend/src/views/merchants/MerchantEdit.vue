@@ -196,7 +196,7 @@ import {Merchants}               from "../../app/merchants";
 import ContentArea               from "../../components/layout/ContentArea";
 import {ROUTE}                   from "../../routes";
 import {Zones}                   from "../../app/zones";
-import util                      from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {Items}                   from "../../app/items";
 import ItemSelector              from "../../components/selectors/ItemSelector";
 import MerchantlistEntryEdit     from "./components/MerchantlistEntryEdit";
@@ -270,7 +270,7 @@ export default {
     editItem(itemId) {
       this.$router.push(
         {
-          path: util.format(ROUTE.ITEM_EDIT, itemId),
+          path: stringFormat(ROUTE.ITEM_EDIT, itemId),
           query: {}
         }
       ).catch(() => {
@@ -379,7 +379,7 @@ export default {
 
       this.$router.push(
         {
-          path: util.format(ROUTE.MERCHANT_EDIT, this.editMerchantId),
+          path: stringFormat(ROUTE.MERCHANT_EDIT, this.editMerchantId),
           query: queryState
         }
       ).catch(() => {

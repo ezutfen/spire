@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import * as util from 'util'
+import { stringFormat } from "@/app/utility/string-format";
 
 export default {
   name: 'DashboardSystemInfo',
@@ -137,7 +137,7 @@ export default {
       return (Object.keys(this.sysinfo).length > 0 ? this.sysinfo.network.stats[0].rx_sec : 0)
     },
     osDisplay: function () {
-      return util.format(
+      return stringFormat(
         '%s %s %s (%s) %s',
         this.ucfirst(this.sysinfo.os.platform),
         this.sysinfo.os.distro,

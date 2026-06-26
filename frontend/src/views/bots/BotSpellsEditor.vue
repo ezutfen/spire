@@ -160,7 +160,7 @@ import {scrollToTarget}    from "../../app/utility/scrollToTarget";
 import {debounce}          from "../../app/utility/debounce";
 import BotSpellPreview     from "../../components/preview/BotSpellPreview";
 import EqDebug             from "../../components/eq-ui/EQDebug";
-import util                from "util";
+import { stringFormat } from "@/app/utility/string-format";
 
 const BotSpellsClient = (new NpcSpellApi(...SpireApi.cfg()))
 
@@ -231,7 +231,7 @@ export default {
     editBotSpellSet(id) {
       this.$router.push(
         {
-          path: util.format(ROUTE.BOT_SPELL_EDIT, id)
+          path: stringFormat(ROUTE.BOT_SPELL_EDIT, id)
         }
       ).catch(() => {
       })

@@ -19,7 +19,7 @@
 <script>
 
 import "ninja-keys";
-import * as util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {App} from "@/constants/app";
 import {EventBus} from "@/app/event-bus/event-bus";
 import {AppEnv} from "@/app/env/app-env";
@@ -241,7 +241,7 @@ export default {
         "firiona-fan-blondy-nkitezgraja.jpeg",
       ]
 
-      const background = util.format("%s%s",
+      const background = stringFormat("%s%s",
         App.ASSET_WALLPAPER_URL,
         backgrounds[Math.floor(Math.random() * backgrounds.length)].trim()
       )

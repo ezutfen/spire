@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import util      from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import ClipBoard from "@/app/clipboard/clipboard";
 import Analytics from "@/app/analytics/analytics";
 import {ROUTE}   from "@/routes";
@@ -120,7 +120,7 @@ export default {
       Notify.toast("Copied [" + s + "] to clipboard!");
     },
     buildFullMethod(method) {
-      return util.format(
+      return stringFormat(
         "%s%s(%s);",
         method.methodPrefix,
         method.method,

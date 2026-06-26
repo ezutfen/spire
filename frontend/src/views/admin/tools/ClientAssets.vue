@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import util       from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {SpireApi} from "@/app/api/spire-api";
 import EqWindow   from "@/components/eq-ui/EQWindow.vue";
 //
@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     download(a) {
-      return util.format(
+      return stringFormat(
         "%s/eqemuserver/export-client-file/%s",
         SpireApi.getBaseV1Path(),
         a.path,

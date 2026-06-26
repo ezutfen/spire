@@ -230,7 +230,7 @@ import {Npcs}              from "../../app/npcs";
 import NpcPopover          from "../../components/NpcPopover";
 import NpcSpellPreview     from "../../components/preview/NpcSpellPreview";
 import EqDebug             from "../../components/eq-ui/EQDebug";
-import util                from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {NpcSpellsEntryApi} from "../../app/api/api/npc-spells-entry-api";
 
 const NpcSpellsClient = (new NpcSpellApi(...SpireApi.cfg()))
@@ -335,7 +335,7 @@ export default {
     editNpcSpellSet(id) {
       this.$router.push(
         {
-          path: util.format(ROUTE.NPC_SPELL_EDIT, id)
+          path: stringFormat(ROUTE.NPC_SPELL_EDIT, id)
         }
       ).catch(() => {
       })

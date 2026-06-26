@@ -66,7 +66,7 @@ import {SpireApi}         from "../../app/api/spire-api";
 import EqWindowSimple     from "../../components/eq-ui/EQWindowSimple";
 import EqWindow           from "../../components/eq-ui/EQWindow";
 import LoaderFakeProgress from "../../components/LoaderFakeProgress";
-import util               from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import ContentArea        from "../../components/layout/ContentArea";
 
 export default {
@@ -84,7 +84,7 @@ export default {
       loading: false,
 
       dropzoneOptions: {
-        url: util.format(
+        url: stringFormat(
           "%s/api/v1/client-files/import/file?%s",
           SpireApi.getBasePath(),
           querystring.stringify(SpireApi.getAccessTokenQueryString())
@@ -103,7 +103,7 @@ export default {
 
     downloadSpells() {
       window.open(
-        util.format(
+        stringFormat(
           "%s/api/v1/client-files/export/spells?%s",
           SpireApi.getBasePath(),
           querystring.stringify(SpireApi.getAccessTokenQueryString())
@@ -113,7 +113,7 @@ export default {
     },
     downloadDbStr() {
       window.open(
-        util.format(
+        stringFormat(
           "%s/api/v1/client-files/export/dbstr?%s",
           SpireApi.getBasePath(),
           querystring.stringify(SpireApi.getAccessTokenQueryString())

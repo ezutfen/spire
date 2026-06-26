@@ -173,7 +173,7 @@ import LoaderFakeProgress from "../../components/LoaderFakeProgress";
 import {ROUTE}             from "../../routes";
 import {DB_STR_TYPES}      from "../../app/constants/eq-db-str-constants";
 import {EditFormFieldUtil} from "../../app/forms/edit-form-field-util";
-import util                from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {SpireQueryBuilder} from "../../app/api/spire-query-builder";
 import InfoErrorBanner     from "../../components/InfoErrorBanner";
 
@@ -502,7 +502,7 @@ export default {
 
       setTimeout(() => {
         const container = document.getElementById("db-strings-list");
-        const target    = document.getElementById(util.format("string-%s", this.subSelectedId))
+        const target    = document.getElementById(stringFormat("string-%s", this.subSelectedId))
 
         if (container && target) {
           console.log("[StringsDatabase] target top [%s]", target.getBoundingClientRect().top)

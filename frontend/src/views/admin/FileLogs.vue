@@ -615,7 +615,6 @@ export default {
 
           // if error is "makeslice: len out of range" then restart the log stream
           if (this.fileError.includes("makeslice: len out of range")) {
-            console.log("len out of range, restart log stream")
             this.stopLogStream()
             this.startLogStream()
           }

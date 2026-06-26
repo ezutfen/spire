@@ -13,7 +13,7 @@ import {
 import {DB_RACE_NAMES} from "@/app/constants/eq-races-constants";
 import {DB_BARD_SKILLS, DB_SKILLS} from "@/app/constants/eq-skill-constants";
 import {BODYTYPES} from "@/app/constants/eq-bodytype-constants";
-import util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {DB_CLASSES, DB_CLASSES_WEAR_SHORT} from "@/app/constants/eq-classes-constants";
 import {DbStrApi, SpellsNewApi} from "@/app/api";
 import {SpireApi} from "./api/spire-api";
@@ -1818,7 +1818,7 @@ export class Spells {
           const spellGroupId   = Math.abs(base);
           const spellGroupName = await this.getSpellGroupNameById(spellGroupId);
 
-          printBuffer += util.format(
+          printBuffer += stringFormat(
             "Limit Spell Group: %s %s",
             (base >= 0 ? "" : "Exclude "),
             spellGroupName
@@ -2447,11 +2447,11 @@ export class Spells {
 
       if (printBuffer !== "") {
         // @ts-ignore
-        effectsInfo = util.format("%s) %s", effectIndex, printBuffer)
+        effectsInfo = stringFormat("%s) %s", effectIndex, printBuffer)
       }
 
       if (App.DEBUG && printBuffer !== "") {
-        const debug = util.format(
+        const debug = stringFormat(
           "--- Debug: Effect ID (%s) (%s) Index (%s)",
           spell["effectid_" + effectIndex],
           DB_SPELL_EFFECTS[spell["effectid_" + effectIndex]] ? DB_SPELL_EFFECTS[spell["effectid_" + effectIndex]] : "UNKNOWN",
@@ -2940,22 +2940,22 @@ export class Spells {
         // @1 Max for effect id 1
         // %z (# ticks)
         for (let i = 1; i <= 12; i++) {
-          const baseEffect = util.format("#%s", i)
+          const baseEffect = stringFormat("#%s", i)
           if (description.includes(baseEffect)) {
             description = description.replaceAll(baseEffect, String(Math.abs(spell["effect_base_value_" + i])))
           }
-          const limitEffect = util.format("$%s", i)
+          const limitEffect = stringFormat("$%s", i)
           if (description.includes(limitEffect)) {
             description = description.replaceAll(limitEffect, String(Math.abs(spell["effect_limit_value_" + i])))
           }
-          const maxEffect = util.format("@%s", i)
+          const maxEffect = stringFormat("@%s", i)
           if (description.includes(maxEffect)) {
             description = description.replaceAll(maxEffect, String(Math.abs(spell["max_" + i])))
           }
 
           if (description.includes("%z")) {
             description = description.replaceAll("%z",
-              util.format("(%s ticks)", spell["buffduration"])
+              stringFormat("(%s ticks)", spell["buffduration"])
             )
           }
         }

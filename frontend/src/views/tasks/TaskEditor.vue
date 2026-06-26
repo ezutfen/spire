@@ -1177,7 +1177,7 @@
 <script type="ts">
 import EqWindow from "@/components/eq-ui/EQWindow.vue";
 import ContentArea from "@/components/layout/ContentArea.vue";
-import util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {ROUTE} from "@/routes";
 import {Tasks} from "@/app/tasks";
 import EqCheckbox from "@/components/eq-ui/EQCheckbox.vue";
@@ -1446,7 +1446,7 @@ export default {
       if (!this.scrolledToActivity) {
         if (this.selectedActivity) {
           const container = document.getElementById("activities-scroll");
-          const target    = document.getElementById(util.format("task-entry-%s", this.selectedActivity))
+          const target    = document.getElementById(stringFormat("task-entry-%s", this.selectedActivity))
           if (container && target) {
             container.scrollTo({top: target.offsetTop - 150, behavior: "smooth"});
           }
@@ -2052,7 +2052,7 @@ export default {
 
           // task list scroll to task
           const container = document.getElementById("task-list");
-          const target    = document.getElementById(util.format("task-entry-%s", this.$route.params.id))
+          const target    = document.getElementById(stringFormat("task-entry-%s", this.$route.params.id))
           if (container && target) {
             // container.scrollTop = target.offsetTop - 100;
             container.scrollTo({top: target.offsetTop - 150, behavior: "smooth"});
@@ -2157,7 +2157,7 @@ export default {
       // navigation
       this.$router.push(
         {
-          path: this.selectedTask > 0 ? util.format(ROUTE.TASK_EDIT, this.selectedTask) : ROUTE.TASKS,
+          path: this.selectedTask > 0 ? stringFormat(ROUTE.TASK_EDIT, this.selectedTask) : ROUTE.TASKS,
           query: queryState
         }
       ).catch(() => {

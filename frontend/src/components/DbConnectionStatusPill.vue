@@ -30,7 +30,7 @@
 import {SpireApi} from "@/app/api/spire-api";
 import {EventBus} from "@/app/event-bus/event-bus";
 import {ROUTE}    from "@/routes";
-import util       from "util";
+import { stringFormat } from "@/app/utility/string-format";
 
 export default {
   name: "DbConnectionStatusPill",
@@ -53,7 +53,7 @@ export default {
 
   methods: {
     getConnectionDescription() {
-      return util.format(
+      return stringFormat(
         "Host: %s Status: %s",
         this.connection.database_connection.db_host,
         this.connectionStatus

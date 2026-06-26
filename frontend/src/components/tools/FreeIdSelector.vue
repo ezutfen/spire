@@ -58,7 +58,7 @@
 
 <script>
 import {SpireApi} from "../../app/api/spire-api";
-import * as util  from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import EqTabs           from "../eq-ui/EQTabs";
 import EqTab            from "../eq-ui/EQTab";
 
@@ -97,7 +97,7 @@ export default {
   },
   mounted() {
     SpireApi.v1().get(
-      util.format(
+      stringFormat(
         `query/free-id-ranges/%s/%s`,
         this.tableName,
         this.idName
@@ -110,7 +110,7 @@ export default {
 
     if (this.withReserved) {
       SpireApi.v1().get(
-        util.format(
+        stringFormat(
           `query/free-ids-reserved/%s/%s/%s`,
           this.tableName,
           this.idName,

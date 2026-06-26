@@ -158,7 +158,7 @@ import {LogsysCategoryApi}        from "@/app/api/api/logsys-category-api";
 import EqCheckbox                 from "@/components/eq-ui/EQCheckbox.vue";
 import EqDebug                    from "@/components/eq-ui/EQDebug.vue";
 import InfoErrorBanner            from "@/components/InfoErrorBanner.vue";
-import util                       from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {DiscordWebhookApi}        from "@/app/api/api/discord-webhook-api";
 import {ROUTE}                    from "@/routes";
 import {PlayerEventLogSettingApi} from "@/app/api/api/player-event-log-setting-api";
@@ -243,7 +243,7 @@ export default {
           // we have to queue timeout to reset the notification dismiss timer
           setTimeout(() => {
             this.notification =
-              util.format(
+              stringFormat(
                 "Settings updated for [%s] (%s)!",
                 e.id,
                 e.event_name

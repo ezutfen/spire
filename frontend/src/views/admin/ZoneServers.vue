@@ -252,7 +252,7 @@ import {ROUTE}                     from "@/routes";
 import {SpireApi}                  from "@/app/api/spire-api";
 import InfoErrorBanner             from "@/components/InfoErrorBanner.vue";
 import {DB_RACES_ICONS}            from "@/app/constants/eq-race-icon-constants";
-import util                        from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {DB_PLAYER_CLASSES}         from "@/app/constants/eq-classes-constants";
 import {DB_CLASSES_ICONS}          from "@/app/constants/eq-class-icon-constants";
 import EqWindow                    from "@/components/eq-ui/EQWindow.vue";
@@ -439,7 +439,7 @@ export default {
     },
 
     formatPlayerTooltip(c) {
-      return util.format(
+      return stringFormat(
         "%s (%s)",
         c.name,
         DB_PLAYER_CLASSES[c.class] ? DB_PLAYER_CLASSES[c.class] : c.class

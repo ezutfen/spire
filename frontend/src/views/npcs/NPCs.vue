@@ -165,7 +165,7 @@ import {DbSchema}              from "../../app/db-schema";
 import {ROUTE}                 from "../../routes";
 import {EditFormFieldUtil} from "../../app/forms/edit-form-field-util";
 import NpcsBulkEditor      from "./components/NpcsBulkEditor";
-import util                from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import NpcPopover              from "../../components/NpcPopover";
 import {Npcs}                  from "../../app/npcs";
 
@@ -312,7 +312,7 @@ export default {
 
         // scroll to table row entry as we are editing entries
         const container = document.getElementById("npcs-table-container");
-        const target    = document.getElementById(util.format("npc-%s", n.id))
+        const target    = document.getElementById(stringFormat("npc-%s", n.id))
         if (container && target) {
           container.scrollTop = container.scrollTop + target.getBoundingClientRect().top - 200;
         }
@@ -391,7 +391,7 @@ export default {
     },
     scrollToColumn(e) {
       const container = document.getElementById("npcs-table-container");
-      const target    = document.getElementById(util.format("column-%s", e))
+      const target    = document.getElementById(stringFormat("column-%s", e))
 
       if (container && target) {
         container.scrollLeft = container.offsetLeft + target.offsetLeft - 400;

@@ -65,7 +65,7 @@ import {TELEPORT_ZONE_SELECTOR_TYPE} from "@/app/constants/eq-spell-constants";
 import EqWindowSimple                from "@/components/eq-ui/EQWindowSimple";
 import {ZoneApi}  from "@/app/api";
 import {SpireApi} from "../../../app/api/spire-api";
-import util       from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import Expansions                    from "@/app/utility/expansions";
 import EqCheckbox                    from "@/components/eq-ui/EQCheckbox";
 import {SpireQueryBuilder}           from "@/app/api/spire-query-builder";
@@ -164,7 +164,7 @@ export default {
     scrollToSelected() {
       setTimeout(() => {
         const container = document.getElementById("zone-view-container");
-        const target    = document.getElementById(util.format("zone-%s", this.selectedZone))
+        const target    = document.getElementById(stringFormat("zone-%s", this.selectedZone))
         if (container && target) {
           const top           = target.getBoundingClientRect().top
           container.scrollTop = container.scrollTop + top - 300;

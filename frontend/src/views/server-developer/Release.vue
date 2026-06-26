@@ -141,7 +141,7 @@
 import EqWindow          from "@/components/eq-ui/EQWindow.vue";
 import {SpireApi}        from "@/app/api/spire-api";
 import {ROUTE}           from "@/routes";
-import util              from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import UserContext       from "@/app/user/UserContext";
 import InfoErrorBanner   from "@/components/InfoErrorBanner.vue";
 import CheckMarkAnimated from "@/components/CheckMarkAnimated.vue";
@@ -271,7 +271,7 @@ export default {
 
       this.$router.push(
         {
-          path: util.format(ROUTE.RELEASE, this.$route.params.version),
+          path: stringFormat(ROUTE.RELEASE, this.$route.params.version),
           query: queryState
         }
       ).catch(() => {

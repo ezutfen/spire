@@ -177,7 +177,7 @@ import {ItemApi, SpellsNewApi} from "@/app/api/api";
 import EqWindow from "@/components/eq-ui/EQWindow.vue";
 import {SpireApi} from "../../app/api/spire-api";
 import EqItemCardPreview from "@/components/preview/EQItemCardPreview.vue";
-import * as util from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import EqSpellPreview from "@/components/preview/EQSpellCardPreview.vue";
 import {DB_CLASSES_ICONS} from "@/app/constants/eq-class-icon-constants";
 import {App} from "@/constants/app";
@@ -314,7 +314,7 @@ export default {
 
       // filter by class
       if (this.selectedClass > 0) {
-        builder.orderBy([util.format("classes%s", this.selectedClass)])
+        builder.orderBy([stringFormat("classes%s", this.selectedClass)])
       }
 
       api.listSpellsNews(builder.get()).then(async (result) => {

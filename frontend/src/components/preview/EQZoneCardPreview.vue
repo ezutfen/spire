@@ -306,7 +306,7 @@ import {Npcs}              from "../../app/npcs";
 import NpcPopover          from "../NpcPopover";
 import {EventBus}          from "../../app/event-bus/event-bus";
 import LoaderFakeProgress  from "../LoaderFakeProgress";
-import util                from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {ROUTE}             from "../../routes";
 import {Spawn}             from "../../app/spawn";
 

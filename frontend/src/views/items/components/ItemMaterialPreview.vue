@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import util              from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import {RACES}           from "@/app/constants/eq-race-constants"
 import PageHeader        from "@/components/layout/PageHeader";
 import {App}             from "@/constants/app";
@@ -147,11 +147,11 @@ export default {
 
           // only show one helm texture for this viewer
           for (let helmTextureId = 0; helmTextureId <= 0; helmTextureId++) {
-            const raceModel   = util.format("CTN_%s_%s_%s_%s.png", raceId, genderId, textureId, helmTextureId)
+            const raceModel   = stringFormat("CTN_%s_%s_%s_%s.png", raceId, genderId, textureId, helmTextureId)
             const modelExists = modelFiles[raceModel]
 
             if (modelExists) {
-              raceImages.push(util.format("%s-%s-%s-%s", raceId, genderId, textureId, helmTextureId));
+              raceImages.push(stringFormat("%s-%s-%s-%s", raceId, genderId, textureId, helmTextureId));
             }
           }
         }
@@ -184,7 +184,7 @@ export default {
 
             // only show one helm texture for this viewer
             for (let helmTextureId = 0; helmTextureId <= 0; helmTextureId++) {
-              modelKey          = util.format("CTN_%s_%s_%s_%s.png", raceId, genderId, textureId, helmTextureId);
+              modelKey          = stringFormat("CTN_%s_%s_%s_%s.png", raceId, genderId, textureId, helmTextureId);
               const modelExists = modelFiles[modelKey]
 
               if (modelExists) {

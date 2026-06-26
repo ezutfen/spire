@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import util                 from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import itemSlots            from "@/constants/item-slots.json"
 import itemTypes            from "@/constants/item-types.json"
 import itemSlotIconMapping  from "@/constants/item-slot-icon-mapping.json"
@@ -299,7 +299,7 @@ export default {
       // Preload icons
       icons = [];
       for (let iconId = 0; iconId <= MAX_ICON_ID; iconId++) {
-        const modelKey    = util.format("item_%s.png", iconId);
+        const modelKey    = stringFormat("item_%s.png", iconId);
         const modelExists = modelFiles[modelKey]
 
         if (modelExists) {
@@ -319,7 +319,7 @@ export default {
 
         let itemCountDescription = "";
         if (itemSlotIconMapping[slotNumbers] && itemSlotIconMapping[slotNumbers].length > 0) {
-          itemCountDescription = util.format(" (%s icons)", itemSlotIconMapping[slotNumbers].length)
+          itemCountDescription = stringFormat(" (%s icons)", itemSlotIconMapping[slotNumbers].length)
         }
 
         iconSlotOptions.push(
@@ -339,7 +339,7 @@ export default {
 
         let itemCountDescription = "";
         if (itemTypesIconMapping[type] && itemTypesIconMapping[type].length > 0) {
-          itemCountDescription = util.format(" (%s icons)", itemTypesIconMapping[type].length)
+          itemCountDescription = stringFormat(" (%s icons)", itemTypesIconMapping[type].length)
         }
 
         if (itemTypesIconMapping[type].length > 0) {

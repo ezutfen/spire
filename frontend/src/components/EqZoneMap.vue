@@ -200,7 +200,7 @@
 </template>
 
 <script>
-import {LIcon, LMap, LMarker, LPolyline, LPopup, LTileLayer, LTooltip} from 'vue2-leaflet';
+import {LIcon, LMap, LMarker, LPolyline, LPopup, LTileLayer, LTooltip} from '@vue-leaflet/vue-leaflet';
 import ContentArea                                                     from "./layout/ContentArea";
 import * as L                                                          from "leaflet";
 import axios                                                           from "axios";

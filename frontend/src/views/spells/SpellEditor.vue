@@ -1492,7 +1492,7 @@
         >
           <spell-icon-selector
             :selected-icon="spell.new_icon"
-            :inputData.sync="spell.new_icon"
+            v-model:inputData="spell.new_icon"
           />
         </eq-window>
 
@@ -1504,7 +1504,7 @@
         >
           <spell-animation-selector
             :selected-animation="spell.spellanim"
-            :inputData.sync="spell.spellanim"
+            v-model:inputData="spell.spellanim"
           />
         </div>
 
@@ -1516,7 +1516,7 @@
         >
           <spell-nimbus-animation-selector
             :selected-animation="spell.nimbuseffect"
-            :inputData.sync="spell.nimbuseffect"
+            v-model:inputData="spell.nimbuseffect"
           />
         </div>
 
@@ -1561,7 +1561,7 @@
         >
           <spell-casting-animation-selector
             :selected-animation="spell[castingAnimField]"
-            :inputData.sync="spell[castingAnimField]"
+            v-model:inputData="spell[castingAnimField]"
           />
         </div>
 
@@ -1684,7 +1684,7 @@ import {debounce}                     from "../../app/utility/debounce";
 import EqWindowSimple                 from "../../components/eq-ui/EQWindowSimple";
 import SpellConeVisualizer            from "./components/SpellConeVisualizer";
 import SpellNimbusAnimationSelector   from "./components/SpellNimbusAnimationSelector";
-import util                           from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import RangeVisualizer                from "../../components/tools/RangeVisualizer";
 import SpellTeleportZoneSelectorZone  from "./components/SpellTeleportZoneSelectorZone";
 import SpellTeleportZoneSelectorPet   from "./components/SpellTeleportZoneSelectorPet";
@@ -2189,7 +2189,7 @@ export default {
 
       let wheresOrs = [];
       whereOr.forEach((filter) => {
-        const where = util.format("%s%s%s", filter[0], filter[1], filter[2])
+        const where = stringFormat("%s%s%s", filter[0], filter[1], filter[2])
         wheresOrs.push(where)
       })
 

@@ -56,7 +56,7 @@ import {TELEPORT_ZONE_SELECTOR_TYPE} from "@/app/constants/eq-spell-constants";
 import EqWindowSimple                from "@/components/eq-ui/EQWindowSimple";
 import {PetApi}                      from "@/app/api";
 import {SpireApi}              from "@/app/api/spire-api";
-import util                          from "util";
+import { stringFormat } from "@/app/utility/string-format";
 import Expansions                    from "@/app/utility/expansions";
 import EqCheckbox                    from "@/components/eq-ui/EQCheckbox";
 import {SpireQueryBuilder}           from "@/app/api/spire-query-builder";
@@ -150,7 +150,7 @@ export default {
 
     setTimeout(() => {
       const container = document.getElementById("pet-view-container");
-      const target    = document.getElementById(util.format("pet-%s", this.selectedPet))
+      const target    = document.getElementById(stringFormat("pet-%s", this.selectedPet))
       if (container && target) {
         const top           = target.getBoundingClientRect().top
         container.scrollTop = container.scrollTop + top - 300;
