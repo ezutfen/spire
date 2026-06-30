@@ -93,8 +93,12 @@ export default {
     }
   },
   created() {
-    const uuidv4 = require("uuid/v4")
-    this.navId   = uuidv4()
+    if (typeof crypto !== "undefined" && crypto.randomUUID) {
+      this.navId = crypto.randomUUID()
+      return
+    }
+
+    this.navId = `nav-${Math.random().toString(36).slice(2, 11)}`
   }
 }
 </script>

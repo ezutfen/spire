@@ -80,6 +80,7 @@ import {DB_RACES_ICONS}            from "@/app/constants/eq-race-icon-constants"
 import {ROUTE}                     from "@/routes";
 import {SpireApi}                  from "@/app/api/spire-api";
 import EqWindow                    from "@/components/eq-ui/EQWindow.vue";
+import { getClassRaceIconUrl }     from "@/app/assets/class-race-icon-url";
 
 export default {
   name: 'PlayersOnlineComponent',
@@ -176,7 +177,7 @@ export default {
      */
     getClassImage: classId => {
       if (DB_CLASSES_ICONS[classId]) {
-        return require('@/assets/img/icons/classes-races/item_' + DB_CLASSES_ICONS[classId] + '.png')
+        return getClassRaceIconUrl(DB_CLASSES_ICONS[classId])
       }
 
       return 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=='
@@ -188,7 +189,7 @@ export default {
      */
     getRaceImage: raceId => {
       if (DB_RACES_ICONS[raceId]) {
-        return require('@/assets/img/icons/classes-races/item_' + DB_RACES_ICONS[raceId] + '.png')
+        return getClassRaceIconUrl(DB_RACES_ICONS[raceId])
       }
 
       return 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=='

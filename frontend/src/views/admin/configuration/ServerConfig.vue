@@ -5,7 +5,7 @@
     <eq-tabs
       :selected="tabSelected"
       @on-selected="tabSelected = $event; updateQueryState()"
-      v-if="Object.keys(config).length > 0"
+      v-if="loaded"
     >
       <eq-tab
         class="fade-in"
@@ -452,18 +452,125 @@ import InfoErrorBanner from "@/components/InfoErrorBanner.vue";
 import EqWindowComplex from "@/components/eq-ui/EQWindowComplex.vue";
 import {AppEnv}        from "@/app/env/app-env";
 
+const createLoginServerConfig = () => ({
+  account: "",
+  password: "",
+  legacy: "0",
+  host: "",
+  port: "5998",
+})
+
+const createDatabaseConfig = () => ({
+  db: "",
+  host: "",
+  port: "",
+  username: "",
+  password: "",
+})
+
+const createDefaultServerConfig = () => ({
+  server: {
+    world: {
+      longname: "",
+      shortname: "",
+      address: "",
+      localaddress: "",
+      key: "",
+      telnet: {
+        enabled: false,
+        ip: "",
+        port: "9000",
+      },
+      tcp: {
+        ip: "",
+        port: "9001",
+      },
+    },
+    zones: {
+      defaultstatus: "0",
+      ports: {
+        low: 7000,
+        high: 7500,
+      },
+    },
+    ucs: {
+      host: "",
+      port: "",
+    },
+    database: createDatabaseConfig(),
+    content_database: createDatabaseConfig(),
+    qsdatabase: createDatabaseConfig(),
+  },
+})
+
+const normalizeServerConfig = (config, maxLoginServers) => {
+  const defaults = createDefaultServerConfig()
+  const server = config && config.server ? config.server : {}
+  const world = server.world ? server.world : {}
+  const zones = server.zones ? server.zones : {}
+
+  const normalizedConfig = {
+    ...defaults,
+    ...(config || {}),
+    server: {
+      ...defaults.server,
+      ...server,
+      world: {
+        ...defaults.server.world,
+        ...world,
+        telnet: {
+          ...defaults.server.world.telnet,
+          ...(world.telnet || {}),
+        },
+        tcp: {
+          ...defaults.server.world.tcp,
+          ...(world.tcp || {}),
+        },
+      },
+      zones: {
+        ...defaults.server.zones,
+        ...zones,
+        ports: {
+          ...defaults.server.zones.ports,
+          ...(zones.ports || {}),
+        },
+      },
+      ucs: {
+        ...defaults.server.ucs,
+        ...(server.ucs || {}),
+      },
+      database: {
+        ...defaults.server.database,
+        ...(server.database || {}),
+      },
+      content_database: {
+        ...defaults.server.content_database,
+        ...(server.content_database || {}),
+      },
+      qsdatabase: {
+        ...defaults.server.qsdatabase,
+        ...(server.qsdatabase || {}),
+      },
+    },
+  }
+
+  for (let i = 1; i <= maxLoginServers; i++) {
+    const key = `loginserver${i}`;
+    normalizedConfig.server.world[key] = {
+      ...createLoginServerConfig(),
+      ...(normalizedConfig.server.world[key] || {}),
+    }
+  }
+
+  return normalizedConfig
+}
+
 export default {
   name: "ServerConfig",
   components: { EqWindowComplex, InfoErrorBanner, EqTab, EqTabs, EqWindow },
   data() {
     return {
-      config: {
-        server: {
-          world: {
-            loginservers: [], // Array to hold loginserver configurations
-          },
-        },
-      },
+      config: createDefaultServerConfig(),
       tabSelected: "World Server",
 
       maxLoginServers: 5,
@@ -482,11 +589,12 @@ export default {
     },
   },
   async created() {
+    let config = createDefaultServerConfig()
 
     try {
       const r = await SpireApi.v1().get('admin/serverconfig')
       if (r.status === 200) {
-        this.config = r.data
+        config = r.data
       }
     } catch (e) {
       // error notify
@@ -494,48 +602,8 @@ export default {
         this.error = e.response.data.error
       }
     }
-
-    if (!this.config.server.qsdatabase) {
-      this.config.server.qsdatabase = {
-        db: "",
-        host: "",
-        port: "",
-        username: "",
-        password: "",
-      }
-    }
-
-    if (!this.config.server.content_database) {
-      this.config.server.content_database = {
-        db: "",
-        host: "",
-        port: "",
-        username: "",
-        password: "",
-      }
-    }
-
-    if (!this.config.server.ucs) {
-      this.config.server.ucs = {
-        host: "",
-        port: "",
-      }
-    }
-
-    const loginServerConfigModel = {
-      'account': '',
-      'password': '',
-      'legacy': '0',
-      'host': '',
-      'port': '5998'
-    }
-
-    for (let i = 1; i <= this.maxLoginServers; i++) {
-      const key = `loginserver${i}`;
-      if (!this.config.server.world[key]) {
-        this.config.server.world[key] = { ...loginServerConfigModel };
-      }
-    }
+    this.config = normalizeServerConfig(config, this.maxLoginServers)
+    this.loaded = true
 
   },
   mounted() {

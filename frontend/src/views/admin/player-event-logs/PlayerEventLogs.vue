@@ -326,6 +326,7 @@ import { stringFormat } from "@/app/utility/string-format";
 import InfoErrorBanner             from "@/components/InfoErrorBanner.vue";
 import EqCheckbox                  from "@/components/eq-ui/EQCheckbox.vue";
 import Time                        from "@/app/time/time";
+import { getClassRaceIconUrl }     from "@/app/assets/class-race-icon-url";
 
 // GM_COMMAND           | [x] Implemented Formatter
 // ZONING               | [x] Implemented Formatter
@@ -664,7 +665,7 @@ export default {
 
     getClassImage: classId => {
       if (DB_CLASSES_ICONS[classId]) {
-        return require('@/assets/img/icons/classes-races/item_' + DB_CLASSES_ICONS[classId] + '.png')
+        return getClassRaceIconUrl(DB_CLASSES_ICONS[classId])
       }
 
       return 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=='
@@ -676,7 +677,7 @@ export default {
      */
     getRaceImage: raceId => {
       if (DB_RACES_ICONS[raceId]) {
-        return require('@/assets/img/icons/classes-races/item_' + DB_RACES_ICONS[raceId] + '.png')
+        return getClassRaceIconUrl(DB_RACES_ICONS[raceId])
       }
 
       return 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=='

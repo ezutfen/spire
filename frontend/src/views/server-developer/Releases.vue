@@ -192,6 +192,7 @@
 
 <script>
 import MarkdownIt from "markdown-it";
+import { defineAsyncComponent } from "vue";
 
 import EqWindow   from "@/components/eq-ui/EQWindow.vue";
 import {SpireApi} from "@/app/api/spire-api";
@@ -206,7 +207,7 @@ export default {
   components: {
     EqTab,
     EqTabs,
-    "v-runtime-template": () => import("v-runtime-template"),
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template")),
     EqWindow
   },
   data() {

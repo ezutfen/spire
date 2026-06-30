@@ -18,10 +18,10 @@ Keep entries short, factual, and action-oriented.
 
 ## Current Status
 
-- Date: `2026-06-24`
-- Branch: `feature/option-2-migration-foundation`
+- Date: `2026-06-26`
+- Branch: `further-modernization`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and now builds on plain Vue 3 (no `@vue/compat`, no `configureCompat({ MODE: 2 })`); SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native`/`.sync` sweep complete across editor-heavy and shared routes (0 remaining occurrences for those searches); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration; first-party frontend `util.format` usage removed behind a browser-safe helper; `EqZoneMap` moved off `vue2-leaflet` to `@vue-leaflet/vue-leaflet`
+- State: frontend foundation is migrated and now builds on plain Vue 3 (no `@vue/compat`, no `configureCompat({ MODE: 2 })`); SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native`/`.sync` sweep complete across editor-heavy and shared routes (0 remaining occurrences for those searches); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration; first-party frontend `util.format` usage removed behind a browser-safe helper; `EqZoneMap` moved off `vue2-leaflet` to `@vue-leaflet/vue-leaflet`; targeted Playwright smoke coverage now validates the migrated `ServerConfig`, releases modal, player event log settings save flow, and `ZoneServers` query restore paths
 
 ## Completed Steps
 
@@ -200,19 +200,44 @@ The single remaining real `this.$children` usage (`frontend/src/components/eq-ui
   - [frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue)
   - [frontend/src/views/admin/FileLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/FileLogs.vue)
 
+### 14. Vue 3 Runtime Smoke Coverage
+
+- Added Playwright smoke coverage and harness support in:
+  - [frontend/playwright.config.ts](/home/zutfen/code/spire/frontend/playwright.config.ts)
+  - [frontend/tests/smoke/helpers.ts](/home/zutfen/code/spire/frontend/tests/smoke/helpers.ts)
+  - [frontend/tests/smoke/vue3-smoke.spec.ts](/home/zutfen/code/spire/frontend/tests/smoke/vue3-smoke.spec.ts)
+  - [frontend/package.json](/home/zutfen/code/spire/frontend/package.json)
+- Fixed browser-runtime blockers surfaced by the new smoke suite:
+  - replaced browser-invalid `require(...)` usage in [frontend/src/views/admin/components/ServerProcessButtonComponent.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/ServerProcessButtonComponent.vue)
+  - added [frontend/src/app/assets/class-race-icon-url.ts](/home/zutfen/code/spire/frontend/src/app/assets/class-race-icon-url.ts) and switched icon consumers off dynamic `require(...)`:
+    [frontend/src/views/admin/ZoneServers.vue](/home/zutfen/code/spire/frontend/src/views/admin/ZoneServers.vue),
+    [frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue),
+    [frontend/src/views/admin/components/PlayersOnlineComponent.vue](/home/zutfen/code/spire/frontend/src/views/admin/components/PlayersOnlineComponent.vue)
+  - replaced `require("uuid/v4")` in [frontend/src/components/layout/NavSectionComponent.vue](/home/zutfen/code/spire/frontend/src/components/layout/NavSectionComponent.vue) with `crypto.randomUUID()` plus a fallback
+  - fixed async runtime-template registration in [frontend/src/views/server-developer/Releases.vue](/home/zutfen/code/spire/frontend/src/views/server-developer/Releases.vue) and [frontend/src/views/admin/server-update/UpdateReleases.vue](/home/zutfen/code/spire/frontend/src/views/admin/server-update/UpdateReleases.vue) using `defineAsyncComponent(...)`
+  - normalized nested config defaults and delayed initial tab rendering in [frontend/src/views/admin/configuration/ServerConfig.vue](/home/zutfen/code/spire/frontend/src/views/admin/configuration/ServerConfig.vue) so hidden tab content no longer crashes on missing subtrees under Vue 3
+- Verified smoke flows:
+  - `ServerConfig` query restore + hover tab selection
+  - releases analytics + release notes modal
+  - player event log settings save + reload notification
+  - `ZoneServers` query restore + filtered player rendering
+
 ## Verification
 
-Last verified successfully (`2026-06-24`, after Step 13):
+Last verified successfully:
 
-- `go build ./...`
-- `go build ./internal/http/spa`
-- `cd frontend && npm test`
-- `cd frontend && npm run build`
-- `rg -n "\.sync=" frontend/src --type-add 'vue:*.vue' --type vue` → 0 matches
-- `rg -n "util\.format\(|from [\"']util[\"']" frontend/src` → 0 matches
-- `rg -n "@vue/compat|configureCompat|MODE: 2" frontend -g '!frontend/package-lock.json'` → 0 matches
-- `rg -n "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src` (`.vue` files) → 0 matches
-- `rg -n "\$children" frontend/src` (excluding `assets/vendors/`) → 0 matches
+- `2026-06-26` (after Step 14):
+  - `cd frontend && npm run test:smoke`
+- `2026-06-24` (after Step 13):
+  - `go build ./...`
+  - `go build ./internal/http/spa`
+  - `cd frontend && npm test`
+  - `cd frontend && npm run build`
+  - `rg -n "\.sync=" frontend/src --type-add 'vue:*.vue' --type vue` → 0 matches
+  - `rg -n "util\.format\(|from [\"']util[\"']" frontend/src` → 0 matches
+  - `rg -n "@vue/compat|configureCompat|MODE: 2" frontend -g '!frontend/package-lock.json'` → 0 matches
+  - `rg -n "beforeDestroy\(|destroyed\(\)|this\.\$set\(|\.native" frontend/src` (`.vue` files) → 0 matches
+  - `rg -n "\$children" frontend/src` (excluding `assets/vendors/`) → 0 matches
 
 ## Open Risks / Warnings
 
@@ -221,14 +246,9 @@ Last verified successfully (`2026-06-24`, after Step 13):
   - deprecated Vue deep selector syntax (`>>>` / `/deep/`)
   - existing duplicate `case 503` warning in `frontend/src/app/spells.ts`
 - `/img/eq-wallpaper-1.b2319219.jpg` still reports a runtime-resolution warning during `vite build`
-- The pure Vue 3 cutover is build-verified but not yet browser-smoke-tested end-to-end:
-  - connections / user modals
-  - `EQTabs` / nested `ServerConfig` tab selection, hover-to-select, and `selected` query restore
-  - launcher options static-zone add/remove
-  - player event log explorer + settings save / reload notifications
-  - update / release views (modal open, install-cancel path, release-detail navigation)
-  - zone/admin lifecycle views, file log streaming, and editor hover flows previously affected by `.native`
-  - `EqZoneMap` rendering / zoom / marker interactions after the `@vue-leaflet/vue-leaflet` swap
+- The pure Vue 3 cutover is only partially browser-smoke-tested so far:
+  - covered by Playwright smoke: `ServerConfig`, releases modal, player event log settings save/reload, `ZoneServers` query restore
+  - still not covered: connections / user modals, launcher options static-zone add/remove, player event log explorer, file log streaming, `EqZoneMap` interactions, and editor hover flows previously affected by `.native`
 - Vue 2-era dependency debt still exists outside the build blocker fixed here (`vue2-ace-editor`, `vue2-dropzone`, `vuex`, `vue-property-decorator`, `vue-class-component`); the app now builds without compat, but those packages should be revalidated or retired in future cleanup
 - `docs/project-assessment-2026-06.md` still references Wire historically; that is acceptable unless we want the assessment updated to reflect implementation progress
 
@@ -236,16 +256,15 @@ Last verified successfully (`2026-06-24`, after Step 13):
 
 Recommended next phase:
 
-- Run the manual browser smoke checklist against the pure Vue 3 build
-- Goal: confirm runtime behavior on the migrated admin/editor flows and capture any remaining regressions now that compat mode is gone
+- Expand runtime verification across the remaining high-risk Vue 3 routes, using Playwright smoke where practical and a short manual pass for the harder interactive flows
+- Goal: confirm the remaining admin/editor runtime behavior now that compat mode is gone
 
 Suggested next targets:
 
 - `frontend/src/views/connections/UserConnections.vue` plus the user modal flows (`CreateUserModal`, `ResetUserPasswordModal`)
-- `frontend/src/views/admin/configuration/ServerConfig.vue` / `frontend/src/components/eq-ui/EQTabs.vue`
-- `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue` / `PlayerEventLogSettings.vue`
-- `frontend/src/views/admin/server-update/UpdateReleases.vue` and `frontend/src/views/server-developer/Releases.vue`
-- `frontend/src/views/admin/ZoneServers.vue`, `frontend/src/views/admin/FileLogs.vue`, and [frontend/src/components/EqZoneMap.vue](/home/zutfen/code/spire/frontend/src/components/EqZoneMap.vue)
+- `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue`
+- `frontend/src/views/admin/FileLogs.vue` and [frontend/src/components/EqZoneMap.vue](/home/zutfen/code/spire/frontend/src/components/EqZoneMap.vue)
+- launcher/update flows that still rely on live process state or richer backend responses
 
 ## Session Notes
 

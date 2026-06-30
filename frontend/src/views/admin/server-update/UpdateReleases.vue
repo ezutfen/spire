@@ -147,6 +147,7 @@
 
 <script>
 import MarkdownIt from "markdown-it";
+import { defineAsyncComponent } from "vue";
 
 import EqWindow        from "@/components/eq-ui/EQWindow.vue";
 import { stringFormat } from "@/app/utility/string-format";
@@ -166,7 +167,7 @@ export default {
     InfoErrorBanner,
     EqTab,
     EqTabs,
-    "v-runtime-template": () => import("v-runtime-template"),
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template")),
     EqWindow
   },
   props: {
