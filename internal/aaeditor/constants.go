@@ -1,22 +1,34 @@
 package aaeditor
 
-// AaCategories maps aa_ability.category to a human readable label. These mirror
-// the EQEmu client AA category groupings.
+// AaCategories maps aa_ability.category to the AA category labels used by
+// PEQEditor / EQEmu AA data.
 var AaCategories = map[int]string{
-	1: "General",
-	2: "Archetype",
-	3: "Class",
-	4: "Special",
-	5: "Expansion",
-	6: "Prestige",
+	0: "None",
+	1: "Passive",
+	2: "Progression",
+	3: "Shroud Passive",
+	4: "Shroud Active",
+	5: "Veteran Reward",
+	6: "Tradeskill",
+	7: "Expendable",
+	8: "Racial Innate",
+	9: "Everquest",
 }
 
-// AaTypes maps aa_ability.type.
+// AaTypes maps aa_ability.type to the AA family / era labels used by
+// PEQEditor / EQEmu AA data.
 var AaTypes = map[int]string{
-	0: "Passive",
-	1: "Activated",
-	2: "Combat",
-	3: "Triggered",
+	0:  "Not Applicable",
+	1:  "General",
+	2:  "Archetype",
+	3:  "Class",
+	4:  "PoP Advanced",
+	5:  "PoP Abilities",
+	6:  "Gates of Discord",
+	7:  "Omens of War",
+	8:  "Veteran",
+	9:  "Dragons of Norrath",
+	10: "Depths of Darkhollow",
 }
 
 // AaSpellTypes maps aa_ranks.spell_type.
