@@ -115,6 +115,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import MarkdownIt from "markdown-it";
 
 import {App}              from "@/constants/app";
@@ -126,7 +127,7 @@ import defaultAvatar      from "@/assets/img/eqemu-avatar.png";
 export default {
   components: {
     NavbarDropdownMenu,
-    "v-runtime-template": () => import("v-runtime-template")
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template"))
   },
   data() {
     return {

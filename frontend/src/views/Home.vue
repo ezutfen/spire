@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import MarkdownIt      from "markdown-it";
 
 import EqWindow        from "@/components/eq-ui/EQWindow";
@@ -33,7 +34,7 @@ import LazyImageLoader from "@/app/lazy-image-load/lazy-image-load";
 export default {
   components: {
     EqWindow,
-    "v-runtime-template": () => import("v-runtime-template")
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template"))
   },
   data() {
     return {

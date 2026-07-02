@@ -131,6 +131,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import EqWindowSimple     from "../../../components/eq-ui/EQWindowSimple";
 import {TASK_TYPE}        from "@/app/constants/eq-task-constants";
 import {Tasks}            from "@/app/tasks";
@@ -153,7 +154,7 @@ export default {
     EqCashDisplay,
     ItemPopover,
     EqWindowSimple,
-    "v-runtime-template": () => import("v-runtime-template")
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template"))
   },
   props: {
     taskSource: Object,

@@ -327,6 +327,8 @@ import InfoErrorBanner             from "@/components/InfoErrorBanner.vue";
 import EqCheckbox                  from "@/components/eq-ui/EQCheckbox.vue";
 import Time                        from "@/app/time/time";
 import { getClassRaceIconUrl }     from "@/app/assets/class-race-icon-url";
+import dot                         from "dot-object";
+import { defineAsyncComponent }    from "vue";
 
 // GM_COMMAND           | [x] Implemented Formatter
 // ZONING               | [x] Implemented Formatter
@@ -376,7 +378,7 @@ export default {
   components: {
     EqCheckbox,
     InfoErrorBanner,
-    "v-runtime-template": () => import("v-runtime-template"),
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template")),
     LoaderFakeProgress,
     EqProgressBar,
     PlayerEventDisplayComponent,
@@ -497,7 +499,6 @@ export default {
     },
 
     formatPayload(e) {
-      const dot = require("dot-object")
       const f   = JSON.stringify(dot.dot(JSON.parse(e.event_data.replaceAll('    ', '  '))));
 
       let lines = []

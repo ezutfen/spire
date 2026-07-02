@@ -104,3 +104,21 @@ test('user connections render and the manage developer modal opens', async ({ pa
   expect(consoleErrors).toEqual([])
   expect(pageErrors).toEqual([])
 })
+
+test('player event log explorer renders the event grid and raw event view', async ({ page }) => {
+  const { consoleErrors, pageErrors } = await bootstrapSmokeHarness(page)
+
+  await page.goto('/admin/player-event-logs/explorer?eventType=29')
+
+  await expect(page.getByText('Player Event Log Explorer')).toBeVisible()
+  await expect(page.getByText('Said')).toBeVisible()
+  await expect(page.getByText('Hail, traveler')).toBeVisible()
+  await expect(page.getByText('Alyra').first()).toBeVisible()
+
+  await page.getByTitle('View raw').first().click()
+
+  await expect(page.locator('pre code')).toContainText('"message"')
+  await expect(page.locator('pre code')).toContainText('Hail, traveler')
+  expect(consoleErrors).toEqual([])
+  expect(pageErrors).toEqual([])
+})

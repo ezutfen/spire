@@ -145,6 +145,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import EqWindowSimple      from "../../components/eq-ui/EQWindowSimple";
 import EqAutoTable         from "../../components/eq-ui/EQAutoTable";
 import ContentArea         from "../../components/layout/ContentArea";
@@ -175,7 +176,7 @@ export default {
     ContentArea,
     EqAutoTable,
     EqWindowSimple,
-    "v-runtime-template": () => import("v-runtime-template")
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template"))
   },
   data() {
     return {

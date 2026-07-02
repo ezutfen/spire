@@ -199,6 +199,7 @@
 </template>
 
 <script type="ts">
+import { defineAsyncComponent } from "vue"
 import {ItemApi} from "@/app/api/api";
 import EqWindow from "@/components/eq-ui/EQWindow.vue";
 import {SpireApi} from "../../app/api/spire-api";
@@ -235,7 +236,7 @@ export default {
     EqItemCardPreview,
     EqItemCardPreview,
     EqWindow,
-    "page-header": () => import("@/components/layout/PageHeader.vue")
+    "page-header": defineAsyncComponent(() => import("@/components/layout/PageHeader.vue"))
   },
   data() {
     return {

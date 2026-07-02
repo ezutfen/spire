@@ -428,6 +428,7 @@
 
 <script>
 
+import { defineAsyncComponent } from "vue"
 import {App}              from "@/constants/app";
 import {DB_SKILLS}        from "@/app/constants/eq-skill-constants";
 import {
@@ -452,8 +453,8 @@ export default {
   components: {
     EqWindow,
     EqDebug,
-    "eq-item-card-preview": () => import("@/components/preview/EQItemCardPreview.vue"),
-    "v-runtime-template": () => import("v-runtime-template")
+    "eq-item-card-preview": defineAsyncComponent(() => import("@/components/preview/EQItemCardPreview.vue")),
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template"))
   },
   watch: {
     spellData: {

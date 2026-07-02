@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import {Spells} from "@/app/spells";
 import {App}             from "@/constants/app";
 import EqItemCardPreview from "@/components/preview/EQItemCardPreview.vue";
@@ -23,7 +24,7 @@ import {Items} from "@/app/items";
 export default {
   name: "EqSpellEffects",
   components: {
-    "v-runtime-template": () => import("v-runtime-template"),
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template")),
     EqItemCardPreview,
     EqSpellPreview,
     EqWindow,

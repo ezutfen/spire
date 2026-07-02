@@ -255,6 +255,38 @@ const userConnectionsFixture = {
   ],
 }
 
+const playerEventLogsFixture = [
+  {
+    id: 9001,
+    event_type_id: 29,
+    event_type_name: 'SAY',
+    character_id: 500,
+    zone_id: 2,
+    event_data: JSON.stringify({ message: 'Hail, traveler', target: 'a_guard' }),
+    created_at: '2026-07-01T12:00:00Z',
+  },
+  {
+    id: 9000,
+    event_type_id: 10,
+    event_type_name: 'WENT_ONLINE',
+    character_id: 500,
+    zone_id: 0,
+    event_data: '{}',
+    created_at: '2026-07-01T11:30:00Z',
+  },
+]
+
+const playerEventLogsCountFixture = { count: 2 }
+
+const characterDataBulkFixture = [
+  {
+    id: 500,
+    name: 'Alyra',
+    class: 1,
+    race: 1,
+  },
+]
+
 async function fulfillJson(route: Route, payload: unknown, status = 200) {
   await route.fulfill({
     status,
@@ -407,6 +439,22 @@ export async function bootstrapSmokeHarness(page: Page, options: SmokeHarnessOpt
 
     if (path.startsWith('/api/v1/player_event_log_setting/')) {
       return fulfillJson(route, { message: 'saved' })
+    }
+
+    if (path === '/api/v1/player_event_logs/count') {
+      return fulfillJson(route, playerEventLogsCountFixture)
+    }
+
+    if (path === '/api/v1/player_event_logs') {
+      return fulfillJson(route, playerEventLogsFixture)
+    }
+
+    if (path === '/api/v1/character_data/bulk') {
+      return fulfillJson(route, characterDataBulkFixture)
+    }
+
+    if (path === '/api/v1/aa_ranks' || path === '/api/v1/aa_abilities' || path === '/api/v1/db_strs') {
+      return fulfillJson(route, [])
     }
 
     if (path === '/api/v1/discord_webhooks') {

@@ -267,6 +267,7 @@
 </template>
 
 <script type="ts">
+import { defineAsyncComponent } from "vue"
 import EqWindow from "@/components/eq-ui/EQWindow.vue";
 import {App} from "@/constants/app";
 import axios from "axios"
@@ -287,7 +288,7 @@ export default {
     AddDeveloperModal,
     DebugDisplayComponent,
     EqWindow,
-    "page-header": () => import("@/components/layout/PageHeader.vue")
+    "page-header": defineAsyncComponent(() => import("@/components/layout/PageHeader.vue"))
   },
   data() {
     return {

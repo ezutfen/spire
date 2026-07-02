@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import MarkdownIt from "markdown-it";
 import hljs       from "highlight.js/lib/core";
 
@@ -37,8 +38,8 @@ import {SpireApi} from "@/app/api/spire-api";
 
 export default {
   components: {
-    "page-header": () => import("@/components/layout/PageHeader"),
-    "v-runtime-template": () => import("v-runtime-template")
+    "page-header": defineAsyncComponent(() => import("@/components/layout/PageHeader")),
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template"))
   },
 
   data() {

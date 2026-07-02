@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import {Spells}          from "@/app/spells";
 import EqItemCardPreview from "@/components/preview/EQItemCardPreview.vue";
 import EqSpellPreview    from "@/components/preview/EQSpellCardPreview.vue";
@@ -16,7 +17,7 @@ import EqWindow          from "@/components/eq-ui/EQWindow.vue";
 export default {
   name: "EqSpellDescription",
   components: {
-    "v-runtime-template": () => import("v-runtime-template"),
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template")),
     EqItemCardPreview,
     EqSpellPreview,
     EqWindow

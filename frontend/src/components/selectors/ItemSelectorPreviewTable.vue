@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import {Items}                                   from "@/app/items";
 import EqWindow                                  from "@/components/eq-ui/EQWindow.vue";
 import {App}                                     from "@/constants/app";
@@ -79,8 +80,8 @@ export default {
     ItemPopover,
     EqWindowSimple,
     EqWindow,
-    "eq-item-card-preview": () => import("@/components/preview/EQItemCardPreview.vue"),
-    "v-runtime-template": () => import("v-runtime-template")
+    "eq-item-card-preview": defineAsyncComponent(() => import("@/components/preview/EQItemCardPreview.vue")),
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template"))
   },
   data() {
     return {

@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import {Spells}           from "@/app/spells";
 import EqWindow           from "@/components/eq-ui/EQWindow.vue";
 import EqSpellEffects     from "@/components/preview/EQSpellEffects";
@@ -89,7 +90,7 @@ export default {
     EqSpellEffects,
     EqSpellPreview,
     EqWindow,
-    "v-runtime-template": () => import("v-runtime-template")
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template"))
   },
   data() {
     return {

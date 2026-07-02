@@ -307,6 +307,7 @@
 </template>
 
 <script type="ts">
+import { defineAsyncComponent } from "vue"
 import EqWindow from "@/components/eq-ui/EQWindow.vue";
 import DebugDisplayComponent from "@/components/DebugDisplayComponent.vue";
 import {SpireApi} from "../../app/api/spire-api";
@@ -341,7 +342,7 @@ export default {
     DebugDisplayComponent,
     EqWindow,
     editor: require('vue2-ace-editor'),
-    "page-header": () => import("@/components/layout/PageHeader.vue")
+    "page-header": defineAsyncComponent(() => import("@/components/layout/PageHeader.vue"))
   },
   data() {
     return {

@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
 import {SPELL_SPA_DEFINITIONS} from "@/app/constants/eq-spell-spa-definitions";
 import EqDebug                 from "@/components/eq-ui/EQDebug";
 import {Spells}                from "@/app/spells";
@@ -54,7 +55,7 @@ export default {
   name: "SpellSpaPreviewPane",
   components: {
     EqDebug,
-    "v-runtime-template": () => import("v-runtime-template"),
+    "v-runtime-template": defineAsyncComponent(() => import("v-runtime-template")),
     EqWindow,
   },
   watch: {

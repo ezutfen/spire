@@ -21,7 +21,7 @@ Keep entries short, factual, and action-oriented.
 - Date: `2026-07-02`
 - Branch: `further-modernization`
 - Goal: implement Option 2 as an in-place migration to `Vue 3 + Vite + Pinia` while keeping the Go backend and HTTP API stable
-- State: frontend foundation is migrated and now builds on plain Vue 3 (no `@vue/compat`, no `configureCompat({ MODE: 2 })`); SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native`/`.sync` sweep complete across editor-heavy and shared routes (0 remaining occurrences for those searches); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration; first-party frontend `util.format` usage removed behind a browser-safe helper; `EqZoneMap` moved off `vue2-leaflet` to `@vue-leaflet/vue-leaflet`; targeted Playwright smoke coverage now validates the migrated `ServerConfig`, releases modal, player event log settings save flow, `ZoneServers` query restore, `FileLogs` listing/filter/stream, and the connections manage-developer modal flow; vitest unit-test run now excludes the Playwright smoke directory so `npm test` stays green
+- State: frontend foundation is migrated and now builds on plain Vue 3 (no `@vue/compat`, no `configureCompat({ MODE: 2 })`); SPA packaging moved from `packr` to `go:embed`; Wire-based bootstrap removed in favor of explicit constructor composition; connections/user modal flows and the current admin update/configuration slices now run on the Vue 3-safe path; admin dashboard/zone/timer lifecycle hooks and removed-API (`$set`/`.native`) usages migrated off Vue 2 conventions; full Vue 2 lifecycle-hook/`$set`/`.native`/`.sync` sweep complete across editor-heavy and shared routes (0 remaining occurrences for those searches); `EQTabs`/`EQTab` rewritten off the removed `$children` instance property via `provide`/`inject` registration; first-party frontend `util.format` usage removed behind a browser-safe helper; `EqZoneMap` moved off `vue2-leaflet` to `@vue-leaflet/vue-leaflet`; targeted Playwright smoke coverage now validates the migrated `ServerConfig`, releases modal, player event log settings save flow, `ZoneServers` query restore, `FileLogs` listing/filter/stream, the connections manage-developer modal flow, and the `PlayerEventLogs` event grid + runtime-template raw-event view; bare `() => import(...)` async component registrations across all editors/preview/doc consumers wrapped in `defineAsyncComponent(...)` (Vue 3 treats the bare form as a functional component returning a Promise, which rendered `[object Promise]`); vitest unit-test run now excludes the Playwright smoke directory so `npm test` stays green
 
 ## Completed Steps
 
@@ -232,10 +232,28 @@ The single remaining real `this.$children` usage (`frontend/src/components/eq-ui
 - Recorded the required `--legacy-peer-deps` install behavior in [frontend/.npmrc](/home/zutfen/code/spire/frontend/.npmrc) so fresh `npm install` runs resolve the legacy Vue 2 dependency peer conflicts (`vue-class-component` / `vue-property-decorator`) without manual flags
 - Verified smoke flows now also cover `FileLogs` and the connections manage-developer modal
 
+### 16. PlayerEventLogs Explorer Smoke + Async Component Registration Sweep
+
+The `PlayerEventLogs` explorer raw-event view (`v-runtime-template`) was rendering `[object Promise]` under Vue 3. Root cause: bare `() => import(...)` component registrations. In Vue 2 these were special-cased as async components; in Vue 3 a bare `() => import(...)` is treated as a functional component whose render returns a Promise, so it renders `[object Promise]` instead of the component. The same defect affected every editor/preview/doc consumer that registered `v-runtime-template`, `page-header`, or `eq-item-card-preview` lazily. Fixed the registration site and swept the whole frontend.
+
+- Converted the browser-unsafe `require("dot-object")` inside `formatPayload` to an ESM default import in [frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue)
+- Wrapped the `v-runtime-template` registration in `defineAsyncComponent(...)` in [frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue](/home/zutfen/code/spire/frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue) (matching the fix already applied to `Releases.vue`/`UpdateReleases.vue`)
+- Swept all remaining bare `() => import(...)` component registrations across the frontend and wrapped them in `defineAsyncComponent(...)`, adding `import { defineAsyncComponent } from "vue"` where missing (28 registrations across 23 files): `Doc.vue`, `Home.vue`, `DocNavbar.vue`, `EQSpellDescription.vue`, `EQSpellEffects.vue`, `EQSpellCardPreview.vue`, `ItemSelectorPreviewTable.vue`, `ItemSelector.vue`, `SpellPreviewTableSelector.vue`, `BotSpellsEditor.vue`, `Connections.vue`, `Items.vue`, `NpcEmotesEditor.vue`, `NpcSpellsEditor.vue`, `QuestApiExplorer.vue`, `SpellItemPreviewTable.vue`, `SpellSpaPreviewPane.vue`, `SpellItemSelector.vue`, `Spells.vue`, `StringsDatabase.vue`, `TaskItemPreviewTable.vue`, `TaskItemSelector.vue`, `TaskPreview.vue`
+- Added a Playwright smoke flow for the player event log explorer (event grid + runtime-template raw-event view) plus supporting fixtures in [frontend/tests/smoke/vue3-smoke.spec.ts](/home/zutfen/code/spire/frontend/tests/smoke/vue3-smoke.spec.ts) and [frontend/tests/smoke/helpers.ts](/home/zutfen/code/spire/frontend/tests/smoke/helpers.ts):
+  - `player_event_logs` list + `/count` fixtures and route handlers
+  - `character_data/bulk` fixture (character 500 / Alyra)
+  - empty-array fixtures for the AA preload endpoints (`/aa_ranks`, `/aa_abilities`, `/db_strs`) so `DbStrs.list` no longer throws `data.filter is not a function` on the generic `{}` catch-all
+- Verified the explorer renders the SAY event row, the player/zone links, and the raw-event filter-link view (no `[object Promise]`, no console/page errors)
+
 ## Verification
 
 Last verified successfully:
 
+- `2026-07-02` (after Step 16):
+  - `cd frontend && npm test` (4 unit tests pass; smoke dir excluded from vitest)
+  - `cd frontend && npm run test:smoke` (7 Playwright smoke tests pass)
+  - `cd frontend && npm run build`
+  - `rg -n ": \(\) => import\(" frontend/src --type-add 'vue:*.vue' --type vue` → 0 matches (all async component registrations now wrapped in `defineAsyncComponent`)
 - `2026-07-02` (after Step 15):
   - `cd frontend && npm test` (4 unit tests pass; smoke dir excluded from vitest)
   - `cd frontend && npm run test:smoke` (6 Playwright smoke tests pass)
@@ -261,8 +279,8 @@ Last verified successfully:
   - existing duplicate `case 503` warning in `frontend/src/app/spells.ts`
 - `/img/eq-wallpaper-1.b2319219.jpg` still reports a runtime-resolution warning during `vite build`
 - The pure Vue 3 cutover is only partially browser-smoke-tested so far:
-  - covered by Playwright smoke: `ServerConfig`, releases modal, player event log settings save/reload, `ZoneServers` query restore, `FileLogs` listing/filter/stream, connections manage-developer modal
-  - still not covered: `EqZoneMap` interactions, the player event log explorer (`PlayerEventLogs.vue` event grid + runtime-template raw view), launcher/update flows that rely on live process state, and editor hover flows previously affected by `.native`
+  - covered by Playwright smoke: `ServerConfig`, releases modal, player event log settings save/reload, `ZoneServers` query restore, `FileLogs` listing/filter/stream, connections manage-developer modal, `PlayerEventLogs` event grid + runtime-template raw-event view
+  - still not covered: `EqZoneMap` interactions, launcher/update flows that rely on live process state, and editor hover flows previously affected by `.native`
 - Vue 2-era dependency debt still exists outside the build blocker fixed here (`vue2-ace-editor`, `vue2-dropzone`, `vuex`, `vue-property-decorator`, `vue-class-component`); the app now builds without compat, but those packages should be revalidated or retired in future cleanup
 - `docs/project-assessment-2026-06.md` still references Wire historically; that is acceptable unless we want the assessment updated to reflect implementation progress
 
@@ -275,7 +293,6 @@ Recommended next phase:
 
 Suggested next targets:
 
-- `frontend/src/views/admin/player-event-logs/PlayerEventLogs.vue` event grid + runtime-template raw-event view (needs richer fixtures: player event logs, characters, AA preload)
 - [frontend/src/components/EqZoneMap.vue](/home/zutfen/code/spire/frontend/src/components/EqZoneMap.vue) leaflet interactions
 - launcher/update flows that still rely on live process state or richer backend responses
 - editor hover flows previously affected by `.native`
