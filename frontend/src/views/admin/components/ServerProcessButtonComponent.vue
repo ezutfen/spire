@@ -2,28 +2,28 @@
   <div class="dropdown">
     <a
       href="#"
-      data-toggle="dropdown"
       aria-haspopup="true"
-      aria-expanded="false"
+      :aria-expanded="powerMenuOpen ? 'true' : 'false'"
       :class="serverStatus === 'Online' ? 'text-success' : 'text-danger'"
+      @click.prevent="togglePowerMenu"
     >
       <i class="fe fe-power"></i> {{ serverStatus }}
     </a>
 
-    <eq-window class="dropdown-menu dropdown-menu-left p-0">
-      <a href="#" @click="startServerModal" class="dropdown-item pl-3">
+    <eq-window :class="'dropdown-menu dropdown-menu-left p-0 ' + (powerMenuOpen ? 'show' : '')">
+      <a href="#" @click.prevent="startServerModal" class="dropdown-item pl-3">
         <i class="fa fa-keyboard-o" aria-hidden="true"></i> (p)
         Power On
       </a>
-      <a href="#" @click="stopServerModal" class="dropdown-item pl-3">
+      <a href="#" @click.prevent="stopServerModal" class="dropdown-item pl-3">
         <i class="fa fa-keyboard-o" aria-hidden="true"></i> (s)
         Power Off
       </a>
-      <a href="#" @click="restartServerModal" class="dropdown-item pl-3">
+      <a href="#" @click.prevent="restartServerModal" class="dropdown-item pl-3">
         <i class="fa fa-keyboard-o" aria-hidden="true"></i> (r)
         Restart [r]
       </a>
-      <a href="#" @click="cancelServerRestartModal" class="dropdown-item pl-3">
+      <a href="#" @click.prevent="cancelServerRestartModal" class="dropdown-item pl-3">
         <i class="fa fa-keyboard-o" aria-hidden="true"></i> (c)
         Cancel Restart [c]
       </a>
@@ -275,6 +275,7 @@ export default {
       showRestartServerModal: false,
       showStopServerModal: false,
       showCancelRestartModal: false,
+      powerMenuOpen: false,
 
       stopDelays: [
         { label: "None", value: 0 },
@@ -316,10 +317,12 @@ export default {
     this.ansiRegex = new RegExp(pattern);
 
     window.addEventListener('keypress', this.keypressHandler)
+    document.addEventListener('click', this.handleDocumentClick)
   },
 
   beforeUnmount() {
     window.removeEventListener('keypress', this.keypressHandler);
+    document.removeEventListener('click', this.handleDocumentClick)
   },
 
   async mounted() {
@@ -334,12 +337,29 @@ export default {
     }
   },
   methods: {
+    togglePowerMenu() {
+      this.powerMenuOpen = !this.powerMenuOpen
+    },
+    closePowerMenu() {
+      this.powerMenuOpen = false
+    },
+    handleDocumentClick(event) {
+      const target = event.target
+      if (!(target instanceof Element)) {
+        return
+      }
+
+      if (!target.closest('.dropdown')) {
+        this.closePowerMenu()
+      }
+    },
     updateStopDelay(value) {
       this.delayedStop = value;
     },
 
     startServerModal(event) {
       event?.preventDefault()
+      this.closePowerMenu()
       this.showStartServerModal = true;
     },
 
@@ -450,6 +470,7 @@ export default {
      */
     stopServerModal(event) {
       event?.preventDefault()
+      this.closePowerMenu()
       this.showStopServerModal = true
     },
     async stopServer() {
@@ -478,6 +499,7 @@ export default {
      */
     restartServerModal(event) {
       event?.preventDefault()
+      this.closePowerMenu()
       this.showRestartServerModal = true
       this.delayedRestart         = 0;
     },
@@ -503,6 +525,7 @@ export default {
      */
     cancelServerRestartModal(event) {
       event?.preventDefault()
+      this.closePowerMenu()
       this.showCancelRestartModal = true
       this.delayedRestart = 0;
     },

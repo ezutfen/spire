@@ -13,11 +13,11 @@
 
     <!-- nested nav dropdown -->
     <a
-      :class="'nav-link collapse ' + (hasRoute(config.routePrefixMatch) || hasRouteInArray(config.routePrefixMatches) ? 'active' : 'collapsed')"
+      :class="'nav-link collapse ' + (isSectionOpen ? 'active' : 'collapsed')"
       :href="'#sidebar-' + navId"
-      data-toggle="collapse"
+      @click.prevent="toggleSection"
       role="button"
-      :aria-expanded="(hasRoute(config.routePrefixMatch) || hasRouteInArray(config.routePrefixMatches) ? 'true' : 'false')"
+      :aria-expanded="isSectionOpen ? 'true' : 'false'"
       :aria-controls="'sidebar-' + navId"
       v-if="!config.to"
     >
@@ -25,7 +25,7 @@
       {{ config.label }}
     </a>
     <div
-      :class="'collapse ' + (hasRoute(config.routePrefixMatch) || hasRouteInArray(config.routePrefixMatches) ? 'show' : '')"
+      :class="'collapse ' + (isSectionOpen ? 'show' : '')"
       :id="'sidebar-' + navId"
       v-if="!config.to"
     >
@@ -67,7 +67,18 @@ import {generateUuid} from "@/app/utility/uuid";
 
 export default {
   name: "NavSectionComponent",
+  computed: {
+    isRouteActive() {
+      return this.hasRoute(this.config.routePrefixMatch) || this.hasRouteInArray(this.config.routePrefixMatches)
+    },
+    isSectionOpen() {
+      return this.expanded || this.isRouteActive
+    },
+  },
   methods: {
+    toggleSection() {
+      this.expanded = !this.isSectionOpen
+    },
     hasRouteInArray(matches) {
       let matched = false
       if (matches && matches.length > 0) {
@@ -86,7 +97,8 @@ export default {
   },
   data() {
     return {
-      navId: ""
+      navId: "",
+      expanded: false,
     }
   },
   props: {
@@ -96,6 +108,7 @@ export default {
   },
   created() {
     this.navId = generateUuid()
+    this.expanded = this.isRouteActive
   }
 }
 </script>

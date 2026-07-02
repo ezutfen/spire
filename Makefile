@@ -25,6 +25,8 @@ ifeq ($(OS),Windows_NT)
     DRUNPREFIX = winpty
 endif
 
+GO_BIN_DIR := $(shell if [ -n "$$(go env GOBIN)" ]; then printf "%s" "$$(go env GOBIN)"; else printf "%s/bin" "$$(go env GOPATH)"; fi)
+
 COMPOSE_COMMAND=docker-compose
 ifeq ($(APP_ENV),production)
 	COMPOSE_COMMAND=docker-compose -f docker-compose.yml -f docker-compose.prod.yml
@@ -220,12 +222,12 @@ strip-extra-assets: ##@build Strips extra assets not needed to packet into binar
 	rm -rf frontend/public/eq-asset-preview-master/assets/item_icons
 
 build-frontend: ##@build Builds frontend to be packed into binary
-	cd frontend && npm install && npm run build
+	cd frontend && npm ci --legacy-peer-deps && npm run build
 
 build-binary: ##@build Build and packs release binary
 	GOOS=linux GOARCH=amd64 go build -o spire-linux-amd64
 	go install github.com/tc-hib/go-winres@latest
-	go-winres make
+	PATH="$(GO_BIN_DIR):$$PATH" go-winres make
 	GOOS=windows GOARCH=amd64 go build -o spire-windows-amd64.exe
 	zip spire-linux-amd64.zip spire-linux-amd64
 	zip spire-windows-amd64.exe.zip spire-windows-amd64.exe
@@ -236,6 +238,6 @@ release-binary: ##@build Releases binary
 build-installer-binary: ##@build Builds installer binary
 	GOOS=linux GOARCH=amd64 go build -o eqemu-server-installer-linux-amd64 ./cmd/installer/
 	go install github.com/tc-hib/go-winres@latest
-	go-winres make --arch amd64 --in ./cmd/installer/winres.json --out ./cmd/installer/
+	PATH="$(GO_BIN_DIR):$$PATH" go-winres make --arch amd64 --in ./cmd/installer/winres.json --out ./cmd/installer/
 	mv cmd/installer/_windows_amd64.syso cmd/installer/rsrc_windows_amd64.syso
 	GOOS=windows GOARCH=amd64 go build -o eqemu-server-installer-windows-amd64.exe ./cmd/installer/

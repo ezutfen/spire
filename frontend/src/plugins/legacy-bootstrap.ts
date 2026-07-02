@@ -10,6 +10,7 @@ import {
   provide,
   reactive,
   ref,
+  resolveComponent,
   renderSlot,
   watch,
   type App as VueApp,
@@ -64,24 +65,93 @@ function normalizeNumber(value: string, modifiers?: Record<string, boolean>) {
 const BButton = defineComponent({
   name: 'BButton',
   inheritAttrs: false,
+  emits: ['click'],
   props: {
     variant: { type: String, default: 'secondary' },
     size: { type: String, default: '' },
     type: { type: String, default: 'button' },
     disabled: { type: Boolean, default: false },
   },
-  setup(props, { attrs, slots }) {
-    return () =>
-      h(
+  setup(props, { attrs, slots, emit }) {
+    return () => {
+      const className = ['btn', `btn-${props.variant}`, props.size ? `btn-${props.size}` : '', attrs.class]
+      const rawAttrs = attrs as Record<string, unknown>
+      const emitClick = (event: MouseEvent) => {
+        emit('click', event)
+      }
+
+      if (typeof rawAttrs.to !== 'undefined') {
+        const { to, class: _class, ...restAttrs } = rawAttrs
+
+        return h(
+          resolveComponent('RouterLink'),
+          {
+            to,
+            custom: true,
+          },
+          {
+            default: ({ href, navigate }: { href: string; navigate: (event?: MouseEvent) => void }) =>
+              h(
+                'a',
+                {
+                  ...restAttrs,
+                  href,
+                  class: className,
+                  'aria-disabled': props.disabled ? 'true' : undefined,
+                  onClick: (event: MouseEvent) => {
+                    if (props.disabled) {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      return
+                    }
+
+                    emitClick(event)
+                    if (!event.defaultPrevented) {
+                      navigate(event)
+                    }
+                  },
+                },
+                slots.default?.(),
+              ),
+          },
+        )
+      }
+
+      if (typeof rawAttrs.href !== 'undefined') {
+        const { class: _class, ...restAttrs } = rawAttrs
+
+        return h(
+          'a',
+          {
+            ...restAttrs,
+            class: className,
+            'aria-disabled': props.disabled ? 'true' : undefined,
+            onClick: (event: MouseEvent) => {
+              if (props.disabled) {
+                event.preventDefault()
+                event.stopPropagation()
+                return
+              }
+
+              emitClick(event)
+            },
+          },
+          slots.default?.(),
+        )
+      }
+
+      return h(
         'button',
         {
-          ...attrs,
+          ...rawAttrs,
           type: props.type,
           disabled: props.disabled,
-          class: ['btn', `btn-${props.variant}`, props.size ? `btn-${props.size}` : '', attrs.class],
+          class: className,
+          onClick: emitClick,
         },
         slots.default?.(),
       )
+    }
   },
 })
 
