@@ -199,6 +199,62 @@ const zonesFixture = [
   },
 ]
 
+const fileLogsFixture = [
+  {
+    path: 'zone-eqemu.log',
+    modified_time: 1750982400,
+    size: 4096,
+  },
+  {
+    path: 'world-eqemu.log',
+    modified_time: 1750982401,
+    size: 8192,
+  },
+  {
+    path: 'crashes-2026-06-20.log',
+    modified_time: 1750982402,
+    size: 1024,
+  },
+]
+
+const fileLogContentsFixture = {
+  contents: '[WorldServer] [Info] Zone booted\n[WorldServer] [Warn] High load\n',
+  cursor: 128,
+}
+
+const userConnectionsFixture = {
+  data: [
+    {
+      id: 1,
+      active: 1,
+      server_database_connection_id: 10,
+      database_connection: {
+        id: 1,
+        name: 'Test Production DB',
+        db_host: 'db.internal',
+        db_port: '3306',
+        db_name: 'peq',
+        db_username: 'spire',
+        content_db_username: '',
+        content_db_host: '',
+        content_db_port: '',
+        content_db_name: '',
+        created_by: 1,
+        user_server_database_connections: [
+          {
+            user: {
+              id: 2,
+              user_name: 'DevAlice',
+              avatar: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+              deleted_at: null,
+            },
+          },
+        ],
+      },
+    },
+  ],
+}
+
 async function fulfillJson(route: Route, payload: unknown, status = 200) {
   await route.fulfill({
     status,
@@ -318,7 +374,23 @@ export async function bootstrapSmokeHarness(page: Page, options: SmokeHarnessOpt
     }
 
     if (path === '/api/v1/connections') {
-      return fulfillJson(route, { data: [] })
+      return fulfillJson(route, userConnectionsFixture)
+    }
+
+    if (path === '/api/v1/connection-default') {
+      return fulfillJson(route, { data: null })
+    }
+
+    if (path === '/api/v1/eqemuserver/logs') {
+      return fulfillJson(route, fileLogsFixture)
+    }
+
+    if (path.startsWith('/api/v1/eqemuserver/log/')) {
+      return fulfillJson(route, fileLogContentsFixture)
+    }
+
+    if (path.startsWith('/api/v1/eqemuserver/log-search/')) {
+      return fulfillJson(route, [])
     }
 
     if (path.startsWith('/api/v1/connection-check/')) {

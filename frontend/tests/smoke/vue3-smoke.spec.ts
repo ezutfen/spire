@@ -67,3 +67,40 @@ test('zone servers restore query state and show filtered players', async ({ page
   expect(consoleErrors).toEqual([])
   expect(pageErrors).toEqual([])
 })
+
+test('file logs list renders, filters, and streams a watched log file', async ({ page }) => {
+  const { consoleErrors, pageErrors } = await bootstrapSmokeHarness(page)
+
+  await page.goto('/admin/file-logs')
+
+  await expect(page.getByText('Files (3)')).toBeVisible()
+  await expect(page.getByText('zone-eqemu.log')).toBeVisible()
+  await expect(page.getByText('world-eqemu.log')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Zone' }).click()
+
+  await expect(page.getByText('zone-eqemu.log')).toBeVisible()
+  await expect(page.getByText('world-eqemu.log')).toHaveCount(0)
+
+  await page.getByTitle('View and watch log file').first().click()
+
+  await expect(page.getByText('Line Buffer')).toBeVisible()
+  await expect(page.locator('#file-contents')).toContainText('Zone booted')
+  expect(consoleErrors).toEqual([])
+  expect(pageErrors).toEqual([])
+})
+
+test('user connections render and the manage developer modal opens', async ({ page }) => {
+  const { consoleErrors, pageErrors } = await bootstrapSmokeHarness(page)
+
+  await page.goto('/connections')
+
+  await expect(page.getByText('User Database Connections (1)')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Test Production DB' })).toBeVisible()
+
+  await page.getByTitle('DevAlice').click()
+
+  await expect(page.getByText('Manage Developer [DevAlice] for connection [Test Production DB]')).toBeVisible()
+  expect(consoleErrors).toEqual([])
+  expect(pageErrors).toEqual([])
+})

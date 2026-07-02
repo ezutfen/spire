@@ -60,5 +60,9 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    test: {
+      environment: 'node',
+      exclude: ['**/node_modules/**', '**/dist/**', 'tests/smoke/**'],
+    },
   }
 })
