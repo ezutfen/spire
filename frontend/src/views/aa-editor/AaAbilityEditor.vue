@@ -3,8 +3,8 @@
     <div class="col-xl-12">
 
       <!-- Header card -->
-      <eq-window-simple class="mb-3">
-        <div class="d-flex align-items-center" style="flex-wrap: wrap">
+      <eq-window-simple class="mb-3 aa-editor-header-window">
+        <div class="d-flex align-items-center aa-editor-header" style="flex-wrap: wrap">
           <div style="flex: 1; min-width: 250px">
             <h4 class="mb-0" style="color: #fff">
               <i class="ra ra-star mr-1"></i>
@@ -16,17 +16,17 @@
               <span v-else>Define a new ability below</span>
             </div>
           </div>
-          <div class="mt-2">
-            <b-button variant="success" :disabled="saving" @click="save">
+          <div class="mt-2 aa-editor-actions">
+            <b-button type="button" variant="success" :disabled="saving" @click="save">
               <i class="fa fa-save mr-1"></i> {{ isNew ? 'Create' : 'Save' }}
             </b-button>
-            <b-button variant="outline-primary" class="ml-1" :disabled="isNew" @click="duplicate">
+            <b-button type="button" variant="outline-primary" class="ml-1" :disabled="isNew" @click="duplicate">
               <i class="fa fa-copy mr-1"></i> Duplicate
             </b-button>
-            <b-button variant="outline-danger" class="ml-1" :disabled="isNew" @click="confirmDelete">
+            <b-button type="button" variant="outline-danger" class="ml-1" :disabled="isNew" @click="confirmDelete">
               <i class="fa fa-trash mr-1"></i> Delete
             </b-button>
-            <b-button variant="outline-secondary" class="ml-1" @click="$router.push(ROUTE.AA_LIST)">
+            <b-button type="button" variant="outline-secondary" class="ml-1" @click="goBack">
               <i class="fa fa-arrow-left"></i> Back
             </b-button>
           </div>
@@ -304,6 +304,13 @@ export default {
       return ROUTE
     },
   },
+  watch: {
+    '$route.params.id': {
+      async handler() {
+        await this.syncRouteState()
+      },
+    },
+  },
   data() {
     return {
       loading: false,
@@ -339,18 +346,17 @@ export default {
     this.deityEntries = this.buildDeityEntries()
 
     await this.loadMetadata()
-
-    const idParam = this.$route.params.id
-    if (!idParam || idParam === 'new') {
-      this.isNew = true
-      this.form = this.emptyForm()
-      // seed one default rank
-      this.form.ranks.push(this.newRank(0))
-      this.snapshot()
-    } else {
-      this.abilityId = parseInt(idParam)
-      await this.load()
+    await this.syncRouteState()
+  },
+  beforeRouteUpdate(to, from, next) {
+    if (this.dirty) {
+      const answer = window.confirm('You have unsaved changes. Are you sure you want to leave?')
+      if (!answer) {
+        return next(false)
+      }
     }
+
+    next()
   },
   methods: {
     emptyForm() {
@@ -424,6 +430,26 @@ export default {
       } catch (e) {
         // optional
       }
+    },
+    async syncRouteState() {
+      this.validation = null
+      this.loadWarnings = []
+
+      const idParam = this.$route.params.id
+      if (!idParam || idParam === 'new') {
+        this.loading = false
+        this.isNew = true
+        this.abilityId = 0
+        this.form = this.emptyForm()
+        // seed one default rank
+        this.form.ranks.push(this.newRank(0))
+        this.snapshot()
+        return
+      }
+
+      this.isNew = false
+      this.abilityId = parseInt(idParam, 10)
+      await this.load()
     },
     async load() {
       this.loading = true
@@ -556,6 +582,7 @@ export default {
           this.showToast('Created "' + full.aa_ability.name + '"', '#4ae84a')
           this.isNew = false
           this.abilityId = full.aa_ability.id
+          this.snapshot()
           this.$router.replace(ROUTE.AA_ABILITY_EDIT.replace(':id', full.aa_ability.id))
         } else {
           full = await AaEditorApi.saveAbility(this.abilityId, payload)
@@ -589,6 +616,9 @@ export default {
     },
     confirmDelete() {
       this.$bvModal.show('aa-delete-modal-edit')
+    },
+    goBack() {
+      this.$router.push(ROUTE.AA_LIST)
     },
     async performDelete() {
       try {
@@ -647,4 +677,21 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.aa-editor-header-window {
+  overflow: visible;
+}
+
+.aa-editor-header,
+.aa-editor-actions {
+  position: relative;
+  z-index: 2;
+}
+
+.aa-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+}
+</style>

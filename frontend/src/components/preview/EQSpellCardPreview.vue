@@ -444,6 +444,7 @@ import {Spells}           from "@/app/spells";
 import {Items}            from "@/app/items";
 import {DB_CLASSES_ICONS} from "@/app/constants/eq-class-icon-constants";
 import {DB_CLASSES_SHORT} from "@/app/constants/eq-classes-constants";
+import {generateUuid}     from "@/app/utility/uuid";
 
 let unknowns = {}
 
@@ -509,8 +510,7 @@ export default {
         }
       }
 
-      const uuidv4     = require("uuid/v4")
-      this.componentId = uuidv4()
+      this.componentId = generateUuid()
 
       // reagents
       let reagents = []

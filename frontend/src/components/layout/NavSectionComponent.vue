@@ -63,6 +63,8 @@
 </template>
 
 <script>
+import {generateUuid} from "@/app/utility/uuid";
+
 export default {
   name: "NavSectionComponent",
   methods: {
@@ -93,8 +95,7 @@ export default {
     }
   },
   created() {
-    const uuidv4 = require("uuid/v4")
-    this.navId   = uuidv4()
+    this.navId = generateUuid()
   }
 }
 </script>

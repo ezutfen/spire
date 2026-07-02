@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row">
+    <div class="d-flex flex-wrap align-items-start">
       <div
         v-for="entry in entries"
         :key="entry.value"

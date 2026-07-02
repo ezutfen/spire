@@ -61,9 +61,7 @@
 import EqWindow               from "@/components/eq-ui/EQWindow.vue";
 import {debounce}       from "@/app/utility/debounce";
 import {SpireWebsocket} from "@/app/api/spire-websocket";
-
-
-const Convert = require('ansi-to-html');
+import Convert                from "ansi-to-html";
 const convert = new Convert();
 
 export default {
