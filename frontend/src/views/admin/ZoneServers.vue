@@ -259,6 +259,7 @@ import EqCheckbox                  from "@/components/eq-ui/EQCheckbox.vue";
 import PlayerEventDisplayComponent from "@/views/admin/player-event-logs/components/PlayerEventDisplayComponent.vue";
 import EqProgressBar               from "@/components/eq-ui/EQProgressBar.vue";
 import {Navbar}                    from "@/app/navbar";
+import {getClassRaceIconUrl}       from "@/app/assets/class-race-icons";
 
 // Simple debounce function
 function debounce(func, delay) {
@@ -423,18 +424,18 @@ export default {
 
     getRaceImage: raceId => {
       if (DB_RACES_ICONS[raceId]) {
-        return require('@/assets/img/icons/classes-races/item_' + DB_RACES_ICONS[raceId] + '.png')
+        return getClassRaceIconUrl(DB_RACES_ICONS[raceId])
       }
 
-      return 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=='
+      return getClassRaceIconUrl()
     },
 
     getClassImage: classId => {
       if (DB_CLASSES_ICONS[classId]) {
-        return require('@/assets/img/icons/classes-races/item_' + DB_CLASSES_ICONS[classId] + '.png')
+        return getClassRaceIconUrl(DB_CLASSES_ICONS[classId])
       }
 
-      return 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=='
+      return getClassRaceIconUrl()
     },
 
     formatPlayerTooltip(c) {

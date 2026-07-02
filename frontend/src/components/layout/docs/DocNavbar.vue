@@ -27,15 +27,15 @@
         <div class="dropdown">
 
           <!-- Toggle -->
-          <a href="#" id="sidebarIcon" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-             aria-expanded="false">
+          <a href="#" id="sidebarIcon" class="dropdown-toggle" role="button" aria-haspopup="true"
+             :aria-expanded="mobileUserMenuOpen ? 'true' : 'false'" @click.prevent="toggleMobileUserMenu">
             <div class="avatar avatar-sm avatar-online">
               <img :src="user ? user.avatar : defaultAvatar"
                    class="avatar-img rounded-circle" alt="...">
             </div>
           </a>
 
-          <navbar-dropdown-menu menu-right="1"/>
+          <navbar-dropdown-menu menu-right="1" :visible="mobileUserMenuOpen"/>
 
         </div>
 
@@ -85,8 +85,9 @@
           <div class="dropup">
 
             <!-- Toggle -->
-            <a href="#" id="sidebarIconCopy" class="dropdown-toggle" role="button" data-bs-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false">
+            <a href="#" id="sidebarIconCopy" class="dropdown-toggle" role="button"
+               aria-haspopup="true" :aria-expanded="desktopUserMenuOpen ? 'true' : 'false'"
+               @click.prevent="toggleDesktopUserMenu">
               <div class="avatar avatar-sm avatar-online">
                 <img :src="user ? user.avatar : defaultAvatar"
                      class="avatar-img rounded-circle" alt="...">
@@ -94,7 +95,7 @@
             </a>
 
             <!-- Menu -->
-            <navbar-dropdown-menu/>
+            <navbar-dropdown-menu :visible="desktopUserMenuOpen"/>
 
           </div>
 
@@ -133,6 +134,8 @@ export default {
       backendBaseUrl: "",
       defaultAvatar,
       user: null,
+      mobileUserMenuOpen: false,
+      desktopUserMenuOpen: false,
       docNav: null,
       componentNavs: [
         { title: "Progress Bars", to: "/components#progress-bars" },
@@ -151,6 +154,7 @@ export default {
   async mounted() {
     this.backendBaseUrl = App.BACKEND_BASE_URL
     this.user           = await UserContext.getUser()
+    document.addEventListener("click", this.handleDocumentClick)
 
     SpireApi.v1().get(`/doc/SUMMARY`).then((response) => {
       if (response.data && response.data.data) {
@@ -182,7 +186,30 @@ export default {
 
   },
 
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleDocumentClick)
+  },
   methods: {
+    toggleMobileUserMenu() {
+      this.mobileUserMenuOpen = !this.mobileUserMenuOpen
+    },
+    toggleDesktopUserMenu() {
+      this.desktopUserMenuOpen = !this.desktopUserMenuOpen
+    },
+    closeUserMenus() {
+      this.mobileUserMenuOpen = false
+      this.desktopUserMenuOpen = false
+    },
+    handleDocumentClick(event) {
+      const target = event.target
+      if (!(target instanceof Element)) {
+        return
+      }
+
+      if (!target.closest('.navbar-user')) {
+        this.closeUserMenus()
+      }
+    },
     hasRoute: function (partial) {
       return (this.$route.path.indexOf(partial) > -1)
     }

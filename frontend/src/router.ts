@@ -287,7 +287,7 @@ const router = createRouter({
       component: () => import('./views/admin/layout/AdminLayout.vue'),
       children: [
         {
-          path: '/',
+          path: '',
           component: () => import('./views/admin/Dashboard.vue'),
           meta: {title: "Dashboard"},
         },

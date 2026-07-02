@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="'dropdown-menu ' + (menuRight ? 'dropdown-menu-right' : '')"
+    :class="'dropdown-menu ' + (menuRight ? 'dropdown-menu-right ' : '') + (visible ? 'show' : '')"
     :aria-labelledby="'sidebarIcon' + menuRight"
   >
     <router-link :to="ROUTE.LOGIN" class="dropdown-item" v-if="!user && githubAuthEnabled">
@@ -34,7 +34,11 @@ export default {
     }
   },
   props: {
-    menuRight: String
+    menuRight: String,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     isAdmin() {

@@ -223,6 +223,35 @@ func sampleAbility(name string, ranks int) AaAbilityInput {
 	return input
 }
 
+func TestGetMetadataUsesCanonicalAaMappings(t *testing.T) {
+	svc := newTestService()
+	metadata := svc.GetMetadata()
+
+	categoryTests := map[int]string{
+		0: "None",
+		3: "Shroud Passive",
+		5: "Veteran Reward",
+		9: "Everquest",
+	}
+	for id, expected := range categoryTests {
+		if got := metadata.Categories[id]; got != expected {
+			t.Fatalf("category %d mismatch: got %q want %q", id, got, expected)
+		}
+	}
+
+	typeTests := map[int]string{
+		0:  "Not Applicable",
+		3:  "Class",
+		6:  "Gates of Discord",
+		10: "Depths of Darkhollow",
+	}
+	for id, expected := range typeTests {
+		if got := metadata.Types[id]; got != expected {
+			t.Fatalf("type %d mismatch: got %q want %q", id, got, expected)
+		}
+	}
+}
+
 // ------------------------------------------------------------------
 
 func TestCreateFullAbility(t *testing.T) {

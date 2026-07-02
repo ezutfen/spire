@@ -198,15 +198,19 @@
 
                   <!-- Toggle -->
                   <a
-                    href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false"
+                    href="#"
+                    class="dropdown-ellipses dropdown-toggle"
+                    role="button"
+                    aria-haspopup="true"
+                    :aria-expanded="openConnectionMenuId === c.id ? 'true' : 'false'"
+                    @click.prevent="toggleConnectionMenu(c.id)"
                   >
                     <i class="fe fe-more-vertical"></i>
                   </a>
 
                   <!-- Menu -->
-                  <div class="dropdown-menu dropdown-menu-right" style="">
-                    <a @click="deleteConnection(c.server_database_connection_id)" class="dropdown-item">
+                  <div :class="'dropdown-menu dropdown-menu-right ' + (openConnectionMenuId === c.id ? 'show' : '')" style="">
+                    <a @click="deleteConnection(c.server_database_connection_id); closeConnectionMenu()" class="dropdown-item">
                       Delete Connection
                     </a>
                   </div>
@@ -263,13 +267,34 @@ export default {
       discordConnection: {}, // ManageDiscordConnectionModal
 
       managedUser: {}, // ManageDeveloperModal
-      managedUserConnection: {} // ManageDeveloperModal
+      managedUserConnection: {}, // ManageDeveloperModal
+      openConnectionMenuId: null,
     }
   },
   async mounted() {
     this.user = await (UserContext.getUser())
+    document.addEventListener('click', this.handleDocumentClick)
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleDocumentClick)
   },
   methods: {
+    toggleConnectionMenu(connectionId) {
+      this.openConnectionMenuId = this.openConnectionMenuId === connectionId ? null : connectionId
+    },
+    closeConnectionMenu() {
+      this.openConnectionMenuId = null
+    },
+    handleDocumentClick(event) {
+      const target = event.target
+      if (!(target instanceof Element)) {
+        return
+      }
+
+      if (!target.closest('.dropdown')) {
+        this.closeConnectionMenu()
+      }
+    },
 
     isCurrentUserOwnerOfConnection(connection) {
       return this.user.id === connection.database_connection.created_by

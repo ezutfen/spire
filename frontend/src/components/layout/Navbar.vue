@@ -39,8 +39,13 @@
       <div class="navbar-user d-md-none">
         <div class="dropdown">
           <a
-            href="#" id="sidebarIcon" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false"
+            href="#"
+            id="sidebarIcon"
+            class="dropdown-toggle"
+            role="button"
+            aria-haspopup="true"
+            :aria-expanded="mobileUserMenuOpen ? 'true' : 'false'"
+            @click.prevent="toggleMobileUserMenu"
           >
             <div :class="'avatar avatar-sm ' + (isUserLoggedIn() ? 'avatar-online' : '')">
               <img
@@ -49,7 +54,7 @@
               >
             </div>
           </a>
-          <navbar-dropdown-menu menu-right="1"/>
+          <navbar-dropdown-menu menu-right="1" :visible="mobileUserMenuOpen"/>
         </div>
       </div>
 
@@ -247,8 +252,13 @@
 
             <!-- Toggle -->
             <a
-              href="#" id="sidebarIconCopy" class="dropdown-toggle" role="button" data-bs-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false"
+              href="#"
+              id="sidebarIconCopy"
+              class="dropdown-toggle"
+              role="button"
+              aria-haspopup="true"
+              :aria-expanded="desktopUserMenuOpen ? 'true' : 'false'"
+              @click.prevent="toggleDesktopUserMenu"
             >
               <div class="avatar avatar-sm avatar-online">
                 <img
@@ -259,7 +269,7 @@
             </a>
 
             <!-- Menu -->
-            <navbar-dropdown-menu/>
+            <navbar-dropdown-menu :visible="desktopUserMenuOpen"/>
 
           </div>
 
@@ -328,6 +338,8 @@ export default {
       backendBaseUrl: "",
       defaultAvatar,
       user: null,
+      mobileUserMenuOpen: false,
+      desktopUserMenuOpen: false,
       hideNavbar: false,
       appEnv: AppEnv.getEnv(),
       appVersion: AppEnv.getVersion(),
@@ -544,11 +556,13 @@ export default {
     EventBus.$on("HIDE_NAVBAR", this.toggleNavbarCollapse);
     EventBus.$on("APP_ENV_LOADED", this.handleAppEnvLoaded);
     EventBus.$on("ROUTE_CHANGE", this.handleRouteChange);
+    document.addEventListener("click", this.handleDocumentClick);
   },
   beforeUnmount() {
     EventBus.$off("HIDE_NAVBAR", this.toggleNavbarCollapse);
     EventBus.$off("APP_ENV_LOADED", this.handleAppEnvLoaded);
     EventBus.$off("ROUTE_CHANGE", this.handleRouteChange);
+    document.removeEventListener("click", this.handleDocumentClick);
   },
 
   async mounted() {
@@ -743,6 +757,26 @@ export default {
     expandNavbar() {
       Navbar.expand()
     },
+    toggleMobileUserMenu() {
+      this.mobileUserMenuOpen = !this.mobileUserMenuOpen
+    },
+    toggleDesktopUserMenu() {
+      this.desktopUserMenuOpen = !this.desktopUserMenuOpen
+    },
+    closeUserMenus() {
+      this.mobileUserMenuOpen = false
+      this.desktopUserMenuOpen = false
+    },
+    handleDocumentClick(event) {
+      const target = event.target
+      if (!(target instanceof Element)) {
+        return
+      }
+
+      if (!target.closest('.navbar-user')) {
+        this.closeUserMenus()
+      }
+    },
     collapseNavbar() {
       Navbar.collapse()
     },
@@ -760,6 +794,7 @@ export default {
       if (sidebar) {
         sidebar.classList.remove("show");
       }
+      this.closeUserMenus()
     },
     checkForSpireUpdate() {
       EventBus.$emit("CHECK_SPIRE_UPDATE", true)

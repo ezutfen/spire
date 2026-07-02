@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a href="#sidebarModalActivity" class="navbar-user-link" data-toggle="modal" v-b-modal.user-settings-modal>
+    <a href="#" class="navbar-user-link" @click.prevent="$bvModal.show('user-settings-modal')">
       <span class="icon">
         <i class="fe fe-settings"></i>
       </span>

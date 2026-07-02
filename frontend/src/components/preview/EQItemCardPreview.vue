@@ -538,6 +538,7 @@ import {FactionListApi}                    from "@/app/api/api/faction-list-api"
 import {SpireApi}                          from "@/app/api/spire-api";
 import {Zones}                             from "@/app/zones";
 import {TRADESKILLS}                       from "@/app/constants/eq-tradeskill-constants";
+import {generateUuid}                      from "@/app/utility/uuid";
 
 export default {
   name: "EqItemCardPreview",
@@ -629,8 +630,7 @@ export default {
     },
 
     async init() {
-      const uuidv4     = require("uuid/v4")
-      this.componentId = uuidv4()
+      this.componentId = generateUuid()
 
       // dynamic section builder
       this.secondlevel3   = {}
